@@ -1,16 +1,16 @@
-package com.example.minecraft;
+package com.example.minecraft.User;
 
 // DATETIME 타입 매핑을 위해 import
 import java.time.LocalDateTime;
 
 /**
  * users 테이블과 매핑되는 DTO (Data Transfer Object)
- * 클래스 이름을 MemberDTO -> UserDTO로 변경
+ * 클래스 이름을 userDTO -> UserDTO로 변경
  */
 public class UserDTO {
 
     // DB의 user_id (BIGINT) 컬럼과 매핑
-    // 타입: String -> Long, 이름: memberid -> userId
+    // 타입: String -> Long, 이름: userid -> userId
     private Long userId;
 
     // DB의 password (VARCHAR) 컬럼과 매핑 (일치)

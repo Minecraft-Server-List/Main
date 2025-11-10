@@ -1,4 +1,4 @@
-package com.example.minecraft;
+package com.example.minecraft.User;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -9,8 +9,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 
-@WebServlet("/memberList.do")
-public class MemberListServlit extends HttpServlet {
+@WebServlet("/userList.do")
+public class UserListServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private UserDAO dao;
 
@@ -27,8 +27,8 @@ public class MemberListServlit extends HttpServlet {
         // request 객체에 "allList"라는 이름으로 데이터를 담음
         request.setAttribute("allList", aList);
         
-        // memberList.jsp로 포워딩 (데이터 전달)
-        RequestDispatcher dispatcher = request.getRequestDispatcher("memberList.jsp");
+        // userList.jsp로 포워딩 (데이터 전달)
+        RequestDispatcher dispatcher = request.getRequestDispatcher("userList.jsp");
         dispatcher.forward(request, response);
     }
 }

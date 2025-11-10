@@ -14,7 +14,7 @@
 <%
     // 2. 관리자(ADMIN)일 경우에만 '회원 목록' 링크를 보여줍니다.
     if ("ADMIN".equals(userRole_header)) {
-        out.print("| <a href='memberList.do'>회원 목록(관리자)</a>");
+        out.print("| <a href='userList.do'>회원 목록(관리자)</a>");
     }
 
     // 3. 로그인 상태에 따라 '마이페이지' 또는 '회원가입' 링크를 분기합니다.

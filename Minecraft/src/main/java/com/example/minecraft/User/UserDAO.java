@@ -1,4 +1,4 @@
-package com.example.minecraft;
+package com.example.minecraft.User;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+
+import com.example.minecraft.Util.JdbcConnectUtil;
 
 public class UserDAO {
     Connection con = null;
@@ -29,7 +31,7 @@ public class UserDAO {
      */
     public ArrayList<UserDTO> SelectAll() {
         ArrayList<UserDTO> uList = new ArrayList<>();
-        con = JdbcConnectUtill.getConnection();
+        con = JdbcConnectUtil.getConnection();
         try {
             pstmt = con.prepareStatement(SQL_ALL);
             rs = pstmt.executeQuery();
@@ -46,7 +48,7 @@ public class UserDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            JdbcConnectUtill.close(con, pstmt, rs);
+            JdbcConnectUtil.close(con, pstmt, rs);
         }
         return uList;
     }
@@ -57,7 +59,7 @@ public class UserDAO {
     public boolean loginCheck(UserDTO udto) {
         boolean loginCheck = false;
         try {
-            con = JdbcConnectUtill.getConnection();
+            con = JdbcConnectUtil.getConnection();
             pstmt = con.prepareStatement(SQL_LOGIN_CHECK);
             pstmt.setString(1, udto.getEmail());
             pstmt.setString(2, udto.getPassword());
@@ -66,7 +68,7 @@ public class UserDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            JdbcConnectUtill.close(con, pstmt, rs);
+            JdbcConnectUtil.close(con, pstmt, rs);
         }
         return loginCheck;
     }
@@ -76,7 +78,7 @@ public class UserDAO {
      */
     public int insertUser(UserDTO udto) {
         int result = 0;
-        con = JdbcConnectUtill.getConnection();
+        con = JdbcConnectUtil.getConnection();
         try {
             pstmt = con.prepareStatement(SQL_INSERT);
             pstmt.setString(1, udto.getName());
@@ -88,7 +90,7 @@ public class UserDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            JdbcConnectUtill.close(con, pstmt);
+            JdbcConnectUtil.close(con, pstmt);
         }
         return result;
     }
@@ -98,7 +100,7 @@ public class UserDAO {
      */
     public UserDTO selectUserByEmail(String email) {
         UserDTO dto = null;
-        con = JdbcConnectUtill.getConnection();
+        con = JdbcConnectUtil.getConnection();
         try {
             pstmt = con.prepareStatement(SQL_SELECT_BY_EMAIL);
             pstmt.setString(1, email);
@@ -117,7 +119,7 @@ public class UserDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            JdbcConnectUtill.close(con, pstmt, rs);
+            JdbcConnectUtil.close(con, pstmt, rs);
         }
         return dto;
     }
@@ -127,7 +129,7 @@ public class UserDAO {
      */
     public UserDTO selectUserById(long userId) {
         UserDTO dto = null;
-        con = JdbcConnectUtill.getConnection();
+        con = JdbcConnectUtil.getConnection();
         try {
             pstmt = con.prepareStatement(SQL_SELECT_BY_ID);
             pstmt.setLong(1, userId);
@@ -146,7 +148,7 @@ public class UserDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            JdbcConnectUtill.close(con, pstmt, rs);
+            JdbcConnectUtil.close(con, pstmt, rs);
         }
         return dto;
     }
@@ -157,7 +159,7 @@ public class UserDAO {
      */
     public int updateUser(UserDTO udto) {
         int result = 0;
-        con = JdbcConnectUtill.getConnection();
+        con = JdbcConnectUtil.getConnection();
         try {
             pstmt = con.prepareStatement(SQL_UPDATE);
             pstmt.setString(1, udto.getName());
@@ -170,7 +172,7 @@ public class UserDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            JdbcConnectUtill.close(con, pstmt);
+            JdbcConnectUtil.close(con, pstmt);
         }
         return result;
     }
@@ -180,7 +182,7 @@ public class UserDAO {
      */
     public int deleteUser(long userId) {
         int result = 0;
-        con = JdbcConnectUtill.getConnection();
+        con = JdbcConnectUtil.getConnection();
         try {
             pstmt = con.prepareStatement(SQL_DELETE);
             pstmt.setLong(1, userId);
@@ -189,7 +191,7 @@ public class UserDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            JdbcConnectUtill.close(con, pstmt);
+            JdbcConnectUtil.close(con, pstmt);
         }
         return result;
     }

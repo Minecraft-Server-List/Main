@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8" import="java.util.*, com.example.minecraft.*"%>
+    pageEncoding="UTF-8" import="java.util.*, com.example.minecraft.User.*"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -33,7 +33,7 @@
 <%
     if("ADMIN".equals(userRole)) {
 %>
-    <a href="memberList.do">[회원 목록으로 가기]</a>
+    <a href="userList.do">[회원 목록으로 가기]</a>
 <%
     } 
 %>
@@ -84,7 +84,7 @@
 <%
     if("ADMIN".equals(userRole)) {
 %>
-    <a href="memberList.do">[회원 목록으로 가기]</a>
+    <a href="userList.do">[회원 목록으로 가기]</a>
 <%
     } 
 %>
@@ -162,13 +162,14 @@ if ("ADMIN".equals(userRole)) {
 // 목록 버튼은 ADMIN에게만 표시
 if("ADMIN".equals(userRole)) {
 %>
-    <input type="button" value="목록으로" onclick="location.href='memberList.do'">
+    <input type="button" value="목록으로" onclick="location.href='userList.do'">
 <%
 } 
 %>
 </form>
 
 <%
+
     // Case 4: [기타 메시지]
 	} else if (message != null) {
 %>
@@ -179,7 +180,7 @@ if("ADMIN".equals(userRole)) {
 <%
     if("ADMIN".equals(userRole)) {
 %>
-    <a href="memberList.do">[회원 목록으로 가기]</a>
+    <a href="userList.do">[회원 목록으로 가기]</a>
 <%
     }
 %>

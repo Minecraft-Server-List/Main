@@ -1,4 +1,4 @@
-package com.example.minecraft;
+package com.example.minecraft.User;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -10,7 +10,7 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
 @WebServlet("/login.do")
-public class LoginServlit extends HttpServlet {
+public class LoginServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private UserDAO dao;
 

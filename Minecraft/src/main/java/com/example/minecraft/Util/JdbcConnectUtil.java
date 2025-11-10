@@ -1,4 +1,4 @@
-package com.example.minecraft;
+package com.example.minecraft.Util;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -6,7 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class JdbcConnectUtill {
+public class JdbcConnectUtil {
 	public static Connection getConnection() {
 		Connection con = null;
 		try {

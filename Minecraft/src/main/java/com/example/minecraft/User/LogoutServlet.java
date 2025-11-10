@@ -1,4 +1,4 @@
-package com.example.minecraft;
+package com.example.minecraft.User;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -9,7 +9,7 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
 @WebServlet("/logout.do")
-public class LogoutServlit extends HttpServlet {
+public class LogoutServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     @Override
