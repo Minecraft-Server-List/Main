@@ -1,4 +1,4 @@
-package com.example.minecraft;
+package com.example.minecraft.User;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
