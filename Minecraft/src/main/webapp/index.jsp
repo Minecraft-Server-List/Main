@@ -6,11 +6,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CraftConnect - Find Your Perfect Minecraft Server</title>
-
 </head>
 <body>
     <%@ include file="/WEB-INF/views/header.jsp" %>
-    
 
     <main>
         <section class="hero">
@@ -29,7 +27,7 @@
                 <h2>Featured Servers</h2>
                 <div class="card-container">
                     
-                    <%-- 목업 데이터 1 (서버 연동 전) --%>
+                    <%-- 목업 데이터 1 --%>
                     <div class="server-card">
                         <img src="https://placehold.co/400x180/a1b1a1/ffffff?text=SurvivalCraft" alt="SurvivalCraft">
                         <div class="card-content">
@@ -69,7 +67,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <%-- 목업 데이터 (생략) --%>
+                        <%-- 목업 데이터 --%>
                         <tr>
                             <td class="server-name">CraftLandia</td>
                             <td>120<span class="player-count-max">/200</span></td>
@@ -112,6 +110,5 @@
     </main>
 
     <%@ include file="/WEB-INF/views/footer.jsp" %>
-
 </body>
 </html>
