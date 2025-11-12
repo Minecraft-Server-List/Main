@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-import com.example.minecraft.Util.JdbcConnectUtil;
+import com.example.minecraft.util.JdbcConnectUtil;
 
 public class UserDAO {
     Connection con = null;
