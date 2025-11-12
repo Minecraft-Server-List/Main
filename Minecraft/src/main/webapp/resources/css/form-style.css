@@ -1,0 +1,308 @@
+/* ==============================================
+  범용 폼 스타일 (login, register 등에서 사용)
+  ==============================================
+*/
+
+/* 폼 페이지의 <main> 영역 기본 스타일 */
+main.form-page-main {
+    padding-top: 48px;
+    padding-bottom: 48px;
+    background-color: #f9f9f9; 
+    min-height: calc(100vh - 250px);
+}
+
+/* 폼을 감싸는 '표준' 박스 (기본 550px) */
+.user-form-container {
+    max-width: 550px; 
+    margin: 0 auto;
+    padding: 32px;
+    background-color: #ffffff;
+    border: 1px solid #eaeaea;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+/* h2 스타일 (공용화) */
+.user-form-container h2,
+.wide-result-container h2 {
+    text-align: center;
+    margin-bottom: 24px;
+    font-weight: 700;
+}
+
+/* 폼 입력 그룹 (라벨 + 인풋) */
+.user-form-group {
+    margin-bottom: 20px;
+}
+
+.user-form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 15px;
+}
+
+/* 폼 입력 필드 (text, password, email) */
+.user-form-group input[type="text"],
+.user-form-group input[type="password"],
+.user-form-group input[type="email"] {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+/* Readonly 폼 필드 */
+.user-form-group input[readonly],
+.user-form-group input[readonly]:focus {
+    background-color: #f0f0f0;
+    cursor: not-allowed;
+    color: #777;
+    border-color: #ddd;
+    outline: none;
+}
+
+/* Select 드롭다운 */
+.user-form-group select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    box-sizing: border-box;
+    background-color: white; 
+    -webkit-appearance: none; 
+    -moz-appearance: none; 
+    appearance: none; 
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23666%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.6-3.6%205.4-7.8%205.4-12.8%200-5-1.8-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 0.65em auto;
+}
+
+/* 제출 버튼 (가입하기, 로그인하기 등) */
+.user-form-group input[type="submit"] {
+    width: 100%;
+    padding: 14px;
+    background-color: #28a745; 
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.user-form-group input[type="submit"]:hover {
+    background-color: #218838;
+}
+
+/* 폼 내부의 보조 버튼 (reset, '목록으로' 등) */
+.user-form-group input[type="reset"],
+.user-form-group input[type="button"].btn-secondary-full { 
+    width: 100%;
+    padding: 14px;
+    background-color: #f0f0f0; 
+    color: #333;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-top: 10px; 
+}
+
+.user-form-group input[type="reset"]:hover,
+.user-form-group input[type="button"].btn-secondary-full:hover {
+    background-color: #e0e0e0;
+}
+
+/*
+ * ============================================
+ * 결과 페이지 버튼 스타일 (Case 2)
+ * (user-form-container 접두사 제거 -> 공용화)
+ * ============================================
+ */
+
+.user-form-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 20px;
+    padding-top: 24px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.user-form-buttons .btn {
+    flex-grow: 1;
+    flex-basis: 0;
+    max-width: 200px;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    border: none;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.user-form-buttons .btn-secondary {
+    background-color: #f0f0f0;
+    color: #333;
+    border: 1px solid #ccc;
+}
+.user-form-buttons .btn-secondary:hover {
+    background-color: #e0e0e0;
+}
+
+.user-form-buttons .btn-primary {
+    background-color: #28a745; 
+    color: #ffffff;
+}
+.user-form-buttons .btn-primary:hover {
+    background-color: #218838;
+}
+
+/*
+ * ============================================
+ * 결과 메시지 스타일 (Case 1, 4)
+ * (user-form-container 접두사 제거 -> 공용화)
+ * ============================================
+ */
+
+.result-message { /* (클래스명 변경) */
+    text-align: center;
+}
+
+.result-message h2 {
+    margin-bottom: 16px;
+}
+.result-message p {
+    font-size: 1.1em;
+    margin-bottom: 24px;
+}
+
+.result-message a {
+    display: inline-block;
+    font-weight: 600;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+    margin: 10px 5px 0 5px;
+    font-size: 15px;
+    border: 1px solid #ccc;
+}
+.result-message a[href="index.jsp"] {
+    background-color: #28a745; 
+    color: #ffffff;
+    border-color: #28a745;
+}
+.result-message a[href="index.jsp"]:hover {
+    background-color: #218838;
+}
+
+.result-message a[href="userList.do"] {
+    background-color: #f0f0f0;
+    color: #333;
+    border-color: #ccc;
+}
+.result-message a[href="userList.do"]:hover {
+    background-color: #e0e0e0;
+}
+
+/*
+ * ============================================
+ * Case 2의 '이전 스타일' 테이블
+ * (user-form-container 접두사 제거 -> 공용화)
+ * ============================================
+ */
+.simple-table { /* (클래스명 변경) */
+    width: 100%;
+    text-align: center;
+    border-collapse: collapse; 
+    margin-bottom: 24px; 
+    border: 1px solid #ccc; 
+    /* table-layout: fixed; 제거됨 */
+}
+
+.simple-table th,
+.simple-table td {
+    border: 1px solid #ccc; 
+    padding: 12px; 
+    height: 40px; 
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+}
+.simple-table th {
+    background-color: #eee; 
+    font-weight: 600;
+}
+
+
+/*
+ * ============================================
+ * [추가] '수정 완료' 전용 800px 컨테이너
+ * ============================================
+ */
+.wide-result-container {
+    max-width: 800px; /* 800px */
+    margin: 0 auto;
+    padding: 32px;
+    background-color: #ffffff;
+    border: 1px solid #eaeaea;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+
+/* * ============================================
+ * [추가] userList.jsp 전용 스타일
+ * ============================================
+ */
+
+/* 1. '이름' 열 한 줄 표시 (4글자 기준) */
+/* .server-table은 style.css에 정의되어 있음 */
+.server-table td.user-list-name-cell {
+    white-space: nowrap;
+    min-width: 100px; /* 4글자+패딩 기준 최소 너비 */
+}
+
+/* 2. [수정]/[삭제] 버튼 스타일 */
+.btn-action-edit,
+.btn-action-delete {
+    display: inline-block;
+    text-decoration: none;
+    padding: 4px 10px;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+    margin: 2px; /* 버튼 사이 간격 */
+    border: 1px solid;
+    white-space: nowrap; /* 버튼 텍스트 줄바꿈 방지 */
+}
+
+.btn-action-edit {
+    color: #2b6cb0; /* blue */
+    background-color: #ebf8ff;
+    border-color: #bee3f8;
+}
+.btn-action-edit:hover {
+    background-color: #bee3f8;
+}
+
+.btn-action-delete {
+    color: #c53030; /* red */
+    background-color: #fff5f5;
+    border-color: #fed7d7;
+}
+.btn-action-delete:hover {
+    background-color: #fed7d7;
+}
