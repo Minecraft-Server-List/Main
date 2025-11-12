@@ -56,7 +56,7 @@ public class LoginServlet extends HttpServlet {
             request.setAttribute("message", "아이디(이메일) 또는 비밀번호를 확인해주세요.");
             
             // 2. [수정] loginFail.jsp 대신 userManageResult.jsp로 포워드
-            RequestDispatcher dispatcher = request.getRequestDispatcher("userManageResult.jsp"); 
+            RequestDispatcher dispatcher = request.getRequestDispatcher("singleUserResult.jsp"); 
             dispatcher.forward(request, response);
         }
     }
