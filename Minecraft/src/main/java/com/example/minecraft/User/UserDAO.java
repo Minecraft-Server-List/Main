@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
+// 충돌 해결: 소문자 util 패키지로 통일
 import com.example.minecraft.util.JdbcConnectUtil;
 
 public class UserDAO {
@@ -54,24 +55,36 @@ public class UserDAO {
     }
 
     /**
-     * [SELECT] 로그인 체크
+     * [SELECT] 로그인 처리
      */
-    public boolean loginCheck(UserDTO udto) {
-        boolean loginCheck = false;
+    public UserDTO loginUser(String email, String password) {
+        UserDTO dto = null; 
+        con = JdbcConnectUtil.getConnection();
+        
         try {
-            con = JdbcConnectUtil.getConnection();
-            pstmt = con.prepareStatement(SQL_LOGIN_CHECK);
-            pstmt.setString(1, udto.getEmail());
-            pstmt.setString(2, udto.getPassword());
+            pstmt = con.prepareStatement(SQL_LOGIN_CHECK); 
+            pstmt.setString(1, email);
+            pstmt.setString(2, password);
+            
             rs = pstmt.executeQuery();
-            loginCheck = rs.next();
+            
+            if (rs.next()) {
+                dto = new UserDTO();
+                dto.setUserId(rs.getLong("user_id"));
+                dto.setName(rs.getString("name"));
+                dto.setEmail(rs.getString("email"));
+                dto.setRole(rs.getString("role"));
+                dto.setCreatedAt(rs.getObject("created_at", LocalDateTime.class));
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            JdbcConnectUtil.close(con, pstmt, rs);
+            JdbcConnectUtil.close(con, pstmt, rs); 
         }
-        return loginCheck;
+        
+        return dto; // 성공 시 DTO, 실패 시 null 반환
     }
+
 
     /**
      * [INSERT] 신규 사용자 추가
