@@ -7,7 +7,8 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-import com.example.minecraft.util.JdbcConnectUtil; // 1. util 패키지 경로는 본인것에 맞게 확인
+// 충돌 해결: 소문자 util 및 dto 패키지 import 정리
+import com.example.minecraft.util.JdbcConnectUtil;
 import com.example.minecraft.dto.UserDTO;
 
 public class UserDAO {

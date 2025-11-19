@@ -318,10 +318,11 @@ h2 {
     font-size: 13px;
 }
 
-.server-table .server-offline {  /* 🚨 이 코드는 CSS 파일 내에 없습니다! */
+/* 충돌 해결: HEAD 내용 유지 (오프라인 상태 스타일 추가) */
+.server-table .server-offline {
     display: inline-block;
-    background-color: #fce4e4;
-    color: #cc0000;
+    background-color: #fce4e4; /* Light red */
+    color: #cc0000; /* Red */
     font-weight: 600;
     padding: 4px 12px;
     border-radius: 16px;
