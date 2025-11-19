@@ -1,4 +1,4 @@
-package com.example.minecraft.User;
+package com.example.minecraft.controller;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -14,13 +14,13 @@ public class LogoutServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // GET 요청 (링크 클릭)으로 로그아웃 처리
-        HttpSession session = request.getSession(false); // 기존 세션 가져오기
+        HttpSession session = request.getSession(false);
         
         if (session != null) {
-            session.invalidate(); // 세션 무효화
+            session.invalidate();
         }
         
-        response.sendRedirect("index.jsp"); // 홈으로 리다이렉트
+        // [수정] 홈으로 이동 시 Controller 경유
+        response.sendRedirect(request.getContextPath() + "/index.page"); 
     }
 }

@@ -1,4 +1,4 @@
-package com.example.minecraft.User;
+package com.example.minecraft.controller;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -8,6 +8,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import com.example.minecraft.dao.UserDAO;
+import com.example.minecraft.dto.UserDTO;
 
 @WebServlet("/userList.do")
 public class UserListServlet extends HttpServlet {
@@ -24,11 +27,10 @@ public class UserListServlet extends HttpServlet {
         // DB에서 전체 리스트를 가져옴
         ArrayList<UserDTO> aList = dao.SelectAll();
         
-        // request 객체에 "allList"라는 이름으로 데이터를 담음
         request.setAttribute("allList", aList);
         
-        // userList.jsp로 포워딩 (데이터 전달)
-        RequestDispatcher dispatcher = request.getRequestDispatcher("userList.jsp");
+        // [수정] WEB-INF 내부의 절대 경로로 변경
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/userList.jsp");
         dispatcher.forward(request, response);
     }
 }

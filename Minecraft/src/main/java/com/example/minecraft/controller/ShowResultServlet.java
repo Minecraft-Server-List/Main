@@ -1,4 +1,4 @@
-package com.example.minecraft.User;
+package com.example.minecraft.controller;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -18,34 +18,26 @@ public class ShowResultServlet extends HttpServlet {
         
         HttpSession session = request.getSession();
 
-        // 1. 세션(Flash)에 있던 "수정 결과"를 request로 옮김
+        // 1. 세션(Flash) -> request로 데이터 이동 및 세션 청소
         if (session.getAttribute("flash_oldUserData") != null) {
             request.setAttribute("oldUserData", session.getAttribute("flash_oldUserData"));
             request.setAttribute("newUserData", session.getAttribute("flash_newUserData"));
-            
-            // 2. 세션에서 즉시 삭제 (소멸)
             session.removeAttribute("flash_oldUserData");
             session.removeAttribute("flash_newUserData");
         }
         
-        // 3. 세션(Flash)에 있던 "삭제 결과"를 request로 옮김
         if (session.getAttribute("flash_deletedEmail") != null) {
             request.setAttribute("deletedEmail", session.getAttribute("flash_deletedEmail"));
-            
-            // 4. 세션에서 즉시 삭제 (소멸)
             session.removeAttribute("flash_deletedEmail");
         }
 
-        // 5. 세션(Flash)에 있던 "기타 메시지"를 request로 옮김
         if (session.getAttribute("flash_message") != null) {
             request.setAttribute("message", session.getAttribute("flash_message"));
-            
-            // 6. 세션에서 즉시 삭제 (소멸)
             session.removeAttribute("flash_message");
         }
 
-        // 7. singleUserResult.jsp로 포워딩 (이제 이 JSP는 안전함)
-        RequestDispatcher dispatcher = request.getRequestDispatcher("singleUserResult.jsp");
+        // [수정] WEB-INF 내부의 절대 경로로 변경
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/singleUserResult.jsp");
         dispatcher.forward(request, response);
     }
 }

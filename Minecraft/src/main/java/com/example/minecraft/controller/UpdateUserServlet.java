@@ -1,6 +1,5 @@
-package com.example.minecraft.User;
+package com.example.minecraft.controller;
 
-import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -8,6 +7,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
+
+import com.example.minecraft.dao.UserDAO;
+import com.example.minecraft.dto.UserDTO;
 
 /**
  * 사용자 정보 수정을 처리하는 서블릿 (doPost 오버라이드)

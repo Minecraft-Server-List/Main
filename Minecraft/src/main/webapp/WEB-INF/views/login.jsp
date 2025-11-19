@@ -5,31 +5,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>로그인 - CraftConnect</title>
-    
-    <%-- 
-      [수정]
-      <style> 태그 대신 <link> 태그로 새 CSS 파일을 불러옵니다.
-    --%>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/form-style.css">
-
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/form-style.css">
 </head>
 <body>
 
     <%@ include file="header.jsp" %>
 
-    <%-- 
-      [수정]
-      <main>에 CSS가 적용되도록 class="form-page-main" 추가
-    --%>
     <main class="form-page-main">
         <div class="container">
-            
-            <%-- [수정] class="login-form-container" -> "user-form-container" --%>
             <div class="user-form-container">
                 <h2>로그인</h2>
                 
+                <%-- [유지] 로그인 처리(DB 확인)는 서블릿(.do)이 담당 --%>
                 <form action="login.do" method="post">
-                    <%-- [수정] class="login-form-group" -> "user-form-group" --%>
                     <div class="user-form-group">
                         <label for="email_id">이메일 (ID)</label>
                         <input type="text" id="email_id" name="id" required>
@@ -43,7 +31,6 @@
                     </div>
                 </form>
             </div>
-            
         </div>
     </main>
 

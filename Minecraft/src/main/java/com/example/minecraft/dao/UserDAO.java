@@ -1,4 +1,4 @@
-package com.example.minecraft.User;
+package com.example.minecraft.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import com.example.minecraft.Util.JdbcConnectUtil; // 1. util 패키지 경로는 본인것에 맞게 확인
+import com.example.minecraft.dto.UserDTO;
 
 public class UserDAO {
     Connection con = null;

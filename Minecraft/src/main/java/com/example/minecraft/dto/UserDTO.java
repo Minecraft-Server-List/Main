@@ -1,4 +1,4 @@
-package com.example.minecraft.User;
+package com.example.minecraft.dto;
 
 // DATETIME 타입 매핑을 위해 import
 import java.time.LocalDateTime;
