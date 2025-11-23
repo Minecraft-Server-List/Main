@@ -53,7 +53,16 @@
                     <td class="user-list-name-cell"><%= dto.getName()  %></td>
                     <td><%= dto.getEmail()  %></td>
                     <td><%= dto.getRole()  %></td>
-                    <td><%= dto.getCreatedAt().format(dtf)  %></td>
+                    <td><%
+                        // 3. 가입일시 (created_at) Null 체크 로직 (수정된 부분)
+                        // dto.getCreatedAt()이 null이 아닌 경우에만 format()을 호출합니다.
+                        if (dto.getCreatedAt() != null) {
+                            out.print(dto.getCreatedAt().format(dtf));
+                        } else {
+                            // 값이 null이면 사용자에게 "N/A" (Not Available) 출력
+                            out.print("N/A");
+                        }
+                    %></td>
                     <td>
                         <%-- [유지] 기능 수행(수정/삭제)은 서블릿(.do) 호출 --%>
                         <a href="searchUser.do?email=<%= dto.getEmail() %>" class="btn-action-edit">[수정]</a>

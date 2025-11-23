@@ -45,8 +45,8 @@
                 <i class='bx bx-search'></i>
                 <input type="search" placeholder="Search">
             </div>
-            
-            <button class="btn-add-server">Add Server</button>
+
+            <a href="${pageContext.request.contextPath}/serverAdd.page" class="btn-add-server">Add Server</a>
 
             <%
                 if (userName_header == null) {
