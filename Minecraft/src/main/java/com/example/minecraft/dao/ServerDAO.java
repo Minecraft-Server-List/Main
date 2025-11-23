@@ -45,7 +45,7 @@ public class ServerDAO {
 
         } finally {
 
-            JdbcConnectUtil.close(con, pstmt, rs);
+            JdbcConnectUtil.close(con, pstmt);
 
         }
 
