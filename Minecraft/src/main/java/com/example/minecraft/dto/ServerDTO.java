@@ -17,6 +17,9 @@ public class ServerDTO {
         생성자
      */
 
+    public ServerDTO() {
+    }
+
     public ServerDTO(String name, String status, String version, String domain) {
         this.name = name;
         this.status = status;

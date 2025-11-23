@@ -2,12 +2,14 @@ package com.example.minecraft.controller;
 
 import com.example.minecraft.dto.ServerDTO;
 import com.example.minecraft.service.ServerService;
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 @WebServlet("/server")
 public class ServerController {
@@ -43,6 +45,37 @@ public class ServerController {
         } else {
             System.out.println("서버 생성 실패");
         }
+
+    }
+
+    // 2. 서버 조회
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        String action = request.getParameter("action");
+        String viewPage = "";
+
+        // 2-1. 서버 목록 조회
+        if (action.equals("list") || action == null) {
+            ArrayList<ServerDTO> serverList = serverService.getServerListService();
+            request.setAttribute("serverList", serverList);
+            viewPage = "/WEB_INF/views/server/server_list.jsp";
+        }
+
+        // 2-2. 서버 단일 조회
+        else if (action.equals("view")) {
+            long id = Long.parseLong(request.getParameter("id"));
+            ServerDTO server = serverService.getServerService(id);
+            request.setAttribute("server", server);
+            viewPage = "/WEB_INF/views/server/server_view.jsp";
+        }
+
+        else {
+            viewPage = "error.jsp";
+        }
+
+        // View(JSP)로 포워딩
+        RequestDispatcher dispatcher = request.getRequestDispatcher(viewPage);
+        dispatcher.forward(request, response);
 
     }
 }
