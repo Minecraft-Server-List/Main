@@ -45,4 +45,21 @@ public class ServerService {
 
     }
 
+    // 3. 서버 수정
+    public boolean updateServerService(ServerDTO server) {
+
+        if (server.getName().isEmpty()) return false;
+        int result = serverDAO.updateServer(server);
+        return result == 1;
+
+    }
+
+    // 4. 서버 삭제
+    public boolean deleteServerService(long id) {
+
+        int result = serverDAO.deleteServerById(id);
+        return result == 1;
+
+    }
+
 }

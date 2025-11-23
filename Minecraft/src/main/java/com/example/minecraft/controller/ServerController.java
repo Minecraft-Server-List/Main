@@ -31,6 +31,12 @@ public class ServerController extends HttpServlet {
         // JSP 에서 POST 요청이 들어왔을 때, 어떤 POST 요청인지 확인하기 위한 구문
         String action = request.getParameter("action");
 
+        Long id = 0L;
+
+        if (request.getParameter("id") != null &&  !request.getParameter("id").equals("")) {
+            id = Long.parseLong(request.getParameter("id"));
+        }
+
         String name = request.getParameter("name");
         String status = request.getParameter("status");
         String version =  request.getParameter("version");
@@ -44,10 +50,18 @@ public class ServerController extends HttpServlet {
             success = serverService.createServerService(serverDTO);
         }
 
+        else if (action.equals("update")) {
+            success = serverService.updateServerService(serverDTO);
+        }
+
+        else if (action.equals("delete")) {
+            success = serverService.deleteServerService(id);
+        }
+
         if (success) {
             response.sendRedirect(request.getContextPath() + "/server.do?action=" + action);
         } else {
-            System.out.println("서버 생성 실패");
+            System.out.println("서버 " + action + " 실패");
         }
 
     }

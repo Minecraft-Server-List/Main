@@ -27,9 +27,17 @@ public class ServerDTO {
         this.domain = domain;
     }
 
+    public ServerDTO(Long serverId, String name, String status, String version, String domain) {
+        this.serverId = serverId;
+        this.name = name;
+        this.status = status;
+        this.version = version;
+        this.domain = domain;
+    }
+
     /*
-            getter 및 setter
-        */
+                getter 및 setter
+            */
     public Long getServerId() {
         return serverId;
     }

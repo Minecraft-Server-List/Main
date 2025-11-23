@@ -23,8 +23,13 @@ public class ServerDAO {
     final String SQL_SERVER_SELECT_LIST = "SELECT * FROM servers;";
     final String SQL_SERVER_SELECT_VIEW = "SELECT * FROM servers WHERE id = ?;";
 
+    final String SQL_SERVER_DELETE = "DELETE FROM servers WHERE id = ?;";
+    final String SQL_SERVER_UPDATE = "UPDATE servers set name = ?, status = ?, version = ?, domain = ? where id = ?;";
+
     // 1. 서버 생성
     public int createServer(ServerDTO serverDTO) {
+
+        int result = 0;
         con = JdbcConnectUtil.getConnection();
 
         try {
@@ -34,7 +39,7 @@ public class ServerDAO {
             pstmt.setString(2, serverDTO.getStatus());
             pstmt.setString(3, serverDTO.getVersion());
             pstmt.setString(4, serverDTO.getDomain());
-            pstmt.executeUpdate();
+            result = pstmt.executeUpdate();
 
             System.out.println("새로운 서버 " + serverDTO.getName() + "(이)가 생성되었습니다.");
 
@@ -49,7 +54,7 @@ public class ServerDAO {
 
         }
 
-        return 1;
+        return result;
     }
 
     // 2-1. 서버 목록 조회
@@ -101,7 +106,7 @@ public class ServerDAO {
                 dto.setVersion(rs.getString("version"));
                 dto.setDomain(rs.getString("domain"));
                 dto.setCreatedAt(rs.getObject("created_at", LocalDateTime.class));
-                dto.setUpdatedAt(rs.getObject("created_at", LocalDateTime.class));
+                dto.setUpdatedAt(rs.getObject("updated_at", LocalDateTime.class));
             }
 
         } catch (SQLException e) {
@@ -111,6 +116,56 @@ public class ServerDAO {
         }
 
         return dto;
+
+    }
+
+    // 3. 서버 수정
+    public int updateServer(ServerDTO serverDTO) {
+
+        int result = 0;
+        con = JdbcConnectUtil.getConnection();
+
+        try {
+
+            pstmt = con.prepareStatement(SQL_SERVER_UPDATE);
+            pstmt.setString(1, serverDTO.getName());
+            pstmt.setString(2, serverDTO.getStatus());
+            pstmt.setString(3, serverDTO.getVersion());
+            pstmt.setString(4, serverDTO.getDomain());
+            pstmt.setObject(5, serverDTO.getServerId());
+            result = pstmt.executeUpdate();
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            JdbcConnectUtil.close(con, pstmt);
+        }
+
+        return result;
+
+    }
+
+    // 4. 서버 삭제
+    public int deleteServerById(Long serverId) {
+
+        int result = 0;
+
+        con = JdbcConnectUtil.getConnection();
+
+        try {
+
+            pstmt = con.prepareStatement(SQL_SERVER_DELETE);
+            pstmt.setLong(1, serverId);
+            result = pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            JdbcConnectUtil.close(con, pstmt);
+        }
+
+        return result;
 
     }
 }
