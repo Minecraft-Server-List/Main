@@ -51,14 +51,14 @@
             <%
                 if (userName_header == null) {
             %>
-                <%-- [수정] 직접 경로 -> PageController 경로 (.page) --%>
+                
                 <a href="${pageContext.request.contextPath}/login.page" class="btn-header-login">Login</a>
                 <a href="${pageContext.request.contextPath}/register.page" class="btn-header-register">Register</a>
             <%
                 } else {
             %>
                 <%-- [유지] 마이페이지/로그아웃은 기능 수행이 필요하므로 .do 유지 --%>
-                <a href="${pageContext.request.contextPath}/searchUser.do?email=<%= userEmail_header %>" class="user-profile" title="My Page">
+				<a href="${pageContext.request.contextPath}/mypage.page" class="user-profile" title="My Page">
                     <img src="https://placehold.co/40x40/9a9a9a/ffffff?text=<%= userName_header.substring(0, 1).toUpperCase() %>" alt="User Profile">
                 </a>
                 

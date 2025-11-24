@@ -33,8 +33,24 @@ public class SearchUserServlet extends HttpServlet {
             request.setAttribute("message", "이메일(" + emailToSearch + ")과 일치하는 사용자가 없습니다.");
         }
         
-        // [수정] WEB-INF 내부 파일 경로로 정확하게 지정
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/singleUserResult.jsp");
+        String requestedWith = request.getHeader("X-Requested-With");
+        boolean isAjax = "XMLHttpRequest".equals(requestedWith);
+        
+     // 🚨 PageController에서 마이페이지 최초 진입 시 설정한 속성 확인 🚨
+        boolean isMypageFirstLoad = (request.getAttribute("isMypage") != null);
+        
+        RequestDispatcher dispatcher;
+
+        if (isAjax) {
+            // 1. AJAX 요청 (마이페이지 탭 전환 시): Header/Footer 없는 Fragment 응답
+            // 이 로직은 관리자 페이지의 AJAX 요청이 있다면 그대로 Fragment를 반환합니다.
+            dispatcher = request.getRequestDispatcher("/WEB-INF/views/mypage-edit.jsp");
+        }
+        else {
+            // 3. 관리자 기능 등 일반적인 페이지 이동 요청: 기존대로 singleUserResult.jsp 응답
+            // (userList.do 등 다른 서블릿에서 searchUser.do로 요청된 경우)
+            dispatcher = request.getRequestDispatcher("/WEB-INF/views/singleUserResult.jsp");
+        }
         dispatcher.forward(request, response);
     }
 }

@@ -48,8 +48,15 @@ public class PageController extends HttpServlet {
 				break;
 				
 			case "/index.page":
-				// 회원가입 화면 보여주기
 				viewPage = "/index.jsp";
+				break;
+			case "/mypage.page":
+				String userEmail = (String) request.getSession().getAttribute("userEmail");
+				if (userEmail != null) {
+					viewPage = "/WEB-INF/views/mypage.jsp";
+				} else {
+					viewPage = "/WEB-INF/views/login.jsp";
+				}
 				break;
 				
 			// 추후 다른 단순 페이지가 생기면 여기에 case만 추가하면 됩니다.
