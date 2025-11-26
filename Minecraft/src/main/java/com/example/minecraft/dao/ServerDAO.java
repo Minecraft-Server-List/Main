@@ -1,6 +1,6 @@
 package com.example.minecraft.dao;
 
-import com.example.minecraft.Util.JdbcConnectUtil;
+import com.example.minecraft.util.JdbcConnectUtil;
 import com.example.minecraft.dto.ServerDTO;
 
 import java.sql.Connection;

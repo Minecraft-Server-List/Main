@@ -1,4 +1,4 @@
-package com.example.minecraft.Util;
+package com.example.minecraft.util;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -13,7 +13,7 @@ public class JdbcConnectUtil {
 			//커넥터 로딩
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			//DB서버 커넥트
-			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/jjap", "root", "3274");
+			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/minecraft", "root", "root");
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {

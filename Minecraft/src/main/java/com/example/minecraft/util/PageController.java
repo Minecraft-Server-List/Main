@@ -1,4 +1,4 @@
-package com.example.minecraft.Util;
+package com.example.minecraft.util;
 
 import java.io.IOException;
 import jakarta.servlet.ServletException;
