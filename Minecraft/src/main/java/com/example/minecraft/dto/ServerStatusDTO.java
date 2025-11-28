@@ -8,7 +8,7 @@ public class ServerStatusDTO {
 
     public ServerStatusDTO() {}
 
-    public boolean isOnline() { return online; }
+    public boolean getOnline() { return online; }
     public void setOnline(boolean online) { this.online = online; }
 
     public PlayersDTO getPlayers() { return players; }

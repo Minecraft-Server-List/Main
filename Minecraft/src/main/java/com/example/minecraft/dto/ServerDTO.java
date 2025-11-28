@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 public class ServerDTO {
 
+    // 필드
+
     private Long serverId;
     private String name;
     private String status;
@@ -11,11 +13,9 @@ public class ServerDTO {
     private String domain;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private ServerStatusDTO serverStatus; // ⬅️ ServerStatusDTO 객체 전체를 필드로 포함
 
-
-    /*
-        생성자
-     */
+    // 생성자
 
     public ServerDTO() {
     }
@@ -35,9 +35,7 @@ public class ServerDTO {
         this.domain = domain;
     }
 
-    /*
-                getter 및 setter
-            */
+    // getter 및 setter
     public Long getServerId() {
         return serverId;
     }
@@ -92,5 +90,13 @@ public class ServerDTO {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public ServerStatusDTO getServerStatus() {
+        return serverStatus;
+    }
+
+    public void setServerStatus(ServerStatusDTO serverStatus) {
+        this.serverStatus = serverStatus;
     }
 }
