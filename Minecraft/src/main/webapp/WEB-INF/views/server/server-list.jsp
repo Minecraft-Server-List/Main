@@ -30,7 +30,6 @@
                         <th>상태</th>
                         <th>현재 접속자</th>
                         <th>최대 접속자</th>
-                        <th>버전 정보</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -51,10 +50,10 @@
                             </td>
 
                             <td>
-                                <c:out value="${server.serverStatus.players.online}" default="N/A" />
+                                <c:out value="${server.serverStatus.players.online}" default="0" />
                             </td>
                             <td>
-                                <c:out value="${server.serverStatus.players.max}" default="N/A" />
+                                <c:out value="${server.serverStatus.players.max}" default="0" />
                             </td>
                         </tr>
                     </c:forEach>
