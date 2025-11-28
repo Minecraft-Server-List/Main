@@ -20,7 +20,7 @@
             <%-- [수정] index.jsp -> index.page --%>
             <a href="${pageContext.request.contextPath}/index.page" class="logo">CraftConnect</a>
             <ul class="nav-links">
-                <li><a href="#">Servers</a></li>
+                <li><a href="${pageContext.request.contextPath}/serverList">Servers</a></li>
                 <li><a href="#">Community</a></li>
                 <li><a href="#">News</a></li>
                 <li><a href="#">Support</a></li>
