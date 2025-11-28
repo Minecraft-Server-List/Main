@@ -1,3 +1,9 @@
+@charset "UTF-8";
+
+/* =========================================
+   1. Global & Common Styles (제공해주신 코드)
+   ========================================= */
+
 /* 1. Reset & Global */
 * {
     margin: 0;
@@ -7,7 +13,7 @@
 
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    background-color: #fdfdfd; /* A very light grey, almost white */
+    background-color: #fdfdfd;
     color: #333;
     line-height: 1.6;
 }
@@ -88,7 +94,7 @@ img {
     background-color: #f5f5f5;
     border: 1px solid #f5f5f5;
     border-radius: 8px;
-    padding: 10px 14px 10px 36px; /* Left padding for icon */
+    padding: 10px 14px 10px 36px;
     font-size: 14px;
     width: 200px;
 }
@@ -103,7 +109,7 @@ img {
 }
 
 .btn-add-server {
-    background-color: #28a745; /* Green button */
+    background-color: #28a745;
     color: #ffffff;
     border: none;
     border-radius: 8px;
@@ -130,7 +136,7 @@ img {
 .hero {
     position: relative;
     height: 450px;
-    background-image: url('https://placehold.co/1920x450/8a9a8c/e0e0e0?text=Minecraft+Background'); /* Placeholder */
+    background-image: url('https://placehold.co/1920x450/8a9a8c/e0e0e0?text=Minecraft+Background');
     background-size: cover;
     background-position: center;
     display: flex;
@@ -140,7 +146,6 @@ img {
     color: #ffffff;
 }
 
-/* Dark overlay */
 .hero::before {
     content: '';
     position: absolute;
@@ -148,11 +153,11 @@ img {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Dimming overlay */
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
 .hero-content {
-    position: relative; /* To be above the overlay */
+    position: relative;
     z-index: 1;
 }
 
@@ -196,7 +201,7 @@ img {
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
-    border-radius: 8px; /* Slightly rounded inside */
+    border-radius: 8px;
     transition: background-color 0.2s;
 }
 
@@ -215,7 +220,7 @@ h2 {
     margin-bottom: 24px;
 }
 
-/* 5. Featured Servers */
+/* 5. Featured Servers & Cards */
 .featured-servers {
     margin-bottom: 48px;
 }
@@ -261,7 +266,7 @@ h2 {
     color: #666;
 }
 
-/* 6. Top Servers Table */
+/* 6. Top Servers Table (Home) */
 .top-servers {
     margin-bottom: 48px;
 }
@@ -272,7 +277,7 @@ h2 {
     background: #fff;
     border: 1px solid #eaeaea;
     border-radius: 12px;
-    overflow: hidden; /* To apply border-radius to table */
+    overflow: hidden;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
 }
 
@@ -290,7 +295,6 @@ h2 {
     text-transform: uppercase;
 }
 
-/* Remove bottom border for the last row */
 .server-table tbody tr:last-child td {
     border-bottom: none;
 }
@@ -310,8 +314,8 @@ h2 {
 
 .server-table .status-online {
     display: inline-block;
-    background-color: #e6f7ec; /* Light green */
-    color: #28a745; /* Green */
+    background-color: #e6f7ec;
+    color: #28a745;
     font-weight: 600;
     padding: 4px 12px;
     border-radius: 16px;
@@ -367,3 +371,358 @@ h2 {
 .copyright {
     font-size: 13px;
 }
+
+
+/* =========================================
+   8. Board Specific Styles (게시판 전용)
+   ========================================= */
+
+/* 레이아웃: 좌측 사이드바 + 우측 컨텐츠 */
+.board-layout {
+    display: flex;
+    gap: 30px;
+    padding: 40px 0;
+    min-height: 800px;
+}
+
+/* 좌측 사이드바 */
+.board-sidebar {
+    width: 200px;
+    flex-shrink: 0;
+}
+
+/* 카페 정보 박스 */
+.cafe-info-box {
+    border: 1px solid #e5e5e5;
+    padding: 20px 15px;
+    margin-bottom: 20px;
+    text-align: center;
+    background: #fff;
+    border-radius: 8px; /* 스타일 통일을 위해 radius 추가 */
+}
+
+.btn-write {
+    display: block;
+    width: 100%;
+    background-color: #28a745;
+    color: #fff;
+    padding: 12px 0;
+    border-radius: 20px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 14px;
+    margin-top: 10px;
+    transition: background-color 0.2s;
+}
+.btn-write:hover { background-color: #218838; }
+
+/* 메뉴 리스트 */
+.sidebar-menu {
+    list-style: none;
+    border-top: 1px solid #eee;
+}
+.sidebar-menu li a {
+    display: block;
+    padding: 12px 10px;
+    color: #333;
+    font-size: 14px;
+    border-bottom: 1px solid #eee;
+    transition: all 0.2s;
+}
+.sidebar-menu li a:hover {
+    background-color: #f9f9f9;
+    color: #28a745;
+    font-weight: 600;
+}
+.sidebar-menu li.active a {
+    color: #28a745;
+    font-weight: 700;
+    border-left: 3px solid #28a745;
+    padding-left: 7px;
+}
+.menu-header {
+    font-size: 13px;
+    color: #888;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    padding-left: 5px;
+}
+
+/* 우측 게시판 메인 */
+.board-main {
+    flex-grow: 1;
+}
+
+.board-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #333;
+    padding-bottom: 10px;
+}
+.board-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #222;
+}
+.board-sort {
+    font-size: 13px;
+    color: #666;
+}
+.board-sort a { margin-left: 10px; }
+.board-sort a.active { font-weight: bold; color: #333; }
+
+/* 게시판 테이블 스타일 */
+.board-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+.board-table th {
+    padding: 15px 0;
+    border-bottom: 1px solid #e5e5e5;
+    color: #333;
+    font-weight: 600;
+    background-color: #f9f9f9;
+}
+.board-table td {
+    padding: 15px 10px;
+    border-bottom: 1px solid #e5e5e5;
+    color: #555;
+    text-align: center;
+}
+.board-table td.title-cell {
+    text-align: left;
+    padding-left: 20px;
+}
+.board-table td.title-cell a:hover {
+    text-decoration: underline;
+    color: #28a745;
+}
+.board-table tr:hover {
+    background-color: #fcfcfc;
+}
+
+/* 공지사항 강조 */
+.notice-badge {
+    font-weight: bold;
+    color: #ef4646;
+    margin-right: 5px;
+}
+
+/* 페이지네이션 */
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+    gap: 5px;
+}
+.pagination a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid #ddd;
+    color: #666;
+    font-size: 14px;
+    background: #fff;
+    transition: all 0.2s;
+}
+.pagination a.active {
+    background-color: #28a745;
+    color: #fff;
+    border-color: #28a745;
+    font-weight: bold;
+}
+.pagination a:hover:not(.active) {
+    background-color: #f5f5f5;
+}
+
+/* 검색창 */
+.board-search {
+    margin-top: 20px;
+    text-align: center;
+}
+.board-search select, .board-search input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    font-size: 13px;
+}
+.board-search button {
+    padding: 8px 15px;
+    background: #333;
+    color: #fff;
+    border: none;
+    font-size: 13px;
+    cursor: pointer;
+}
+/* =========================================
+   9. Write/Edit Form Styles (글쓰기/수정)
+   ========================================= */
+
+.write-table {
+    width: 100%;
+    border-top: 2px solid #333;
+    border-collapse: collapse;
+}
+
+.write-table th {
+    background-color: #f9f9f9;
+    border-bottom: 1px solid #e5e5e5;
+    padding: 15px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    text-align: center;
+}
+
+.write-table td {
+    border-bottom: 1px solid #e5e5e5;
+    padding: 10px 15px;
+}
+
+/* 입력 폼 스타일링 */
+.input-select {
+    padding: 8px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    color: #555;
+    min-width: 150px;
+}
+
+.input-text {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.input-text:focus {
+    border-color: #28a745;
+}
+
+.input-textarea {
+    width: 100%;
+    height: 400px; /* 에디터 느낌을 위해 높이 확보 */
+    padding: 15px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    resize: vertical; /* 세로 크기 조절 허용 */
+    outline: none;
+    line-height: 1.6;
+    font-family: inherit;
+}
+.input-textarea:focus {
+    border-color: #28a745;
+}
+
+.content-cell {
+    padding: 0 !important; /* textarea 꽉 차게 */
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.content-cell textarea {
+    border: none; /* 테이블 테두리와 겹치지 않게 */
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.input-file {
+    font-size: 14px;
+    color: #555;
+}
+
+/* 하단 버튼 영역 */
+.btn-area {
+    margin-top: 30px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn-submit {
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    padding: 12px 40px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.btn-submit:hover {
+    background-color: #218838;
+}
+
+.btn-cancel {
+    background-color: #fff;
+    color: #666;
+    border: 1px solid #ddd;
+    padding: 12px 40px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.btn-cancel:hover {
+    background-color: #f5f5f5;
+    border-color: #ccc;
+}
+/* =========================================
+   10. AJAX & SPA Utility Styles (추가됨)
+   ========================================= */
+
+/* 로딩 스피너 */
+.loading-spinner {
+    text-align: center;
+    padding: 50px;
+    color: #888;
+    font-size: 14px;
+    display: none; /* 기본 숨김 */
+}
+
+/* 화면 전환 애니메이션 */
+.page-section {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* boardPost.jsp 내부의 모드 전환(조회/수정)용 */
+.section-mode {
+    display: none;
+}
+.section-mode.active {
+    display: block;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* 댓글 섹션 스타일 (comment.jsp) */
+.comment-section { background-color: #f9f9f9; padding: 20px; border-top: 1px solid #eee; margin-top: 30px; }
+.comment-count-box { font-size: 14px; font-weight: bold; margin-bottom: 15px; color: #333; }
+.comment-list { list-style: none; margin-bottom: 20px; border-top: 1px solid #ddd; padding-left: 0; }
+.comment-item { padding: 15px 10px; border-bottom: 1px solid #ddd; background: #fff; }
+.cmt-meta { margin-bottom: 8px; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
+.cmt-writer { font-weight: bold; color: #333; }
+.cmt-date { color: #888; font-size: 12px; margin-left: 10px; }
+.cmt-content { font-size: 14px; color: #555; line-height: 1.5; white-space: pre-wrap; margin-bottom: 8px; }
+.cmt-actions { display: flex; gap: 15px; align-items: center; font-size: 12px; }
+.btn-like { cursor: pointer; border: 1px solid #ddd; background: #fff; padding: 4px 10px; border-radius: 15px; color: #666; transition: all 0.2s; }
+.btn-like:hover { background: #f0f0f0; }
+.btn-like.liked { border-color: #ff4e50; color: #ff4e50; background: #fff0f0; }
+.btn-cmt-del { color: #999; cursor: pointer; background: none; border: none; text-decoration: underline; font-size: 11px; }
+.comment-form { display: flex; gap: 10px; background: #fff; padding: 15px; border: 1px solid #ddd; border-radius: 4px; }
+.comment-input { flex-grow: 1; border: 1px solid #e5e5e5; padding: 10px; resize: none; height: 60px; font-size: 13px; outline: none; }
+.comment-input:focus { border-color: #28a745; }
+.btn-cmt-submit { width: 80px; background-color: #28a745; color: #fff; border: none; font-weight: bold; cursor: pointer; border-radius: 4px; }
+.btn-cmt-submit:hover { background-color: #218838; }
