@@ -44,7 +44,7 @@ public class SearchUserServlet extends HttpServlet {
         if (isAjax) {
             // 1. AJAX 요청 (마이페이지 탭 전환 시): Header/Footer 없는 Fragment 응답
             // 이 로직은 관리자 페이지의 AJAX 요청이 있다면 그대로 Fragment를 반환합니다.
-            dispatcher = request.getRequestDispatcher("/WEB-INF/views/mypage-edit.jsp");
+            dispatcher = request.getRequestDispatcher("/WEB-INF/views/mypageEdit.jsp");
         }
         else {
             // 3. 관리자 기능 등 일반적인 페이지 이동 요청: 기존대로 singleUserResult.jsp 응답

@@ -20,8 +20,9 @@
             <%-- [수정] index.jsp -> index.page --%>
             <a href="${pageContext.request.contextPath}/index.page" class="logo">CraftConnect</a>
             <ul class="nav-links">
+                <%-- 충돌 해결: Servers(HEAD)와 Community(Incoming) 링크 모두 적용 --%>
                 <li><a href="${pageContext.request.contextPath}/serverList">Servers</a></li>
-                <li><a href="#">Community</a></li>
+                <li><a href="${pageContext.request.contextPath}/board.page">Community</a></li>
                 <li><a href="#">News</a></li>
                 <li><a href="#">Support</a></li>
                 

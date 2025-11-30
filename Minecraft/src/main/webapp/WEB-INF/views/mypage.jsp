@@ -13,7 +13,7 @@
     <%@ include file="header.jsp" %>  <main class="form-page-main">
         <div class="container">
             
-            <%@ include file="mypage-header.jsp" %>
+            <%@ include file="mypageHeader.jsp" %>
             
             <%-- 🚨 AJAX 콘텐츠가 삽입될 영역 🚨 --%>
             <div class="mypage-content-area">

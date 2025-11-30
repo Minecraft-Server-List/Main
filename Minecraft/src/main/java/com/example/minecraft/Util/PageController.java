@@ -59,6 +59,10 @@ public class PageController extends HttpServlet {
 				}
 				break;
 				
+			case "/board.page":
+				// 회원가입 화면 보여주기
+				viewPage = "/WEB-INF/views/boardMain.jsp";
+				break;
 			// 추후 다른 단순 페이지가 생기면 여기에 case만 추가하면 됩니다.
 			// 예: case "/intro.page": viewPage = "/WEB-INF/views/intro.jsp"; break;
 		}
