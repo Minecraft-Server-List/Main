@@ -318,6 +318,16 @@ h2 {
     font-size: 13px;
 }
 
+.server-table .server-offline {  /* 🚨 이 코드는 CSS 파일 내에 없습니다! */
+    display: inline-block;
+    background-color: #fce4e4;
+    color: #cc0000;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 13px;
+}
+
 /* 7. Footer */
 .main-footer {
     background-color: #ffffff;
