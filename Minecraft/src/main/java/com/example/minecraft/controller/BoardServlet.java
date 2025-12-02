@@ -48,7 +48,7 @@ public class BoardServlet extends HttpServlet {
                 case "/delete": deleteBoard(request, response); break;
                 case "/like": toggleLike(request, response); break;
                 
-                // [추가] 마이페이지 내 글 목록
+                // 마이페이지 내 글 목록
                 case "/myList": listMyBoard(request, response); break; 
                 
                 default: response.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -136,6 +136,8 @@ public class BoardServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
         
         long userId = getLoginUserId(request);
+        String userRole = getLoginUserRole(request); // 권한 확인
+
         if (userId == 0) {
             out.print("{\"status\":\"fail\", \"message\":\"로그인이 필요합니다.\"}");
             return;
@@ -149,6 +151,12 @@ public class BoardServlet extends HttpServlet {
         if ((idParam == null || idParam.isEmpty()) && (category == null || category.isEmpty())) {
              out.print("{\"status\":\"fail\", \"message\":\"카테고리를 선택해야 합니다.\"}");
              return;
+        }
+
+        // [수정] 공지사항(NOTICE) 작성 권한 체크: 관리자(ADMIN)가 아니면 차단
+        if ("NOTICE".equals(category) && !"ADMIN".equals(userRole)) {
+            out.print("{\"status\":\"fail\", \"message\":\"공지사항은 관리자만 작성할 수 있습니다.\"}");
+            return;
         }
 
         BoardDTO dto = new BoardDTO();

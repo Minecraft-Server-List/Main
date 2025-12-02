@@ -82,7 +82,11 @@
                     <th>카테고리</th>
                     <td>
                         <select name="category" class="input-select">
-                            <option value="NOTICE">공지사항</option>
+                            <%-- [수정] 관리자(ADMIN)인 경우에만 공지사항 옵션 표시 --%>
+                            <% if ("ADMIN".equals(userRole)) { %>
+                                <option value="NOTICE">공지사항</option>
+                            <% } %>
+                            
                             <option value="GREETING">가입 인사</option>
                             <option value="FREE" selected>자유 게시판</option>
                             <option value="PROMOTION">서버 홍보</option>
