@@ -63,6 +63,16 @@ public class PageController extends HttpServlet {
 				// 회원가입 화면 보여주기
 				viewPage = "/WEB-INF/views/boardMain.jsp";
 				break;
+				
+            case "/serverAdd.page":
+                viewPage = "/WEB-INF/views/server/form.jsp";
+                break;
+                
+            case "/serverList.page":
+                // PageController는 데이터를 가져오는 역할이 아니므로,
+                // @WebServlet("/serverList")로 매핑된 서블릿으로 제어를 넘깁니다.
+                request.getRequestDispatcher("/serverList").forward(request, response);
+                return; // 포워딩 후 메서드 종료
 			// 추후 다른 단순 페이지가 생기면 여기에 case만 추가하면 됩니다.
 			// 예: case "/intro.page": viewPage = "/WEB-INF/views/intro.jsp"; break;
 		}
