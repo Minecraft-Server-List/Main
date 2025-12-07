@@ -6,10 +6,7 @@
     <meta charset="UTF-8">
     <title>마인크래프트 서버 상태 목록 - CraftConnect</title>
 
-    <%-- 메인 페이지와 동일한 스타일시트 구조를 따름 --%>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/style.css">
-
-    <%-- Boxicons 아이콘 사용을 위해 추가 --%>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 <body>
@@ -19,18 +16,16 @@
 <main class="page-main">
     <div class="container">
 
-        <%-- 메인 페이지의 Top Servers 섹션 클래스 구조를 따릅니다. --%>
         <section class="top-servers">
             <h2><i class='bx bx-server' style="margin-right: 8px;"></i>등록된 서버 목록</h2>
 
             <c:choose>
                 <c:when test="${not empty serverList}">
 
-                    <%-- 메인 페이지의 Top Servers 테이블 클래스 (.server-table) 사용 --%>
                     <table class="server-table">
                         <thead>
                         <tr>
-                            <th>Server Name</th>
+                            <th>Image</th> <th>Server Name</th>
                             <th>Domain</th>
                             <th>Version</th>
                             <th>Players</th>
@@ -40,6 +35,20 @@
                         <tbody>
                         <c:forEach var="server" items="${serverList}">
                             <tr>
+
+                                <td>
+                                    <c:choose>
+                                        <c:when test="${not empty server.serverImage}">
+                                            <%-- Image DTO의 fileName 필드를 사용하며, /upload/server_images/ 경로는 Tomcat 설정에 매핑되어야 합니다. --%>
+                                            <img src="${pageContext.request.contextPath}/upload/server_images/${server.serverImage.fileName}"
+                                                 alt="${server.name} 이미지"
+                                                 style="width: 50px; height: 50px; object-fit: cover;">
+                                        </c:when>
+                                        <c:otherwise>
+                                            [No Image]
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>
 
                                     <%-- 1. Server Name (DB 이름 + .server-name 클래스) --%>
                                 <td class="server-name"><c:out value="${server.name}" /></td>
@@ -66,7 +75,6 @@
                                             <span class="status-online">Online</span>
                                         </c:when>
                                         <c:otherwise>
-                                            <%-- Offline은 CSS에서 빨간색 계열로 정의됨 --%>
                                             <span class="server-offline">Offline</span>
                                         </c:otherwise>
                                     </c:choose>
