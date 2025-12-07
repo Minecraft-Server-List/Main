@@ -4,15 +4,22 @@ import com.example.minecraft.dto.ServerDTO;
 import com.example.minecraft.service.ServerService;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
 @WebServlet("/server.do")
+@MultipartConfig(
+        fileSizeThreshold = 1024 * 1024,
+        maxFileSize = 1024 * 1024 * 5,
+        maxRequestSize = 1024 * 1024 * 5 * 5
+)
 public class ServerController extends HttpServlet {
 
     private ServerService serverService;
@@ -42,12 +49,21 @@ public class ServerController extends HttpServlet {
         String version =  request.getParameter("version");
         String domain = request.getParameter("domain");
 
+        Part serverImagePart = request.getPart("serverImage");
+
         status = "ACTIVE";
         ServerDTO serverDTO = new ServerDTO(name, status, version, domain);
         boolean success = false;
 
-        if (action.equals("create")) { // 어떤 POST 요청인지 확인
-            success = serverService.createServerService(serverDTO);
+        jakarta.servlet.ServletContext context = request.getServletContext();
+
+        if (action.equals("create")) {
+            try {
+                // 🚨 수정: Service 호출 시 context 객체 전달
+                success = serverService.createServerService(serverDTO, serverImagePart, context);
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+            }
         }
 
         else if (action.equals("update")) {
@@ -83,7 +99,7 @@ public class ServerController extends HttpServlet {
         // 2-2. 서버 단일 조회
         else if (action.equals("view")) {
             long id = Long.parseLong(request.getParameter("id"));
-            ServerDTO server = serverService.getServerService(id);
+            ServerDTO server = serverService.getServerByIdService(id);
             request.setAttribute("server", server);
             viewPage = "/WEB-INF/views/server/server_view.jsp";
         }
