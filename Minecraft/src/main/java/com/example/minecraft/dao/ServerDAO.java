@@ -3,10 +3,7 @@ package com.example.minecraft.dao;
 import com.example.minecraft.dto.ServerDTO;
 import com.example.minecraft.util.JdbcConnectUtil;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
@@ -20,103 +17,96 @@ public class ServerDAO {
     // SQL문 상수화를 통한 유지보수 향상
     final String SQL_SERVER_CREATE = "INSERT INTO servers (name, status, version, domain) VALUES (?, ?, ?, ?);";
 
-    final String SQL_SERVER_SELECT_LIST = "SELECT * FROM servers;";
-    final String SQL_SERVER_SELECT_VIEW = "SELECT * FROM servers WHERE id = ?;";
+    final String SQL_SERVER_SELECT_LIST = "SELECT server_id, name, status, version, domain, created_at, updated_at FROM servers ORDER BY created_at DESC;";
+    final String SQL_SERVER_SELECT_VIEW = "SELECT server_id, name, status, version, domain, created_at, updated_at FROM servers WHERE server_id = ?;";
 
     final String SQL_SERVER_DELETE = "DELETE FROM servers WHERE id = ?;";
     final String SQL_SERVER_UPDATE = "UPDATE servers set name = ?, status = ?, version = ?, domain = ? where id = ?;";
 
     // 1. 서버 생성
-    public int createServer(ServerDTO serverDTO) {
+    public long createServer(Connection con, ServerDTO serverDTO) throws SQLException {
 
-        int result = 0;
-        con = JdbcConnectUtil.getConnection();
+        long generatedId = -1;
+        // Statement.RETURN_GENERATED_KEYS 옵션 추가!
+        try (PreparedStatement pstmt = con.prepareStatement(SQL_SERVER_CREATE, Statement.RETURN_GENERATED_KEYS)) {
 
-        try {
-
-            pstmt = con.prepareStatement(SQL_SERVER_CREATE);
             pstmt.setString(1, serverDTO.getName());
             pstmt.setString(2, serverDTO.getStatus());
             pstmt.setString(3, serverDTO.getVersion());
             pstmt.setString(4, serverDTO.getDomain());
-            result = pstmt.executeUpdate();
+            pstmt.executeUpdate();
 
-            System.out.println("새로운 서버 " + serverDTO.getName() + "(이)가 생성되었습니다.");
-
-
-        } catch (Exception e) {
-
-            throw new RuntimeException(e);
-
-        } finally {
-
-            JdbcConnectUtil.close(con, pstmt);
-
+            try (ResultSet rs = pstmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    generatedId = rs.getLong(1);
+                }
+            }
         }
-
-        return result;
+        if (generatedId == -1) {
+            throw new SQLException("서버 등록에 실패했습니다. 생성된 ID를 얻지 못했습니다.");
+        }
+        return generatedId;
     }
 
     // 2-1. 서버 목록 조회
     public ArrayList<ServerDTO> getServerList() {
-
         ArrayList<ServerDTO> list = new ArrayList<>();
-        con = JdbcConnectUtil.getConnection();
+        Connection con = null;
 
         try {
+            con = JdbcConnectUtil.getConnection();
+            try (PreparedStatement pstmt = con.prepareStatement(SQL_SERVER_SELECT_LIST);
+                 ResultSet rs = pstmt.executeQuery()) {
 
-            pstmt = con.prepareStatement(SQL_SERVER_SELECT_LIST);
-            rs = pstmt.executeQuery();
-
-            while (rs.next()) {
-                ServerDTO dto = new ServerDTO();
-                dto.setName(rs.getString("name"));
-                dto.setStatus(rs.getString("status"));
-                dto.setVersion(rs.getString("version"));
-                dto.setDomain(rs.getString("domain"));
-                dto.setCreatedAt(rs.getObject("created_at", LocalDateTime.class));
-                dto.setUpdatedAt(rs.getObject("created_at", LocalDateTime.class));
-                list.add(dto);
+                while (rs.next()) {
+                    ServerDTO dto = new ServerDTO();
+                    dto.setServerId(rs.getLong("server_id"));
+                    dto.setName(rs.getString("name"));
+                    dto.setStatus(rs.getString("status"));
+                    dto.setVersion(rs.getString("version"));
+                    dto.setDomain(rs.getString("domain"));
+                    dto.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+                    dto.setUpdatedAt(rs.getTimestamp("updated_at").toLocalDateTime());
+                    list.add(dto);
+                }
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            JdbcConnectUtil.close(con, pstmt, rs);
+            JdbcConnectUtil.close(con);
         }
-
         return list;
     }
 
     // 2-2. 서버 단일 조회
     public ServerDTO getServerById(Long serverId) {
-
         ServerDTO dto = null;
-        con = JdbcConnectUtil.getConnection();
+        Connection con = null;
 
         try {
+            con = JdbcConnectUtil.getConnection();
+            try (PreparedStatement pstmt = con.prepareStatement(SQL_SERVER_SELECT_VIEW)) {
+                pstmt.setLong(1, serverId);
 
-            pstmt = con.prepareStatement(SQL_SERVER_SELECT_VIEW);
-            rs = pstmt.executeQuery();
-
-            if (rs.next()) {
-                dto = new ServerDTO();
-                dto.setName(rs.getString("name"));
-                dto.setStatus(rs.getString("status"));
-                dto.setVersion(rs.getString("version"));
-                dto.setDomain(rs.getString("domain"));
-                dto.setCreatedAt(rs.getObject("created_at", LocalDateTime.class));
-                dto.setUpdatedAt(rs.getObject("updated_at", LocalDateTime.class));
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    if (rs.next()) {
+                        dto = new ServerDTO();
+                        dto.setServerId(rs.getLong("server_id"));
+                        dto.setName(rs.getString("name"));
+                        dto.setStatus(rs.getString("status"));
+                        dto.setVersion(rs.getString("version"));
+                        dto.setDomain(rs.getString("domain"));
+                        dto.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+                        dto.setUpdatedAt(rs.getTimestamp("updated_at").toLocalDateTime());
+                    }
+                }
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            JdbcConnectUtil.close(con, pstmt, rs);
+            JdbcConnectUtil.close(con);
         }
-
         return dto;
-
     }
 
     // 3. 서버 수정
@@ -139,7 +129,7 @@ public class ServerDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            JdbcConnectUtil.close(con, pstmt);
+            JdbcConnectUtil.close(con);
         }
 
         return result;
@@ -162,7 +152,7 @@ public class ServerDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            JdbcConnectUtil.close(con, pstmt);
+            JdbcConnectUtil.close(con);
         }
 
         return result;

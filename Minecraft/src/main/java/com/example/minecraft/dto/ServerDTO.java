@@ -13,7 +13,8 @@ public class ServerDTO {
     private String domain;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private ServerStatusDTO serverStatus; // ⬅️ ServerStatusDTO 객체 전체를 필드로 포함
+    private ServerStatusDTO serverStatus;
+    private ServerImageDTO serverImage; // 이미지 정보 필드 ( 1 대 1 관계 )
 
     // 생성자
 
@@ -99,4 +100,8 @@ public class ServerDTO {
     public void setServerStatus(ServerStatusDTO serverStatus) {
         this.serverStatus = serverStatus;
     }
+
+    public ServerImageDTO getServerImage() { return serverImage; }
+
+    public void setServerImage(ServerImageDTO serverImage) { this.serverImage = serverImage; }
 }
