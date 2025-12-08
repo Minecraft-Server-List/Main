@@ -101,7 +101,7 @@ public class ServerController extends HttpServlet {
             long id = Long.parseLong(request.getParameter("id"));
             ServerDTO server = serverService.getServerByIdService(id);
             request.setAttribute("server", server);
-            viewPage = "/WEB-INF/views/server/server_view.jsp";
+            viewPage = "/WEB-INF/views/server/server-detail.jsp";
         }
 
         else {
