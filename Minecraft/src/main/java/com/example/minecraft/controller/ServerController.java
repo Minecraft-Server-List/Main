@@ -45,6 +45,7 @@ public class ServerController extends HttpServlet {
         }
 
         String name = request.getParameter("name");
+        String description = request.getParameter("description");
         String status = request.getParameter("status");
         String version =  request.getParameter("version");
         String domain = request.getParameter("domain");
@@ -52,7 +53,7 @@ public class ServerController extends HttpServlet {
         Part serverImagePart = request.getPart("serverImage");
 
         status = "ACTIVE";
-        ServerDTO serverDTO = new ServerDTO(name, status, version, domain);
+        ServerDTO serverDTO = new ServerDTO(name, description, status, version, domain);
         boolean success = false;
 
         jakarta.servlet.ServletContext context = request.getServletContext();

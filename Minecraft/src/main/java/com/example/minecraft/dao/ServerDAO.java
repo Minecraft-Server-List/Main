@@ -15,25 +15,25 @@ public class ServerDAO {
     ResultSet rs = null;
 
     // SQL문 상수화를 통한 유지보수 향상
-    final String SQL_SERVER_CREATE = "INSERT INTO servers (name, status, version, domain) VALUES (?, ?, ?, ?);";
+    final String SQL_SERVER_CREATE = "INSERT INTO servers (name, description, status, version, domain) VALUES (?, ?, ?, ?, ?);";
 
-    final String SQL_SERVER_SELECT_LIST = "SELECT server_id, name, status, version, domain, created_at, updated_at FROM servers ORDER BY created_at DESC;";
-    final String SQL_SERVER_SELECT_VIEW = "SELECT server_id, name, status, version, domain, created_at, updated_at FROM servers WHERE server_id = ?;";
+    final String SQL_SERVER_SELECT_LIST = "SELECT server_id, name, description, status, version, domain, created_at, updated_at FROM servers ORDER BY created_at DESC;";
+    final String SQL_SERVER_SELECT_VIEW = "SELECT server_id, name, description, status, version, domain, created_at, updated_at FROM servers WHERE server_id = ?;";
 
     final String SQL_SERVER_DELETE = "DELETE FROM servers WHERE id = ?;";
-    final String SQL_SERVER_UPDATE = "UPDATE servers set name = ?, status = ?, version = ?, domain = ? where id = ?;";
+    final String SQL_SERVER_UPDATE = "UPDATE servers set name = ?, description = ?, status = ?, version = ?, domain = ? where id = ?;";
 
     // 1. 서버 생성
     public long createServer(Connection con, ServerDTO serverDTO) throws SQLException {
 
         long generatedId = -1;
-        // Statement.RETURN_GENERATED_KEYS 옵션 추가!
         try (PreparedStatement pstmt = con.prepareStatement(SQL_SERVER_CREATE, Statement.RETURN_GENERATED_KEYS)) {
 
             pstmt.setString(1, serverDTO.getName());
-            pstmt.setString(2, serverDTO.getStatus());
-            pstmt.setString(3, serverDTO.getVersion());
-            pstmt.setString(4, serverDTO.getDomain());
+            pstmt.setString(2, serverDTO.getDescription());
+            pstmt.setString(3, serverDTO.getStatus());
+            pstmt.setString(4, serverDTO.getVersion());
+            pstmt.setString(5, serverDTO.getDomain());
             pstmt.executeUpdate();
 
             try (ResultSet rs = pstmt.getGeneratedKeys()) {
@@ -62,6 +62,7 @@ public class ServerDAO {
                     ServerDTO dto = new ServerDTO();
                     dto.setServerId(rs.getLong("server_id"));
                     dto.setName(rs.getString("name"));
+                    dto.setDescription(rs.getString("description"));
                     dto.setStatus(rs.getString("status"));
                     dto.setVersion(rs.getString("version"));
                     dto.setDomain(rs.getString("domain"));
@@ -93,6 +94,7 @@ public class ServerDAO {
                         dto = new ServerDTO();
                         dto.setServerId(rs.getLong("server_id"));
                         dto.setName(rs.getString("name"));
+                        dto.setDescription(rs.getString("description"));
                         dto.setStatus(rs.getString("status"));
                         dto.setVersion(rs.getString("version"));
                         dto.setDomain(rs.getString("domain"));
@@ -119,10 +121,11 @@ public class ServerDAO {
 
             pstmt = con.prepareStatement(SQL_SERVER_UPDATE);
             pstmt.setString(1, serverDTO.getName());
-            pstmt.setString(2, serverDTO.getStatus());
-            pstmt.setString(3, serverDTO.getVersion());
-            pstmt.setString(4, serverDTO.getDomain());
-            pstmt.setObject(5, serverDTO.getServerId());
+            pstmt.setString(2, serverDTO.getDescription());
+            pstmt.setString(3, serverDTO.getStatus());
+            pstmt.setString(4, serverDTO.getVersion());
+            pstmt.setString(5, serverDTO.getDomain());
+            pstmt.setObject(6, serverDTO.getServerId());
             result = pstmt.executeUpdate();
 
 
