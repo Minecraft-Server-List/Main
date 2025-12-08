@@ -1,0 +1,661 @@
+/* ========================================================= */
+/* 0. Global Setup for Detail Page */
+/* ========================================================= */
+/* Inter 폰트 사용 가정, body 배경색 설정 */
+.detail-body {
+    background-color: #f8fafc; /* bg-slate-50 */
+    font-family: 'Inter', sans-serif;
+}
+
+.detail-main-container {
+    padding-bottom: 50px;
+}
+
+/* ========================================================= */
+/* 1. Banner Section (Hero) */
+/* ========================================================= */
+.server-banner-section {
+    position: relative;
+    height: 350px;
+    width: 100%;
+    overflow: hidden;
+    background-color: #1e293b; /* bg-slate-900 */
+}
+
+/* Background Image & Overlay */
+.hero-bg-ts {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    opacity: 0.6; /* opacity-60 */
+}
+.hero-gradient-overlay-ts {
+    position: absolute;
+    inset: 0;
+    /* bg-gradient-to-t from-slate-900 via-slate-900/50 to-transparent */
+    background: linear-gradient(to top, #0f172a 0%, rgba(15, 23, 42, 0.5) 50%, transparent 100%);
+    z-index: 0;
+}
+
+/* Back Button */
+.back-button-ts {
+    position: absolute;
+    top: 24px;
+    left: 16px;
+    z-index: 20;
+}
+.btn-back-ts {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* gap-2 */
+    color: rgba(255, 255, 255, 0.8); /* text-white/80 */
+    background-color: rgba(0, 0, 0, 0.3); /* bg-black/30 */
+    padding: 8px 16px; /* px-4 py-2 */
+    border-radius: 9999px; /* rounded-full */
+    transition: all 0.2s;
+    backdrop-filter: blur(4px);
+    border: none;
+    cursor: pointer;
+}
+.btn-back-ts:hover {
+    color: white;
+    background-color: rgba(0, 0, 0, 0.5); /* hover:bg-black/50 */
+}
+.btn-back-ts i {
+    font-size: 20px;
+}
+
+
+/* Server Info Bottom */
+.server-info-bottom-ts {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+
+.server-info-inner-ts {
+    padding-bottom: 48px; /* pb-12 */
+    display: flex;
+    align-items: flex-end; /* md:items-center */
+    gap: 24px; /* gap-6 */
+}
+
+/* Icon */
+.server-icon-ts {
+    width: 128px; /* md:w-32, 128px */
+    height: 128px;
+    background-color: white;
+    border-radius: 12px; /* rounded-2xl */
+    padding: 8px; /* p-2 */
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); /* shadow-2xl */
+    transform: translateY(16px); /* translate-y-4 */
+    flex-shrink: 0;
+}
+.rounded-icon-ts {
+    width: 100%;
+    height: 100%;
+    border-radius: 8px; /* rounded-xl */
+    object-fit: cover;
+}
+
+/* Text Content */
+.server-text-content-ts {
+    flex-grow: 1;
+    color: white;
+    margin-bottom: 8px; /* mb-2 */
+}
+
+.status-name-row-ts {
+    display: flex;
+    align-items: center;
+    gap: 12px; /* gap-3 */
+    margin-bottom: 8px; /* mb-2 */
+}
+
+.server-name-ts {
+    font-size: 2.25rem; /* text-3xl md:text-4xl */
+    font-weight: 800; /* font-extrabold */
+    letter-spacing: -0.025em;
+    margin: 0;
+}
+
+.status-badge-ts {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px; /* px-3 py-1 */
+    border-radius: 9999px; /* rounded-full */
+    font-size: 0.875rem; /* text-sm */
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+}
+
+.status-badge-ts.online {
+    background-color: #10b981; /* bg-emerald-500 */
+}
+.status-badge-ts.offline {
+    background-color: #dc3545;
+}
+
+.status-dot-ts {
+    width: 8px; /* w-2 */
+    height: 8px; /* h-2 */
+    background-color: white;
+    border-radius: 50%;
+    margin-right: 8px; /* mr-2 */
+    /* .animate-pulse 효과는 JS나 keyframes이 필요하나, 여기서는 정적 상태 유지 */
+}
+
+.server-description-ts {
+    color: #cbd5e1; /* text-slate-300 */
+    max-width: 48rem; /* max-w-3xl */
+    font-size: 0.875rem; /* text-sm md:text-base */
+    margin-bottom: 16px; /* mb-4 */
+}
+
+.server-tags-ts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px; /* gap-2 */
+}
+
+.tag-ts {
+    padding: 4px 12px; /* px-3 py-1 */
+    background-color: rgba(255, 255, 255, 0.1); /* bg-white/10 */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* border border-white/10 */
+    border-radius: 8px; /* rounded-lg */
+    font-size: 0.875rem; /* text-xs md:text-sm */
+    font-weight: 500;
+    backdrop-filter: blur(4px);
+    transition: background-color 0.2s;
+}
+.tag-ts:hover {
+    background-color: rgba(255, 255, 255, 0.2); /* hover:bg-white/20 */
+}
+
+
+/* ========================================================= */
+/* 2. Main Content & Sidebar */
+/* ========================================================= */
+
+.main-content-grid-ts {
+    /* max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 */
+    padding-top: 32px; /* py-8 */
+    padding-bottom: 32px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px; /* gap-8 */
+}
+@media (min-width: 768px) {
+    .main-content-grid-ts {
+        grid-template-columns: 2fr 1fr; /* md:grid-cols-3, md:col-span-2 */
+    }
+}
+
+.content-left-ts {
+    /* md:col-span-2 */
+    width: 100%;
+}
+
+.sidebar-right-ts {
+    /* md:col-span-1 space-y-6 */
+    width: 100%;
+    align-self: flex-start; /* sticky top-6 구현을 위해 필요 */
+    /* sticky top-6는 CSS에서 복잡하므로, 여기서는 그냥 일반적인 레이아웃만 적용 */
+}
+
+
+/* Tabs */
+.tabs-container-ts {
+    background-color: white;
+    border-radius: 12px; /* rounded-xl */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* shadow-sm */
+    border: 1px solid #f1f5f9; /* border border-slate-100 */
+    overflow: hidden;
+    margin-bottom: 24px; /* mb-6 */
+}
+
+.tabs-nav-ts {
+    display: flex;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.tab-item-ts {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px 0; /* py-4 */
+    font-size: 0.875rem; /* text-sm */
+    font-weight: 500;
+    transition: all 0.2s;
+    position: relative;
+    border: none;
+    cursor: pointer;
+}
+.tab-item-ts i {
+    font-size: 16px;
+}
+
+.tab-item-ts:not(.active) {
+    color: #64748b; /* text-slate-500 */
+    background-color: white;
+}
+.tab-item-ts:not(.active):hover {
+    color: #334155; /* hover:text-slate-700 */
+    background-color: #f8fafc; /* hover:bg-slate-50 */
+}
+
+.tab-item-ts.active {
+    color: #059669; /* text-emerald-600 */
+    background-color: rgba(16, 185, 129, 0.05); /* bg-emerald-50/50 */
+}
+.tab-item-ts.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px; /* h-0.5 */
+    background-color: #10b981; /* bg-emerald-500 */
+}
+
+.tabs-content-ts {
+    padding: 24px 32px; /* p-6 md:p-8 */
+}
+
+/* Section Content */
+.detail-block-ts {
+    margin-bottom: 40px; /* mb-10 */
+}
+
+.section-title-ts {
+    font-size: 1.25rem; /* text-xl */
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 16px; /* mb-4 */
+    border-left: 4px solid #10b981; /* border-l-4 border-emerald-500 */
+    padding-left: 12px; /* pl-3 */
+}
+
+.text-regular-ts {
+    color: #475569; /* text-slate-600 */
+    line-height: 1.6; /* leading-relaxed */
+    margin-bottom: 24px; /* mb-6 */
+    font-size: 0.95em;
+}
+
+.feature-title-ts {
+    font-weight: 600;
+    color: #0f172a;
+    margin-bottom: 12px; /* mb-3 */
+}
+
+.feature-list-ts {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 12px; /* gap-3 */
+}
+@media (min-width: 768px) {
+    .feature-list-ts {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+.feature-item-ts {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px; /* gap-2 */
+    color: #475569;
+    font-size: 0.875rem; /* text-sm */
+}
+.dot-ts {
+    margin-top: 6px; /* mt-1.5 */
+    width: 6px; /* w-1.5 */
+    height: 6px; /* h-1.5 */
+    border-radius: 50%;
+    background-color: #10b981; /* bg-emerald-500 */
+    flex-shrink: 0;
+}
+
+/* Rules Section */
+.rules-list-ts {
+    /* space-y-3 */
+}
+
+.rule-item-ts {
+    display: flex;
+    align-items: center;
+    gap: 12px; /* gap-3 */
+    padding: 12px; /* p-3 */
+    border-radius: 8px; /* rounded-lg */
+    background-color: #f8fafc; /* bg-slate-50 */
+    border: 1px solid #f1f5f9; /* border border-slate-100 */
+    margin-bottom: 12px;
+}
+.rule-item-ts i {
+    font-size: 20px;
+    color: #10b981; /* text-emerald-500 */
+    flex-shrink: 0;
+}
+.rule-text-ts {
+    color: #334155; /* text-slate-700 */
+    font-weight: 500;
+}
+
+
+/* Staff Section */
+.staff-grid-ts {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 16px; /* gap-4 */
+}
+@media (min-width: 640px) {
+    .staff-grid-ts {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.staff-member-ts {
+    display: flex;
+    align-items: center;
+    gap: 12px; /* gap-3 */
+    padding: 16px; /* p-4 */
+    background-color: white;
+    border: 1px solid #e2e8f0; /* border border-slate-200 */
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); /* shadow-sm */
+    transition: box-shadow 0.2s;
+}
+.staff-member-ts:hover {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* hover:shadow-md */
+}
+
+.staff-avatar-ts {
+    width: 40px; /* w-10 */
+    height: 40px; /* h-10 */
+    border-radius: 50%;
+    background-color: #f1f5f9; /* bg-slate-100 */
+    object-fit: cover;
+}
+
+.staff-name-ts {
+    font-weight: 700;
+    color: #0f172a;
+    font-size: 0.875rem; /* text-sm */
+}
+
+.staff-role-ts {
+    font-size: 0.75rem; /* text-xs */
+    color: #64748b;
+}
+
+
+/* ========================================================= */
+/* 3. Sidebar (Info Card & Actions) */
+/* ========================================================= */
+.info-card-ts {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #f1f5f9;
+    padding: 24px; /* p-6 */
+}
+
+.card-header-ts {
+    font-size: 1.125rem; /* text-lg */
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 16px; /* mb-4 */
+}
+
+/* Server Address Group */
+.info-group-ts {
+    margin-bottom: 24px; /* mb-6 */
+}
+.info-label-ts {
+    font-size: 0.75rem; /* text-xs */
+    font-weight: 600;
+    color: #64748b; /* text-slate-500 */
+    margin-bottom: 6px; /* mb-1.5 */
+    display: block;
+    text-transform: uppercase;
+}
+
+.address-input-group-ts {
+    display: flex;
+    gap: 8px; /* gap-2 */
+}
+
+.address-text-ts {
+    flex-grow: 1;
+    background-color: #f8fafc; /* bg-slate-50 */
+    border: 1px solid #e2e8f0; /* border border-slate-200 */
+    color: #334155; /* text-slate-700 */
+    padding: 10px 12px; /* px-3 py-2.5 */
+    border-radius: 8px;
+    font-size: 0.875rem; /* text-sm */
+    font-family: monospace; /* font-mono */
+    display: flex;
+    align-items: center;
+}
+
+.btn-copy-ts {
+    padding: 0 12px; /* px-3 */
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    background-color: #d1fae5; /* bg-emerald-100 */
+    color: #047857; /* text-emerald-700 */
+    border: none;
+    cursor: pointer;
+}
+.btn-copy-ts:hover {
+    background-color: #a7f3d0; /* hover:bg-emerald-200 */
+}
+/* Copied State */
+.btn-copy-ts.copied {
+    background-color: #10b981; /* bg-emerald-500 */
+    color: white;
+}
+.btn-copy-ts.copied i:first-child { display: none; }
+.btn-copy-ts i:last-child { display: none; }
+.btn-copy-ts.copied i:last-child { display: inline; }
+.btn-copy-ts i { font-size: 20px; }
+
+
+/* Player Progress Group */
+.player-progress-group {
+    margin-bottom: 24px;
+}
+.progress-label-row-ts {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.875rem; /* text-sm */
+    margin-bottom: 8px; /* mb-2 */
+}
+.progress-label-ts {
+    color: #64748b; /* text-slate-500 */
+}
+.progress-count-ts {
+    font-weight: 700;
+    color: #0f172a; /* text-slate-900 */
+}
+
+.progress-bar-wrap-ts {
+    width: 100%;
+    background-color: #e2e8f0; /* bg-slate-100 */
+    border-radius: 9999px; /* rounded-full */
+    height: 10px; /* h-2.5 */
+    overflow: hidden;
+}
+.progress-bar-ts {
+    background-color: #10b981; /* bg-emerald-500 */
+    height: 100%;
+    border-radius: 9999px;
+}
+
+
+/* Meta Data (Version, Category, etc.) */
+.meta-data-ts {
+    padding-top: 16px; /* pt-4 */
+    border-top: 1px solid #f1f5f9; /* border-t border-slate-100 */
+    display: flex;
+    flex-direction: column;
+    gap: 16px; /* space-y-4 */
+}
+
+.meta-item-ts {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.875rem;
+}
+
+.meta-label-ts {
+    color: #64748b;
+}
+
+.meta-value-ts {
+    font-weight: 600;
+    color: #0f172a;
+}
+.status-online-text {
+    font-weight: 700;
+    color: #10b981; /* text-emerald-500 */
+}
+
+
+/* Action Buttons */
+.action-buttons-ts {
+    margin-top: 32px; /* mt-8 */
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* space-y-3 */
+}
+
+.btn-action-ts {
+    width: 100%;
+    font-weight: 700;
+    padding: 12px; /* py-3 */
+    border-radius: 8px;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px; /* gap-2 */
+    border: none;
+    cursor: pointer;
+}
+.btn-action-ts i {
+    font-size: 18px;
+}
+
+.btn-vote-ts {
+    background-color: #059669; /* bg-emerald-600 */
+    color: white;
+}
+.btn-vote-ts:hover { background-color: #047857; }
+
+.btn-visit-ts {
+    background-color: #0f172a; /* bg-slate-900 */
+    color: white;
+}
+.btn-visit-ts:hover { background-color: #1e293b; }
+
+.btn-discord-ts {
+    background-color: #5865F2; /* Discord Color */
+    color: white;
+}
+.btn-discord-ts:hover { background-color: #4752C4; }
+
+
+/* ========================================================= */
+/* 4. Similar Servers Section */
+/* ========================================================= */
+.similar-servers-section-ts {
+    margin-top: 64px; /* mt-16 */
+    border-top: 1px solid #e2e8f0; /* border-t border-slate-200 */
+    padding-top: 48px; /* pt-12 */
+}
+
+.section-title-similar-ts {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 24px; /* mb-6 */
+}
+
+.similar-grid-ts {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 24px; /* gap-6 */
+}
+@media (min-width: 768px) {
+    .similar-grid-ts {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.similar-card-ts {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    border: 1px solid #f1f5f9;
+    overflow: hidden;
+    transition: transform 0.3s;
+}
+.similar-card-ts:hover {
+    transform: translateY(-4px); /* hover:-translate-y-1 */
+}
+
+.similar-image-wrap-ts {
+    height: 128px; /* h-32 */
+    background-color: #e2e8f0;
+    position: relative;
+}
+.similar-image-ts {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.similar-content-ts {
+    padding: 16px; /* p-4 */
+}
+
+.similar-title-ts {
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 4px; /* mb-1 */
+}
+
+.similar-meta-ts {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.75rem; /* text-xs */
+    color: #64748b;
+    margin-top: 12px; /* mt-3 */
+}
+
+.meta-item-small-ts {
+    display: flex;
+    align-items: center;
+    gap: 4px; /* gap-1 */
+}
+.meta-item-small-ts i {
+    font-size: 12px;
+}
+.heart-count {
+    color: #10b981; /* text-emerald-500 */
+}
+.heart-count i {
+    fill: #10b981; /* fill-current */
+}
