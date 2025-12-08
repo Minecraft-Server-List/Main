@@ -8,9 +8,11 @@ public class ServerDTO {
 
     private Long serverId;
     private String name;
+    private String description;
     private String status;
     private String version;
     private String domain;
+    private String category;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private ServerStatusDTO serverStatus;
@@ -21,8 +23,9 @@ public class ServerDTO {
     public ServerDTO() {
     }
 
-    public ServerDTO(String name, String status, String version, String domain) {
+    public ServerDTO(String name, String description, String status, String version, String domain) {
         this.name = name;
+        this.description = description;
         this.status = status;
         this.version = version;
         this.domain = domain;
@@ -53,6 +56,10 @@ public class ServerDTO {
         this.name = name;
     }
 
+    public String getDescription() { return description; }
+
+    public void setDescription(String description) { this.description = description; }
+
     public String getStatus() {
         return status;
     }
@@ -76,6 +83,10 @@ public class ServerDTO {
     public void setDomain(String domain) {
         this.domain = domain;
     }
+
+    public String getCategory() { return category; }
+
+    public void setCategory(String category) { this.category = category; }
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
