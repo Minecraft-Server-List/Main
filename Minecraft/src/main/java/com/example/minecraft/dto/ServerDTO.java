@@ -8,20 +8,24 @@ public class ServerDTO {
 
     private Long serverId;
     private String name;
+    private String description;
     private String status;
     private String version;
     private String domain;
+    private String category;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private ServerStatusDTO serverStatus; // ⬅️ ServerStatusDTO 객체 전체를 필드로 포함
+    private ServerStatusDTO serverStatus;
+    private ServerImageDTO serverImage; // 이미지 정보 필드 ( 1 대 1 관계 )
 
     // 생성자
 
     public ServerDTO() {
     }
 
-    public ServerDTO(String name, String status, String version, String domain) {
+    public ServerDTO(String name, String description, String status, String version, String domain) {
         this.name = name;
+        this.description = description;
         this.status = status;
         this.version = version;
         this.domain = domain;
@@ -52,6 +56,10 @@ public class ServerDTO {
         this.name = name;
     }
 
+    public String getDescription() { return description; }
+
+    public void setDescription(String description) { this.description = description; }
+
     public String getStatus() {
         return status;
     }
@@ -76,6 +84,10 @@ public class ServerDTO {
         this.domain = domain;
     }
 
+    public String getCategory() { return category; }
+
+    public void setCategory(String category) { this.category = category; }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -99,4 +111,8 @@ public class ServerDTO {
     public void setServerStatus(ServerStatusDTO serverStatus) {
         this.serverStatus = serverStatus;
     }
+
+    public ServerImageDTO getServerImage() { return serverImage; }
+
+    public void setServerImage(ServerImageDTO serverImage) { this.serverImage = serverImage; }
 }

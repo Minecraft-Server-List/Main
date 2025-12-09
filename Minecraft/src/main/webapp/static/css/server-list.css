@@ -1,0 +1,315 @@
+/* ========================================================= */
+/* 0. Hero Section (목록 페이지 상단 짙은 배경) */
+/* ========================================================= */
+.server-list-hero {
+    /* 이미지의 짙은 배경색 */
+    background: linear-gradient(180deg, #1f2d3d, #0f172a);
+    color: #fff;
+    padding: 30px 0 20px 0;
+    margin-bottom: 20px; /* 메인 콘텐츠와의 간격 */
+}
+
+.hero-inner-list {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 40px; /* 전역 컨테이너와 동일한 여백 사용 */
+}
+
+.hero-sub-list {
+    margin-top: 6px;
+    color: #cbd5e1;
+    font-size: 1.1em;
+    margin-bottom: 20px;
+}
+
+.hero-search-list {
+    background: #fff;
+    border-radius: 8px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    padding: 0 18px;
+    gap: 10px;
+    max-width: 500px; /* 검색창 너비 제한 */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.hero-search-list i {
+    font-size: 20px;
+    color: #6b7280;
+}
+
+.hero-search-list input {
+    border: none;
+    outline: none;
+    width: 100%;
+    font-size: 15px;
+}
+
+/* ========================================================= */
+/* 1. Main Content Layout (목록 페이지 전용) */
+/* ========================================================= */
+.content-grid {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 24px;
+    /* max-width와 margin: 0 auto는 전역 .container가 처리 */
+    margin-bottom: 50px;
+}
+
+/* ========================================================= */
+/* 2. 사이드바 (Sidebar) */
+/* ========================================================= */
+
+.sidebar {
+    /* 각 박스가 독립적으로 스타일링되므로 배경/패딩/그림자 제거 */
+    background: transparent;
+    padding: 0;
+    box-shadow: none;
+}
+
+/* 모든 사이드바 섹션의 기본 박스 스타일 */
+.sidebar-box {
+    background: #fff;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    margin-bottom: 24px; /* 박스 간 간격 */
+}
+
+/* 사이드바 섹션 제목 */
+.sidebar-box h3.section-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #374151;
+    margin-top: 0;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+/* 카테고리/버전 리스트 공통 스타일 */
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar li {
+    padding: 10px 6px;
+    border-radius: 8px;
+    color: #374151;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex; /* 아이콘 정렬용 */
+    align-items: center;
+    gap: 8px;
+}
+
+.sidebar li:hover {
+    background: #f3f4f6;
+}
+
+/* 카테고리 활성 스타일 */
+.sidebar .active {
+    background: #dcfce7;
+    color: #16a34a;
+    font-weight: 700;
+}
+
+/* 버전 필터 영역 */
+.version-list li {
+    padding: 8px 6px;
+    font-size: 14px;
+}
+
+.version-list li.active-version {
+    background: #dcfce7;
+    color: #16a34a;
+    font-weight: 700;
+}
+
+/* 🚨 통계 섹션 스타일 (그라데이션 박스) */
+.stats-gradient-box {
+    background: linear-gradient(135deg, #2ecc71, #16a34a);
+    color: white;
+    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.4);
+}
+
+.stats-gradient-box .section-title {
+    color: white;
+    font-weight: 700;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    padding-bottom: 8px;
+    margin-bottom: 15px;
+}
+
+.stats-data .stat-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.stats-data .stat-item span {
+    color: #e5e7eb;
+}
+
+.stats-data .stat-item b.stat-value {
+    font-size: 1.2em;
+    font-weight: 800;
+    color: white;
+}
+
+/* ========================================================= */
+/* 3. 리스트 및 카드 스타일 (목록 페이지 전용) */
+/* ========================================================= */
+
+/* 정렬 영역 */
+.list-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    font-size: 14px;
+    align-items: center;
+    padding-top: 10px; /* 사이드바와 높이 맞추기 */
+}
+
+.list-header select {
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+}
+
+/* 서버 카드 그리드 */
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+/* 서버 카드 */
+.server-card {
+    background: #fff;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.server-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* 상단 이미지 */
+.thumb {
+    height: 150px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+.badge-left {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(0,0,0,0.6);
+    padding: 4px 10px;
+    border-radius: 12px;
+    color: #fff;
+    font-size: 12px;
+}
+
+.badge-right {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    color: #fff;
+}
+
+.badge-right.online {
+    background: #16a34a;
+}
+
+.badge-right.offline {
+    background: #dc2626;
+}
+
+/* 카드 본문 */
+.card-body {
+    padding: 16px 18px;
+}
+
+.card-body h2 {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.desc {
+    font-size: 13px;
+    color: #6b7280;
+    height: 38px;
+    overflow: hidden;
+    margin-top: 4px;
+}
+
+.tags {
+    margin-top: 8px;
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.tags span {
+    padding: 3px 8px;
+    background: #f3f4f6;
+    color: #374151;
+    border-radius: 10px;
+    font-size: 11px;
+}
+
+.player-row {
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+}
+
+.progress {
+    width: 100%;
+    height: 6px;
+    background: #e5e7eb;
+    border-radius: 10px;
+    margin-top: 6px;
+    overflow: hidden;
+}
+
+.progress .fill {
+    height: 100%;
+    background: #16a34a;
+}
+
+.bottom-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.view-btn {
+    display: block;
+    width: calc(100% - 36px);
+    margin: 16px auto;
+    text-align: center;
+    padding: 10px 0;
+    border-radius: 12px;
+    background: #16a34a;
+    color: white;
+    font-weight: 600;
+    text-decoration: none;
+}
