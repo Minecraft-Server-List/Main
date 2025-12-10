@@ -24,8 +24,8 @@ public class ServerService {
 
     private final ServerDAO serverDAO = new ServerDAO();
     private final ServerImageDAO serverImageDAO = new ServerImageDAO();
-    private final McStatusApiClient apiClient = new McStatusApiClient();
-    private final Gson gson = new Gson();
+
+    private final ServerStatusCacheManager cacheManager = ServerStatusCacheManager.getInstance();
 
     // 1. 서버 생성
     public boolean createServerService(ServerDTO serverDTO, Part imagePart, jakarta.servlet.ServletContext context) { // 🚨 Part 객체 추가
@@ -98,48 +98,25 @@ public class ServerService {
     // 2-1. 서버 목록 조회
     public ArrayList<ServerDTO> getServerListService() {
 
-        // 1. 서버 기본 목록 조회 (이미지/카테고리 정보는 DAO에서 JOIN으로 가져와야 함)
+        // API 호출을 캐시 매니저 호출로 대체로 인한 코드 변경
+
         ArrayList<ServerDTO> serverList = serverDAO.getServerList();
 
-        // 2. 각 서버별 상태 정보 조회 및 설정
-        for (ServerDTO server : serverList) {
-            // 🚨 API 호출 로직만 남깁니다.
-            String apiUrl = API_BASE_URL + server.getDomain();
-            String jsonResponse = apiClient.callApi(apiUrl);
-
-            ServerStatusDTO statusDTO;
-            if (jsonResponse != null && !jsonResponse.isEmpty()) {
-                statusDTO = gson.fromJson(jsonResponse, ServerStatusDTO.class);
-            } else {
-                statusDTO = new ServerStatusDTO();
-                statusDTO.setOnline(false);
-            }
-            server.setServerStatus(statusDTO);
-        }
         return serverList;
     }
 
     // 2-2. 서버 단일 조회
     public ServerDTO getServerByIdService(Long serverId) {
 
-        // 1. 서버 기본 정보 조회 (이미지/카테고리 정보는 DAO에서 JOIN으로 가져와야 함)
+        // API 호출을 캐시 매니저 호출로 대체로 인한 코드 변경
+
         ServerDTO serverDTO = serverDAO.getServerById(serverId);
 
         if (serverDTO == null) {
             throw new NoSuchElementException("ID " + serverId + "에 해당하는 서버를 찾을 수 없습니다.");
         }
 
-        // 🚨 API 호출 로직만 남깁니다.
-        String apiUrl = API_BASE_URL + serverDTO.getDomain();
-        String jsonResponse = apiClient.callApi(apiUrl);
-
-        ServerStatusDTO statusDTO;
-        if (jsonResponse != null && !jsonResponse.isEmpty()) {
-            statusDTO = gson.fromJson(jsonResponse, ServerStatusDTO.class);
-        } else {
-            statusDTO = new ServerStatusDTO();
-            statusDTO.setOnline(false);
-        }
+        ServerStatusDTO statusDTO = cacheManager.getStatus(serverDTO.getDomain());
         serverDTO.setServerStatus(statusDTO);
 
         return serverDTO;

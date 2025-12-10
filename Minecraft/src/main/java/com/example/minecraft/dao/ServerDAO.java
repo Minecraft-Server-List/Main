@@ -16,10 +16,10 @@ public class ServerDAO {
     ResultSet rs = null;
 
     // SQL문 상수화를 통한 유지보수 향상
-    final String SQL_SERVER_CREATE = "INSERT INTO servers (name, description, status, version, domain) VALUES (?, ?, ?, ?, ?);";
+    final String SQL_SERVER_CREATE = "INSERT INTO servers (name, description, status, onlinePlayers, maxPlayers, version, domain) VALUES (?, ?, ?, ?, ?, ?, ?);";
 
     final String SQL_SERVER_SEARCH = "SELECT " +
-                                        "    s.server_id, s.name, s.description, s.status, s.version, s.domain, s.created_at, s.updated_at, " +
+                                        "    s.server_id, s.name, s.description, s.status, s.onlinePlayers, s.maxPlayers, s.version, s.domain, s.created_at, s.updated_at, " +
                                         "    MAX(c.name) AS category_name, " +
                                         "    si.file_name AS image_file_name " +
                                         "FROM servers s " +
@@ -31,7 +31,7 @@ public class ServerDAO {
                                         "ORDER BY s.created_at DESC";
 
     final String SQL_SERVER_SELECT_LIST = "SELECT " +
-                                            "    s.server_id, s.name, s.description, s.status, s.version, s.domain, s.created_at, s.updated_at, " +
+                                            "    s.server_id, s.name, s.description, s.status, s.onlinePlayers, s.maxPlayers, s.onlinePlayers, s.maxPlayers, s.version, s.domain, s.created_at, s.updated_at, " +
                                             "    MAX(c.name) AS category_name, " +
                                             "    si.file_name AS image_file_name " +
                                             "FROM servers s " +
@@ -42,7 +42,7 @@ public class ServerDAO {
                                             "ORDER BY s.created_at DESC";
 
     final String SQL_SERVER_SELECT_VIEW = "SELECT " +
-                                            "    s.server_id, s.name, s.description, s.status, s.version, s.domain, s.created_at, s.updated_at, " +
+                                            "    s.server_id, s.name, s.description, s.status, s.onlinePlayers, s.maxPlayers, s.version, s.domain, s.created_at, s.updated_at, " +
                                             "    MAX(c.name) AS category_name, " +
                                             "    si.file_name AS image_file_name " +
                                             "FROM servers s " +
@@ -53,7 +53,7 @@ public class ServerDAO {
                                             "GROUP BY s.server_id";
 
     final String SQL_SERVER_DELETE = "DELETE FROM servers WHERE server_id = ?;";
-    final String SQL_SERVER_UPDATE = "UPDATE servers set name = ?, description = ?, status = ?, version = ?, domain = ? where server_id = ?;";
+    final String SQL_SERVER_UPDATE = "UPDATE servers set name = ?, description = ?, status = ?, onlinePlayers = ?, maxPlayers = ?, version = ?, domain = ? where server_id = ?;";
 
     // 1. 서버 생성
     public long createServer(Connection con, ServerDTO serverDTO) throws SQLException {
@@ -64,8 +64,10 @@ public class ServerDAO {
             pstmt.setString(1, serverDTO.getName());
             pstmt.setString(2, serverDTO.getDescription());
             pstmt.setString(3, serverDTO.getStatus());
-            pstmt.setString(4, serverDTO.getVersion());
-            pstmt.setString(5, serverDTO.getDomain());
+            pstmt.setInt(4, serverDTO.getOnlinePlayers());
+            pstmt.setInt(5, serverDTO.getMaxPlayers());
+            pstmt.setString(6, serverDTO.getVersion());
+            pstmt.setString(7, serverDTO.getDomain());
             pstmt.executeUpdate();
 
             try (ResultSet rs = pstmt.getGeneratedKeys()) {
@@ -96,6 +98,8 @@ public class ServerDAO {
                     dto.setName(rs.getString("name"));
                     dto.setDescription(rs.getString("description"));
                     dto.setStatus(rs.getString("status"));
+                    dto.setOnlinePlayers(rs.getInt("onlinePlayers"));
+                    dto.setMaxPlayers(rs.getInt("maxPlayers"));
                     dto.setVersion(rs.getString("version"));
                     dto.setDomain(rs.getString("domain"));
                     dto.setCategory(rs.getString("category_name"));
@@ -135,6 +139,8 @@ public class ServerDAO {
                         dto.setName(rs.getString("name"));
                         dto.setDescription(rs.getString("description"));
                         dto.setStatus(rs.getString("status"));
+                        dto.setOnlinePlayers(rs.getInt("onlinePlayers"));
+                        dto.setMaxPlayers(rs.getInt("maxPlayers"));
                         dto.setVersion(rs.getString("version"));
                         dto.setDomain(rs.getString("domain"));
                         dto.setCategory(rs.getString("category_name"));
@@ -170,9 +176,11 @@ public class ServerDAO {
             pstmt.setString(1, serverDTO.getName());
             pstmt.setString(2, serverDTO.getDescription());
             pstmt.setString(3, serverDTO.getStatus());
-            pstmt.setString(4, serverDTO.getVersion());
-            pstmt.setString(5, serverDTO.getDomain());
-            pstmt.setObject(6, serverDTO.getServerId());
+            pstmt.setInt(4, serverDTO.getOnlinePlayers());
+            pstmt.setInt(5, serverDTO.getMaxPlayers());
+            pstmt.setString(6, serverDTO.getVersion());
+            pstmt.setString(7, serverDTO.getDomain());
+            pstmt.setObject(8, serverDTO.getServerId());
             result = pstmt.executeUpdate();
 
 
@@ -231,6 +239,8 @@ public class ServerDAO {
                         dto.setName(rs.getString("name"));
                         dto.setDescription(rs.getString("description"));
                         dto.setStatus(rs.getString("status"));
+                        dto.setOnlinePlayers(rs.getInt("onlinePlayers"));
+                        dto.setMaxPlayers(rs.getInt("maxPlayers"));
                         dto.setVersion(rs.getString("version"));
                         dto.setDomain(rs.getString("domain"));
                         dto.setCategory(rs.getString("category_name"));
