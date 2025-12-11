@@ -24,8 +24,8 @@ public class ServerService {
 
     private final ServerDAO serverDAO = new ServerDAO();
     private final ServerImageDAO serverImageDAO = new ServerImageDAO();
-    private final McStatusApiClient apiClient = new McStatusApiClient();
-    private final Gson gson = new Gson();
+
+    private final ServerStatusCacheManager cacheManager = ServerStatusCacheManager.getInstance();
 
     // 1. 서버 생성
     public boolean createServerService(ServerDTO serverDTO, Part imagePart, jakarta.servlet.ServletContext context) { // 🚨 Part 객체 추가
@@ -96,46 +96,11 @@ public class ServerService {
     }
 
     // 2-1. 서버 목록 조회
-    // @return DB 정보 + API 상태 정보가 담긴 ServerDTO 목록
     public ArrayList<ServerDTO> getServerListService() {
 
-        // 1. 서버 기본 목록 조회 (DAO에서 Connection 열고 닫음)
+        // API 호출을 캐시 매니저 호출로 대체로 인한 코드 변경
+
         ArrayList<ServerDTO> serverList = serverDAO.getServerList();
-
-        Connection con = null;
-
-        try {
-            // 이미지 조회를 위한 Connection 획득 (반복문 밖에서 한 번만 열기)
-            con = JdbcConnectUtil.getConnection();
-
-            // 2. 각 서버별 이미지 및 상태 정보 조회 및 설정
-            for (ServerDTO server : serverList) {
-
-                // 2-1. 이미지 정보 조회 및 설정
-                ServerImageDTO imageDTO = serverImageDAO.getServerImageByServerId(con, server.getServerId());
-                server.setServerImage(imageDTO); // DTO에 이미지 정보 설정
-
-                // 2-2. 마크 서버 상태 조회 및 설정 (기존 로직 유지)
-                String apiUrl = API_BASE_URL + server.getDomain();
-                String jsonResponse = apiClient.callApi(apiUrl);
-
-                if (jsonResponse != null && !jsonResponse.isEmpty()) {
-                    ServerStatusDTO statusDTO = gson.fromJson(jsonResponse, ServerStatusDTO.class);
-                    server.setServerStatus(statusDTO);
-                } else {
-                    ServerStatusDTO statusDTO = new ServerStatusDTO();
-                    statusDTO.setOnline(false);
-                    server.setServerStatus(statusDTO);
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("서버 상태 또는 이미지 조회 중 오류 발생: " + e.getMessage());
-        } finally {
-            // 3. 이미지 조회를 위해 열었던 Connection 닫기
-            JdbcConnectUtil.close(con);
-        }
 
         return serverList;
     }
@@ -143,42 +108,16 @@ public class ServerService {
     // 2-2. 서버 단일 조회
     public ServerDTO getServerByIdService(Long serverId) {
 
-        // 1. 서버 기본 정보 조회 (DAO에서 Connection 열고 닫음)
+        // API 호출을 캐시 매니저 호출로 대체로 인한 코드 변경
+
         ServerDTO serverDTO = serverDAO.getServerById(serverId);
 
         if (serverDTO == null) {
             throw new NoSuchElementException("ID " + serverId + "에 해당하는 서버를 찾을 수 없습니다.");
         }
 
-        Connection con = null;
-        try {
-            // 이미지 조회를 위한 Connection 획득
-            con = JdbcConnectUtil.getConnection();
-
-            // 2. 이미지 정보 조회 및 설정
-            ServerImageDTO imageDTO = serverImageDAO.getServerImageByServerId(con, serverId);
-            serverDTO.setServerImage(imageDTO);
-
-            // 3. 마크 서버 상태 조회 및 설정 (기존 로직 유지)
-            String apiUrl = API_BASE_URL + serverDTO.getDomain();
-            String jsonResponse = apiClient.callApi(apiUrl);
-
-            if (jsonResponse != null && !jsonResponse.isEmpty()) {
-                ServerStatusDTO statusDTO = gson.fromJson(jsonResponse, ServerStatusDTO.class);
-                serverDTO.setServerStatus(statusDTO);
-            } else {
-                ServerStatusDTO statusDTO = new ServerStatusDTO();
-                statusDTO.setOnline(false);
-                serverDTO.setServerStatus(statusDTO);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("서버 상태 또는 이미지 조회 중 오류 발생: " + e.getMessage());
-        } finally {
-            // 4. 이미지 조회를 위해 열었던 Connection 닫기
-            JdbcConnectUtil.close(con);
-        }
+        ServerStatusDTO statusDTO = cacheManager.getStatus(serverDTO.getDomain());
+        serverDTO.setServerStatus(statusDTO);
 
         return serverDTO;
     }
@@ -197,6 +136,17 @@ public class ServerService {
 
         int result = serverDAO.deleteServerById(id);
         return result == 1;
+
+    }
+
+    // 5. 서버 검색
+    public ArrayList<ServerDTO> searchServersService(String query) {
+        // 쿼리가 유효한지 확인 후 DAO 호출
+        if (query == null || query.trim().isEmpty()) {
+            // 검색어가 없으면 전체 목록 반환
+            return serverDAO.getServerList();
+        }
+        return serverDAO.searchServers(query);
 
     }
 

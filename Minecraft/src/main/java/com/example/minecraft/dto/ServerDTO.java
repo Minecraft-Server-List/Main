@@ -10,6 +10,8 @@ public class ServerDTO {
     private String name;
     private String description;
     private String status;
+    private Integer onlinePlayers;
+    private Integer maxPlayers;
     private String version;
     private String domain;
     private String category;
@@ -26,14 +28,6 @@ public class ServerDTO {
     public ServerDTO(String name, String description, String status, String version, String domain) {
         this.name = name;
         this.description = description;
-        this.status = status;
-        this.version = version;
-        this.domain = domain;
-    }
-
-    public ServerDTO(Long serverId, String name, String status, String version, String domain) {
-        this.serverId = serverId;
-        this.name = name;
         this.status = status;
         this.version = version;
         this.domain = domain;
@@ -67,6 +61,14 @@ public class ServerDTO {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    public Integer getOnlinePlayers() { return onlinePlayers; }
+
+    public void setOnlinePlayers(Integer onlinePlayers) { this.onlinePlayers = onlinePlayers; }
+
+    public Integer getMaxPlayers() { return maxPlayers; }
+
+    public void setMaxPlayers(Integer maxPlayers) { this.maxPlayers = maxPlayers; }
 
     public String getVersion() {
         return version;

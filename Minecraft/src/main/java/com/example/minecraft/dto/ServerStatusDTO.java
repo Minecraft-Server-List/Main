@@ -1,19 +1,27 @@
 package com.example.minecraft.dto;
 
 public class ServerStatusDTO {
+    public static class Players {
+        public int online;
+        public int max;
+    }
 
-    private boolean online;
-    private PlayersDTO players;
-    private VersionDTO version;
+    public boolean online;
+    public Players players;
 
-    public ServerStatusDTO() {}
+    public boolean isOnline() {
+        return online;
+    }
 
-    public boolean getOnline() { return online; }
-    public void setOnline(boolean online) { this.online = online; }
+    public void setOnline(boolean online) {
+        this.online = online;
+    }
 
-    public PlayersDTO getPlayers() { return players; }
-    public void setPlayers(PlayersDTO players) { this.players = players; }
+    public Players getPlayers() {
+        return players;
+    }
 
-    public VersionDTO getVersion() { return version; }
-    public void setVersion(VersionDTO version) { this.version = version; }
+    public void setPlayers(Players players) {
+        this.players = players;
+    }
 }

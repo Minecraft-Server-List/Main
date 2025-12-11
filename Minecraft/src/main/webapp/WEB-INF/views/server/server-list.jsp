@@ -11,6 +11,10 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/footer.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/server-list.css">
+
+    <%-- 🚨 DB 캐싱 전략 적용: 기존의 AJAX 요청 및 JS 업데이트 로직은 모두 제거합니다. --%>
+    <%-- 서버 상태는 이제 ServerListController를 통해 DB에서 가져온 데이터로 즉시 표시됩니다. --%>
+
 </head>
 
 <body>
@@ -24,17 +28,20 @@
             <c:out value="${fn:length(serverList)}" />개의 서버를 찾았습니다
         </p>
 
-        <div class="hero-search-list">
+        <form action="${pageContext.request.contextPath}/serverList" method="GET" class="hero-search-list">
             <i class='bx bx-search'></i>
-            <input type="text" placeholder="서버 이름이나 설명으로 검색...">
-        </div>
+            <input type="text"
+                   name="query"
+                   placeholder="서버 이름이나 설명으로 검색..."
+                   value="${searchQuery != null ? searchQuery : ''}"> <button type="submit" style="display:none;"></button>
+        </form>
+
     </div>
 </section>
 
 <div class="container content-grid">
 
     <aside class="sidebar">
-
         <div class="sidebar-box category-section">
             <h3 class="section-title">카테고리</h3>
             <ul>
@@ -98,12 +105,19 @@
         <div class="card-grid">
 
             <c:forEach var="server" items="${serverList}">
-                <div class="server-card">
+                <%-- 🚨 갱신된 DB 상태 값을 JSTL 변수로 미리 설정 --%>
+                <c:set var="isOnline" value="${server.status == 'ACTIVE'}" />
+                <c:set var="onlineCount" value="${server.onlinePlayers}" />
+                <c:set var="maxCount" value="${server.maxPlayers}" />
+                <c:set var="statusClass" value="${isOnline ? 'online' : 'offline'}" />
+                <c:set var="statusText" value="${isOnline ? 'ONLINE' : 'OFFLINE'}" />
+
+                <div class="server-card" data-domain="${server.domain}">
 
                     <div class="thumb"
                          style="background-image:url(
                          <c:choose>
-                         <c:when test="${not empty server.serverImage.fileName}">
+                         <c:when test="${not empty server.serverImage && not empty server.serverImage.fileName}">
                                  '${pageContext.request.contextPath}/upload/server_images/${server.serverImage.fileName}'
                          </c:when>
                          <c:otherwise>
@@ -112,51 +126,47 @@
                          </c:choose>
                                  );">
 
-                        <div class="badge-left">Network</div>
-                        <div class="badge-right ${server.serverStatus.online ? 'online' : 'offline'}">
-                            ● <c:out value="${server.serverStatus.online ? 'ONLINE' : 'OFFLINE'}" />
+                        <div class="badge-left">${server.category}</div>
+
+                            <%-- 🚨 1. 상태 배지: DB status 값으로 즉시 표시 --%>
+                        <div class="badge-right ${statusClass}" data-status-badge>
+                            ● <span data-status-text>${statusText}</span>
                         </div>
                     </div>
 
                     <div class="card-body">
                         <h2>${server.name}</h2>
-                        <p class="desc">서버 설명이 여기에 들어갑니다.</p>
+                        <p class="desc">${server.description}</p>
 
                         <div class="tags">
-                            <span>Minigames</span>
-                            <span>Survival</span>
-                            <span>Economy</span>
+                            <span class="main-category-tag">${server.category}</span>
+                            <span class="sub-tag">Survival</span>
+                            <span class="sub-tag">Economy</span>
                         </div>
 
                         <div class="player-row">
                             <span>플레이어</span>
-                            <b>${server.serverStatus.players.online} / ${server.serverStatus.players.max}</b>
-                        </div>
-
-                        <div class="progress">
-                            <c:set var="fillPercentage">
+                            <b data-player-count>
+                                    <%-- 🚨 2. 플레이어 수: DB onlinePlayers, maxPlayers 필드 직접 출력 --%>
                                 <c:choose>
-                                    <%-- Case 1: 최대 인원수가 0이거나 데이터가 없을 때 (분모 오류 방지) --%>
-                                    <c:when test="${server.serverStatus.players.max == 0 || empty server.serverStatus.players.max}">
-                                        0
+                                    <c:when test="${isOnline}">
+                                        ${onlineCount} / ${maxCount}
                                     </c:when>
-                                    <%-- Case 2: 온라인 인원수가 0일 때 --%>
-                                    <c:when test="${server.serverStatus.players.online == 0}">
-                                        0
-                                    </c:when>
-                                    <%-- Case 3: 정상적인 계산 --%>
                                     <c:otherwise>
-                                        ${(server.serverStatus.players.online * 100 / server.serverStatus.players.max)}
+                                        Offline
                                     </c:otherwise>
                                 </c:choose>
-                            </c:set>
+                            </b>
+                        </div>
 
-                            <div class="fill"
-                                 style="width: ${fillPercentage}%;"></div>
+                            <%-- 🚨 3. 게이지 바: DB 데이터로 스타일 속성 계산 --%>
+                        <c:set var="percentage" value="${(onlineCount / maxCount) * 100}" />
+                        <div class="progress">
+                            <div class="fill" style="width: <c:if test="${isOnline && maxCount > 0}">${percentage}%</c:if> <c:if test="${!isOnline || maxCount == 0}">0%</c:if>;"></div>
                         </div>
 
                         <div class="bottom-row">
-                            <div class="ver">1.20.4</div>
+                            <div class="ver" data-version>${server.version}</div>
                             <div class="votes">★ 0 votes</div>
                         </div>
 
