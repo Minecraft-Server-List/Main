@@ -12,89 +12,9 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/server-list.css">
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const API_URL = '${pageContext.request.contextPath}/api/server/status';
+    <%-- 🚨 DB 캐싱 전략 적용: 기존의 AJAX 요청 및 JS 업데이트 로직은 모두 제거합니다. --%>
+    <%-- 서버 상태는 이제 ServerListController를 통해 DB에서 가져온 데이터로 즉시 표시됩니다. --%>
 
-            // 1. AJAX 요청 함수
-            function fetchServerStatuses() {
-                fetch(API_URL)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('API 호출 실패: ' + response.statusText);
-                        }
-                        return response.json();
-                    })
-                    .then(serverList => {
-                        // 2. JSON 데이터로 화면 업데이트
-                        serverList.forEach(updateServerCard);
-                    })
-                    .catch(error => {
-                        console.error("서버 상태 업데이트 오류:", error);
-                    });
-            }
-
-            // 3. 개별 서버 카드 업데이트 로직 (🚨 Null 안전하게 수정됨)
-            function updateServerCard(server) {
-                // 해당 도메인을 가진 카드 DOM 요소 찾기
-                const cardElement = document.querySelector(`.server-card[data-domain="${server.domain}"]`);
-                if (!cardElement) return;
-
-                // 🚨 Optional Chaining (?. ) 및 Nullish Coalescing (??) 적용
-                // server.serverStatus가 없으면 (API 응답에 없으면) false/0으로 처리합니다.
-                const isOnline = server.serverStatus?.online ?? false;
-                const onlinePlayers = server.serverStatus?.players?.online ?? 0;
-                const maxPlayers = server.serverStatus?.players?.max ?? 0;
-
-                // version 정보가 API에 없다면, JSP에서 미리 받은 DB 버전 정보를 사용합니다.
-                const version = isOnline && server.serverStatus?.version?.nameClean ? server.serverStatus.version.nameClean : cardElement.querySelector('[data-version]').textContent;
-
-                // 상태 배지 업데이트
-                const badge = cardElement.querySelector('[data-status-badge]');
-                if (badge) {
-                    badge.classList.remove('offline', 'online', 'initial-status');
-                    badge.classList.add(isOnline ? 'online' : 'offline');
-
-                    // isOnline이 false인 경우에도 Loading... 대신 Offline으로 표시
-                    badge.querySelector('[data-status-text]').textContent = isOnline ? 'ONLINE' : 'OFFLINE';
-                    badge.querySelector('span').textContent = isOnline ? 'ONLINE' : 'OFFLINE';
-                }
-
-                // 플레이어 수 업데이트
-                const playerCountElement = cardElement.querySelector('[data-player-count]');
-                if (playerCountElement) {
-                    if (isOnline) {
-                        playerCountElement.innerHTML = `${onlinePlayers} / ${maxPlayers}`;
-                    } else {
-                        // 오프라인이거나 serverStatus 정보가 없을 때
-                        playerCountElement.innerHTML = `Offline`;
-                    }
-                }
-
-                // 버전 업데이트
-                const versionElement = cardElement.querySelector('[data-version]');
-                if (versionElement) {
-                    versionElement.textContent = version;
-                }
-
-                // 게이지 바 업데이트
-                const fillElement = cardElement.querySelector('.progress .fill');
-                if (fillElement) {
-                    let percentage = 0;
-                    if (isOnline && maxPlayers > 0) {
-                        percentage = (onlinePlayers / maxPlayers) * 100;
-                    }
-                    fillElement.style.width = `${percentage}%`;
-                }
-            }
-
-            // 4. 페이지 로드 후 즉시 상태 업데이트 시작
-            fetchServerStatuses();
-
-            // 5. 60초마다 상태를 주기적으로 업데이트 (선택 사항)
-            // setInterval(fetchServerStatuses, 60000);
-        });
-    </script>
 </head>
 
 <body>
@@ -111,7 +31,8 @@
         <form action="${pageContext.request.contextPath}/serverList" method="GET" class="hero-search-list">
             <i class='bx bx-search'></i>
             <input type="text"
-                   name="query"                  placeholder="서버 이름이나 설명으로 검색..."
+                   name="query"
+                   placeholder="서버 이름이나 설명으로 검색..."
                    value="${searchQuery != null ? searchQuery : ''}"> <button type="submit" style="display:none;"></button>
         </form>
 
@@ -182,14 +103,20 @@
         </div>
 
         <div class="card-grid">
-            <%-- 🚨 서버 상태를 제외한 모든 정보는 DB에서 가져오므로 안전합니다. --%>
+
             <c:forEach var="server" items="${serverList}">
+                <%-- 🚨 갱신된 DB 상태 값을 JSTL 변수로 미리 설정 --%>
+                <c:set var="isOnline" value="${server.status == 'ACTIVE'}" />
+                <c:set var="onlineCount" value="${server.onlinePlayers}" />
+                <c:set var="maxCount" value="${server.maxPlayers}" />
+                <c:set var="statusClass" value="${isOnline ? 'online' : 'offline'}" />
+                <c:set var="statusText" value="${isOnline ? 'ONLINE' : 'OFFLINE'}" />
+
                 <div class="server-card" data-domain="${server.domain}">
 
                     <div class="thumb"
                          style="background-image:url(
                          <c:choose>
-                             <%-- 🚨 이미지 Null 체크 강화 (server.serverImage가 null인지 먼저 확인) --%>
                          <c:when test="${not empty server.serverImage && not empty server.serverImage.fileName}">
                                  '${pageContext.request.contextPath}/upload/server_images/${server.serverImage.fileName}'
                          </c:when>
@@ -200,8 +127,10 @@
                                  );">
 
                         <div class="badge-left">${server.category}</div>
-                        <div class="badge-right initial-status offline" data-status-badge>
-                            ● <span data-status-text>Loading...</span>
+
+                            <%-- 🚨 1. 상태 배지: DB status 값으로 즉시 표시 --%>
+                        <div class="badge-right ${statusClass}" data-status-badge>
+                            ● <span data-status-text>${statusText}</span>
                         </div>
                     </div>
 
@@ -218,12 +147,22 @@
                         <div class="player-row">
                             <span>플레이어</span>
                             <b data-player-count>
-                                <span class="loading-dots">...</span>
+                                    <%-- 🚨 2. 플레이어 수: DB onlinePlayers, maxPlayers 필드 직접 출력 --%>
+                                <c:choose>
+                                    <c:when test="${isOnline}">
+                                        ${onlineCount} / ${maxCount}
+                                    </c:when>
+                                    <c:otherwise>
+                                        Offline
+                                    </c:otherwise>
+                                </c:choose>
                             </b>
                         </div>
 
+                            <%-- 🚨 3. 게이지 바: DB 데이터로 스타일 속성 계산 --%>
+                        <c:set var="percentage" value="${(onlineCount / maxCount) * 100}" />
                         <div class="progress">
-                            <div class="fill" style="width: 0%;"></div>
+                            <div class="fill" style="width: <c:if test="${isOnline && maxCount > 0}">${percentage}%</c:if> <c:if test="${!isOnline || maxCount == 0}">0%</c:if>;"></div>
                         </div>
 
                         <div class="bottom-row">

@@ -15,6 +15,7 @@
 
     <script>
         function handleCopy() {
+            // 서버 도메인(${server.domain})을 사용
             const address = document.getElementById('serverAddress').innerText;
             navigator.clipboard.writeText(address).then(() => {
                 const button = document.getElementById('copyButton');
@@ -55,10 +56,12 @@
                 <div class="server-text-content-ts">
                     <div class="status-name-row-ts">
                         <h1 class="server-name-ts">${server.name}</h1>
-                        <span class="status-badge-ts ${server.serverStatus.online ? 'online' : 'offline'}">
-                                <div class="status-dot-ts"></div>
-                                <c:out value="${server.serverStatus.online ? 'ONLINE' : 'OFFLINE'}" />
-                            </span>
+
+                        <%-- DB status 필드 사용 --%>
+                        <span class="status-badge-ts ${server.status eq 'ACTIVE' ? 'online' : 'offline'}">
+                            <div class="status-dot-ts"></div>
+                            <c:out value="${server.status eq 'ACTIVE' ? 'ONLINE' : 'OFFLINE'}" />
+                        </span>
                     </div>
 
                     <p class="server-description-ts">
@@ -146,7 +149,8 @@
                     <label class="info-label-ts">서버 주소</label>
                     <div class="address-input-group-ts">
                         <div id="serverAddress" class="address-text-ts">
-                            play.hypercraft.net
+                            <%-- DB domain 필드 사용 --%>
+                            ${server.domain}
                         </div>
                         <button id="copyButton" onclick="handleCopy()" class="btn-copy-ts">
                             <i class='bx bx-copy'></i>
@@ -158,17 +162,21 @@
                 <div class="info-group-ts player-progress-group">
                     <div class="progress-label-row-ts">
                         <span class="progress-label-ts">플레이어</span>
-                        <span class="progress-count-ts">${server.serverStatus.players.online} / ${server.serverStatus.players.max}</span>
+                        <%-- DB onlinePlayers, maxPlayers 필드 사용 --%>
+                        <span class="progress-count-ts">${server.onlinePlayers} / ${server.maxPlayers}</span>
                     </div>
                     <div class="progress-bar-wrap-ts">
-                        <div class="progress-bar-ts" style="width: 52%;"></div>
+                        <%-- DB 값 기반 비율 계산 --%>
+                        <c:set var="playerRatio" value="${(server.onlinePlayers / server.maxPlayers) * 100}" />
+                        <div class="progress-bar-ts" style="width: ${playerRatio}%;"></div>
                     </div>
                 </div>
 
                 <div class="meta-data-ts">
                     <div class="meta-item-ts">
                         <span class="meta-label-ts">버전</span>
-                        <span class="meta-value-ts">${server.serverStatus.version.nameClean}</span>
+                        <%-- DB version 필드 사용 --%>
+                        <span class="meta-value-ts">${server.version}</span>
                     </div>
                     <div class="meta-item-ts">
                         <span class="meta-label-ts">카테고리</span>
@@ -197,6 +205,7 @@
                         <i class='bx bxs-heart'></i>
                         투표하기
                     </button>
+                    <%-- DB domain 필드 사용 --%>
                     <a href="<c:url value="http://${server.domain}" />" target="_blank" class="btn-action-ts btn-visit-ts">
                         <i class='bx bx-globe'></i>
                         웹사이트 방문
