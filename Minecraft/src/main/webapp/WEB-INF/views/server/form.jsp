@@ -1,12 +1,21 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<html>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
+<!DOCTYPE html>
+
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <title>서버 등록 - CraftConnect</title>
+
+    <%-- 💡 수정: CSS 경로 확인 및 메인 페이지에 모두 로드 --%>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/style.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/form-style.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/footer.css">
 </head>
 <body>
 
+<%-- header.jsp는 HTML 구조 없이 컨텐츠만 포함해야 함 --%>
 <%@ include file="/WEB-INF/views/header.jsp" %>
 <main class="form-page-main">
     <div class="container">
@@ -21,6 +30,11 @@
                 <div class="user-form-group">
                     <label for="name">서버 이름</label>
                     <input type="text" id="name" name="name" required>
+                </div>
+
+                <div class="user-form-group">
+                    <label for="description">서버 설명</label>
+                    <input type="text" id="description" name="description" required>
                 </div>
 
                 <div class="user-form-group">

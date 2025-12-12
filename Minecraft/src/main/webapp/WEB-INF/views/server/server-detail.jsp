@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/footer.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/server-detail.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/login-modal.css">
 
     <script>
         function handleCopy() {
@@ -70,10 +71,6 @@
 
                     <div class="server-tags-ts">
                         <span class="tag-ts">${server.category}</span>
-                        <span class="tag-ts">Survival</span>
-                        <span class="tag-ts">Economy</span>
-                        <span class="tag-ts">PvP</span>
-                        <span class="tag-ts">Custom</span>
                     </div>
                 </div>
             </div>
@@ -87,9 +84,9 @@
             <div class="tabs-container-ts">
                 <div class="tabs-nav-ts">
                     <button class="tab-item-ts active">개요</button>
-                    <button class="tab-item-ts">게임 모드</button>
-                    <button class="tab-item-ts">스크린샷</button>
-                    <button class="tab-item-ts">리뷰</button>
+<%--                    <button class="tab-item-ts">게임 모드</button>--%>
+<%--                    <button class="tab-item-ts">스크린샷</button>--%>
+<%--                    <button class="tab-item-ts">리뷰</button>--%>
                 </div>
 
                 <div class="tabs-content-ts">
