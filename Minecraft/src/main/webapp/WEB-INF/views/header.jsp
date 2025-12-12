@@ -1,71 +1,117 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
-<%
-    String userName_header = (String) session.getAttribute("userName");
-    String userRole_header = (String) session.getAttribute("userRole");
-    String userEmail_header = (String) session.getAttribute("userEmail");
-%>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/style.css">
+<header class="main-header-new">
+    <nav class="container main-nav-new">
 
+        <div class="nav-left-new">
+            <a href="${pageContext.request.contextPath}/index" class="logo-new">
+                <img src="${pageContext.request.contextPath}/static/images/logo_icon.png" alt="CraftConnect Logo" class="logo-icon">
+                CraftConnect
+            </a>
 
-<header class="main-header">
-    <nav class="container main-nav">
-        
-        <div class="nav-left">
-            <%-- [수정] index.jsp -> index.page --%>
-            <a href="${pageContext.request.contextPath}/index.page" class="logo">CraftConnect</a>
-            <ul class="nav-links">
+            <ul class="nav-links-new">
                 <li><a href="${pageContext.request.contextPath}/serverList">Servers</a></li>
                 <li><a href="#">Community</a></li>
                 <li><a href="#">News</a></li>
                 <li><a href="#">Support</a></li>
-                
-                <%-- [유지] 관리자 메뉴는 데이터를 가져와야 하므로 .do 유지 --%>
-                <%
-                    if ("ADMIN".equals(userRole_header)) {
-                %>
-                        <li>
-                            <a href="${pageContext.request.contextPath}/userList.do" style="color: #d9534f; font-weight: 700;">
-                                [관리자 메뉴]
-                            </a>
-                        </li>
-                <%
-                    }
-                %>
             </ul>
         </div>
-        
-        <div class="nav-right">
-            <div class="header-search">
-                <i class='bx bx-search'></i>
-                <input type="search" placeholder="Search">
-            </div>
 
-            <a href="${pageContext.request.contextPath}/serverAdd.page" class="btn-add-server">Add Server</a>
+        <div class="nav-right-new">
 
-            <%
-                if (userName_header == null) {
-            %>
-                <%-- [수정] 직접 경로 -> PageController 경로 (.page) --%>
-                <a href="${pageContext.request.contextPath}/login.page" class="btn-header-login">Login</a>
-                <a href="${pageContext.request.contextPath}/register.page" class="btn-header-register">Register</a>
-            <%
-                } else {
-            %>
-                <%-- [유지] 마이페이지/로그아웃은 기능 수행이 필요하므로 .do 유지 --%>
-                <a href="${pageContext.request.contextPath}/searchUser.do?email=<%= userEmail_header %>" class="user-profile" title="My Page">
-                    <img src="https://placehold.co/40x40/9a9a9a/ffffff?text=<%= userName_header.substring(0, 1).toUpperCase() %>" alt="User Profile">
+            <%-- 💡 Add Server 링크 --%>
+            <a href="${pageContext.request.contextPath}/serverAdd.page" class="btn-add-server-new">Add Server</a>
+
+            <%-- 🚨 JSTL로 로그인 상태 체크 및 렌더링 --%>
+            <c:if test="${empty sessionScope.userName}">
+                <%-- 💡 로그인 링크에 ID 부여 --%>
+                <a href="#" id="main-login-open-btn" class="btn-header-text">Login</a>
+            </c:if>
+
+            <c:if test="${not empty sessionScope.userName}">
+                <%-- 로그인한 경우 --%>
+
+                <%-- 관리자 메뉴 추가 (Admin Role 체크) --%>
+                <c:if test="${sessionScope.userRole == 'ADMIN'}">
+                    <a href="${pageContext.request.contextPath}/userList.do" class="btn-header-text admin-link" title="[관리자 메뉴]">
+                        Admin
+                    </a>
+                </c:if>
+
+                <%-- 유저 프로필 및 로그아웃 --%>
+                <a href="${pageContext.request.contextPath}/searchUser.do?email=${sessionScope.userEmail}" class="user-profile-new" title="My Page">
+                    <img src="https://placehold.co/36x36/9a9a9a/ffffff?text=${fn:toUpperCase(fn:substring(sessionScope.userName, 0, 1))}" alt="User Profile">
                 </a>
-                
-                <a href="${pageContext.request.contextPath}/logout.do" class="btn-header-logout">Logout</a>
-            <%
-                }
-            %>
+
+                <a href="${pageContext.request.contextPath}/logout.do" class="btn-header-text">Logout</a>
+            </c:if>
         </div>
     </nav>
 </header>
+
+
+<%-- 1. 모달 HTML 구조 포함 --%>
+<%@ include file="/WEB-INF/views/login-modal.jsp" %>
+
+<%-- 2. 모달 제어 JavaScript 로직 포함 --%>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const modal = document.getElementById('login-modal');
+        const openButton = document.getElementById('main-login-open-btn');
+        const closeButton = document.getElementById('login-close-btn');
+        const backdropArea = document.getElementById('modal-backdrop-area');
+
+        // 비밀번호 토글 관련 요소
+        const passwordInput = document.getElementById('password-input');
+        const togglePasswordBtn = document.getElementById('toggle-password-btn');
+        const eyeShow = document.getElementById('eye-show');
+        const eyeOff = document.getElementById('eye-off');
+
+        // 모달 닫기 함수
+        const closeModal = () => {
+            if (modal) {
+                modal.classList.add('hidden');
+                document.body.style.overflow = ''; // 스크롤 복구
+            }
+        };
+
+        // 모달 열기
+        if (openButton && modal) {
+            openButton.addEventListener('click', (e) => {
+                e.preventDefault(); // 기본 링크 동작 방지
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; // 스크롤 방지
+            });
+        }
+
+        // 닫기 버튼 클릭 시
+        if (closeButton) closeButton.addEventListener('click', closeModal);
+
+        // 배경(Backdrop) 클릭 시 닫기
+        if (backdropArea) backdropArea.addEventListener('click', closeModal);
+
+        // ESC 키 눌렀을 때 닫기
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) {
+                closeModal();
+            }
+        });
+
+        // 비밀번호 보이기/숨기기 토글 로직
+        if (togglePasswordBtn && passwordInput) {
+            togglePasswordBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const isPassword = passwordInput.type === 'password';
+                passwordInput.type = isPassword ? 'text' : 'password';
+
+                // 아이콘 전환
+                if (eyeShow && eyeOff) {
+                    eyeShow.classList.toggle('hidden', !isPassword);
+                    eyeOff.classList.toggle('hidden', isPassword);
+                }
+            });
+        }
+    });
+</script>

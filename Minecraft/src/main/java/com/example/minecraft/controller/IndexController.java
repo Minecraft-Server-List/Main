@@ -13,7 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 
-@WebServlet("/index")
+// @WebServlet("/index")
 public class IndexController extends HttpServlet {
 
     private ServerService serverService;
@@ -30,6 +30,7 @@ public class IndexController extends HttpServlet {
         try {
             // 1. 서버 목록 전체를 최신순으로 가져옵니다.
             ArrayList<ServerDTO> serverList = serverService.getServerListService();
+            System.out.println(">>> IndexController: DAO에서 가져온 서버 개수: " + serverList.size());
 
             // 2. JSP에서 최근 3개만 사용할 수 있도록 리스트를 전달합니다.
             //    (JSP에서 <c:forEach end="2">로 3개만 사용하도록 처리했습니다.)
