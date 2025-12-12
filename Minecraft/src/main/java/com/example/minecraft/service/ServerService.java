@@ -42,6 +42,16 @@ public class ServerService {
             con = JdbcConnectUtil.getConnection();
             con.setAutoCommit(false);
 
+            if (serverDTO.getOnlinePlayers() == null) {
+                serverDTO.setOnlinePlayers(0);
+            }
+            if (serverDTO.getMaxPlayers() == null) {
+                serverDTO.setMaxPlayers(0); // 적절한 기본값 (예: 20)을 설정할 수도 있습니다.
+            }
+            if (serverDTO.getStatus() == null) {
+                serverDTO.setStatus("UNKNOWN"); // 등록 초기 상태
+            }
+
             String UPLOAD_PATH = context.getRealPath("/") + "upload" + File.separator + "server_images";
             // 2. SERVER 테이블에 기본 정보 삽입 및 ID 획득
             newServerId = serverDAO.createServer(con, serverDTO); // Connection 전달
@@ -148,6 +158,31 @@ public class ServerService {
         }
         return serverDAO.searchServers(query);
 
+    }
+
+    // 6. 서버 카테고리
+    public ArrayList<String> getAllCategoriesService() {
+        return serverDAO.getAllCategories();
+    }
+
+    // 7. 서버 카테고리 필터링
+    public ArrayList<ServerDTO> searchAndFilterServersService(String query, String category) {
+        boolean hasQuery = query != null && !query.trim().isEmpty();
+        boolean hasCategory = category != null && !category.trim().isEmpty();
+
+        if (hasQuery && hasCategory) {
+            // 🌟 케이스 1: 검색어 + 카테고리
+            return serverDAO.searchAndFilter(query, category);
+        } else if (hasCategory) {
+            // 🌟 케이스 2: 카테고리만
+            return serverDAO.filterServersByCategory(category);
+        } else if (hasQuery) {
+            // 🌟 케이스 3: 검색어만
+            return serverDAO.searchServers(query);
+        } else {
+            // 🌟 케이스 4: 전체 목록
+            return serverDAO.getServerList();
+        }
     }
 
 }
