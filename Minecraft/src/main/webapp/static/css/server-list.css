@@ -95,19 +95,37 @@
     margin: 0;
 }
 
+/* 🚨 수정: li 자체의 패딩과 gap 제거 (a 태그가 영역을 채우도록) */
 .sidebar li {
-    padding: 10px 6px;
+    padding: 0; /* li의 패딩 제거 */
     border-radius: 8px;
     color: #374151;
     cursor: pointer;
     font-size: 14px;
-    display: flex; /* 아이콘 정렬용 */
+    display: flex; /* a 태그의 flex 속성을 상속하기 위함 */
     align-items: center;
+}
+
+/* 🌟 핵심 수정: a 태그 스타일 - 클릭 영역 전체 확장 및 flex 속성 부여 */
+.sidebar li a {
+    display: flex; /* li와 동일하게 flex 설정 */
+    align-items: center;
+    flex-grow: 1; /* 🚨 a 태그가 li의 남은 공간을 모두 차지하도록 강제 */
+
+    padding: 10px 6px; /* li에서 제거했던 패딩을 a 태그에 부여 */
+    width: 100%; /* 너비 100% 설정 (flex-grow가 처리하지만 안전장치) */
+
+    text-decoration: none;
+    color: inherit; /* li의 텍스트 색상을 상속 */
+
+    /* li에서 제거한 gap을 a 태그 내부에 복원 */
     gap: 8px;
 }
 
+
+/* 호버 스타일 */
 .sidebar li:hover {
-    background: #f3f4f6;
+    background: #f3f4f6; /* li에 hover 효과 유지 */
 }
 
 /* 카테고리 활성 스타일 */
@@ -117,10 +135,17 @@
     font-weight: 700;
 }
 
+/* 🚨 활성화된 li 내부의 a 태그 텍스트 색상도 활성화 색상으로 강제 */
+.sidebar .active a {
+    color: #16a34a;
+}
+
+
 /* 버전 필터 영역 */
 .version-list li {
     padding: 8px 6px;
     font-size: 14px;
+    /* 버전 리스트는 a 태그를 사용하지 않을 경우 li에 직접 패딩 적용 */
 }
 
 .version-list li.active-version {

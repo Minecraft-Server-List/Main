@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/footer.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/server-list.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/login-modal.css">
 
     <%-- 🚨 DB 캐싱 전략 적용: 기존의 AJAX 요청 및 JS 업데이트 로직은 모두 제거합니다. --%>
     <%-- 서버 상태는 이제 ServerListController를 통해 DB에서 가져온 데이터로 즉시 표시됩니다. --%>
@@ -33,7 +34,14 @@
             <input type="text"
                    name="query"
                    placeholder="서버 이름이나 설명으로 검색..."
-                   value="${searchQuery != null ? searchQuery : ''}"> <button type="submit" style="display:none;"></button>
+                   value="${searchQuery != null ? searchQuery : ''}">
+
+            <%-- 🌟 수정: 현재 선택된 카테고리 값이 있다면, 숨김 필드로 유지 --%>
+            <c:if test="${not empty param.category}">
+                <input type="hidden" name="category" value="${param.category}">
+            </c:if>
+
+            <button type="submit" style="display:none;"></button>
         </form>
 
     </div>
@@ -45,16 +53,29 @@
         <div class="sidebar-box category-section">
             <h3 class="section-title">카테고리</h3>
             <ul>
-                <li class="active"><i class='bx bx-grid-alt'></i> 전체</li>
-                <li><i class='bx bx-leaf'></i> Survival</li>
-                <li><i class='bx bx-pen'></i> Creative</li>
-                <li><i class='bx bx-target-lock'></i> PvP</li>
-                <li><i class='bx bx-cloud-lightening'></i> Skyblock</li>
-                <li><i class='bx bx-lock-alt'></i> Prison</li>
-                <li><i class='bx bx-shield'></i> Faction</li>
-                <li><i class='bx bx-network-chart'></i> Network</li>
-                <li><i class='bx bx-cube-alt'></i> Modded</li>
-                <li><i class='bx bx-run'></i> Roleplay</li>
+                <%-- 1. 전체 보기 링크 --%>
+                <%-- 🌟 수정: 카테고리 파라미터가 없으면 '전체'가 Active --%>
+                <c:set var="isAllActive" value="${empty param.category || param.category eq ''}" />
+                <li class="${isAllActive ? 'active' : ''}">
+                    <a href="${pageContext.request.contextPath}/serverList">
+                        <i class='bx bx-grid-alt'></i> 전체
+                    </a>
+                </li>
+
+                <%-- 2. DB에서 가져온 카테고리 목록 출력 --%>
+                <c:forEach var="categoryName" items="${categoryList}">
+
+                    <%-- 🌟 수정: 현재 URL의 'category' 파라미터 값과 일치하는지 확인 --%>
+                    <c:set var="isActive" value="${param.category eq categoryName}" />
+
+                    <li class="${isActive ? 'active' : ''}">
+                        <a href="${pageContext.request.contextPath}/serverList?category=${categoryName}">
+                            <i class='bx bx-star'></i>
+                            <span><c:out value="${categoryName}" /></span>
+                        </a>
+                    </li>
+                </c:forEach>
+
             </ul>
         </div>
 
@@ -62,11 +83,6 @@
             <h3 class="section-title">버전</h3>
             <ul class="version-list">
                 <li class="active-version">모든 버전</li>
-                <li>1.20.4</li>
-                <li>1.20.3</li>
-                <li>1.20.2</li>
-                <li>1.19.4</li>
-                <li>1.18.2</li>
             </ul>
         </div>
 
