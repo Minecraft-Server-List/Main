@@ -39,4 +39,4 @@ src/main/webapp
 > https://www.figma.com/design/mRlFUtz2dAt6VKyelDkb1B/짭인리스트?node-id=0-1&p=f&t=s15OzWBe0GIXK1a4-0
 
 ## 🗓️ERD CLOUD
-> https://www.erdcloud.com/d/tZtqCGjXQyviHkXWE
+> [https://www.erdcloud.com/d/tZtqCGjXQyviHkXWE](https://www.erdcloud.com/d/QyWwW9pBPaaYZMEpg)
