@@ -54,12 +54,10 @@
                     <td><%= dto.getEmail()  %></td>
                     <td><%= dto.getRole()  %></td>
                     <td><%
-                        // 3. 가입일시 (created_at) Null 체크 로직 (수정된 부분)
-                        // dto.getCreatedAt()이 null이 아닌 경우에만 format()을 호출합니다.
+                        // 3. 가입일시 (created_at) Null 체크 로직 (안정성 확보)
                         if (dto.getCreatedAt() != null) {
                             out.print(dto.getCreatedAt().format(dtf));
                         } else {
-                            // 값이 null이면 사용자에게 "N/A" (Not Available) 출력
                             out.print("N/A");
                         }
                     %></td>

@@ -7,7 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class JdbcConnectUtil {
-
     // 1. Connection 획득
     public static Connection getConnection() {
         Connection con = null;

@@ -74,8 +74,6 @@ public class UpdateUserServlet extends HttpServlet {
             // 7-1. [성공] 결과 페이지(singleUserResult.jsp)에 변경 전/후 데이터를 보여주기 위해 Flash 속성 설정
             session.setAttribute("flash_oldUserData", oldUser);
             session.setAttribute("flash_newUserData", newUser);
-
-            // --- ▼▼▼ [핵심 수정 로직] ▼▼▼ ---
             
             // 7-2. 현재 로그인한 사용자의 이메일 (세션에서 가져오기)
             String loggedInUserEmail = (String) session.getAttribute("userEmail");
@@ -90,7 +88,6 @@ public class UpdateUserServlet extends HttpServlet {
                 session.setAttribute("userEmail", newUser.getEmail()); // <-- 중요!
                 session.setAttribute("userRole", newUser.getRole());
             }
-            // --- ▲▲▲ [수정 완료] ▲▲▲ ---
 
         } else {
             // 7-5. [실패] 결과 페이지에 실패 메시지를 보내기 위해 Flash 속성 설정
