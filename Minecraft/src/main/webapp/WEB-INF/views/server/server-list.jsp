@@ -1,91 +1,202 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <!DOCTYPE html>
-<html>
+<html lang="ko">
+
 <head>
-    <meta charset="UTF-8">
-    <title>마인크래프트 서버 상태 목록 - CraftConnect</title>
-
-    <%-- 메인 페이지와 동일한 스타일시트 구조를 따름 --%>
+    <meta charset="UTF-8" />
+    <title>마인크래프트 서버 목록</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/style.css">
-
-    <%-- Boxicons 아이콘 사용을 위해 추가 --%>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/footer.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/server-list.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/login-modal.css">
+
+    <%-- 🚨 DB 캐싱 전략 적용: 기존의 AJAX 요청 및 JS 업데이트 로직은 모두 제거합니다. --%>
+    <%-- 서버 상태는 이제 ServerListController를 통해 DB에서 가져온 데이터로 즉시 표시됩니다. --%>
+
 </head>
+
 <body>
 
 <%@ include file="/WEB-INF/views/header.jsp" %>
 
-<main class="page-main">
-    <div class="container">
+<section class="server-list-hero">
+    <div class="container hero-inner-list">
+        <h1 class="hero-title">마인크래프트 서버 목록</h1>
+        <p class="hero-sub-list">
+            <c:out value="${fn:length(serverList)}" />개의 서버를 찾았습니다
+        </p>
 
-        <%-- 메인 페이지의 Top Servers 섹션 클래스 구조를 따릅니다. --%>
-        <section class="top-servers">
-            <h2><i class='bx bx-server' style="margin-right: 8px;"></i>등록된 서버 목록</h2>
+        <form action="${pageContext.request.contextPath}/serverList" method="GET" class="hero-search-list">
+            <i class='bx bx-search'></i>
+            <input type="text"
+                   name="query"
+                   placeholder="서버 이름이나 설명으로 검색..."
+                   value="${searchQuery != null ? searchQuery : ''}">
 
-            <c:choose>
-                <c:when test="${not empty serverList}">
+            <%-- 🌟 수정: 현재 선택된 카테고리 값이 있다면, 숨김 필드로 유지 --%>
+            <c:if test="${not empty param.category}">
+                <input type="hidden" name="category" value="${param.category}">
+            </c:if>
 
-                    <%-- 메인 페이지의 Top Servers 테이블 클래스 (.server-table) 사용 --%>
-                    <table class="server-table">
-                        <thead>
-                        <tr>
-                            <th>Server Name</th>
-                            <th>Domain</th>
-                            <th>Version</th>
-                            <th>Players</th>
-                            <th>Status</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <c:forEach var="server" items="${serverList}">
-                            <tr>
+            <button type="submit" style="display:none;"></button>
+        </form>
 
-                                    <%-- 1. Server Name (DB 이름 + .server-name 클래스) --%>
-                                <td class="server-name"><c:out value="${server.name}" /></td>
-
-                                    <%-- 2. Domain (DB 호스트 주소) --%>
-                                <td><c:out value="${server.domain}" /></td>
-
-                                    <%-- 3. Version (API 상태 정보) --%>
-                                <td>
-                                    <c:out value="${server.serverStatus.version.nameClean}" default="1.20.1" />
-                                </td>
-
-                                    <%-- 4. Players (메인 페이지 형식: 120/200) --%>
-                                <td>
-                                    <c:out value="${server.serverStatus.players.online}" default="0" />
-                                    <span class="player-count-max">/<c:out value="${server.serverStatus.players.max}" default="0" />
-                                    </span>
-                                </td>
-
-                                    <%-- 5. Status (status-online/server-offline 클래스 사용) --%>
-                                <td>
-                                    <c:choose>
-                                        <c:when test="${server.serverStatus.online}">
-                                            <span class="status-online">Online</span>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <%-- Offline은 CSS에서 빨간색 계열로 정의됨 --%>
-                                            <span class="server-offline">Offline</span>
-                                        </c:otherwise>
-                                    </c:choose>
-                                </td>
-                            </tr>
-                        </c:forEach>
-                        </tbody>
-                    </table>
-                </c:when>
-                <c:otherwise>
-                    <p style="text-align: center; color: #777; margin-top: 50px;">
-                        현재 등록된 서버가 없습니다.
-                        <a href="${pageContext.request.contextPath}/serverAdd.page">새 서버를 등록</a>해주세요.
-                    </p>
-                </c:otherwise>
-            </c:choose>
-        </section>
     </div>
-</main>
+</section>
+
+<div class="container content-grid">
+
+    <aside class="sidebar">
+        <div class="sidebar-box category-section">
+            <h3 class="section-title">카테고리</h3>
+            <ul>
+                <%-- 1. 전체 보기 링크 --%>
+                <%-- 🌟 수정: 카테고리 파라미터가 없으면 '전체'가 Active --%>
+                <c:set var="isAllActive" value="${empty param.category || param.category eq ''}" />
+                <li class="${isAllActive ? 'active' : ''}">
+                    <a href="${pageContext.request.contextPath}/serverList">
+                        <i class='bx bx-grid-alt'></i> 전체
+                    </a>
+                </li>
+
+                <%-- 2. DB에서 가져온 카테고리 목록 출력 --%>
+                <c:forEach var="categoryName" items="${categoryList}">
+
+                    <%-- 🌟 수정: 현재 URL의 'category' 파라미터 값과 일치하는지 확인 --%>
+                    <c:set var="isActive" value="${param.category eq categoryName}" />
+
+                    <li class="${isActive ? 'active' : ''}">
+                        <a href="${pageContext.request.contextPath}/serverList?category=${categoryName}">
+                            <i class='bx bx-star'></i>
+                            <span><c:out value="${categoryName}" /></span>
+                        </a>
+                    </li>
+                </c:forEach>
+
+            </ul>
+        </div>
+
+        <div class="sidebar-box version-filter-section">
+            <h3 class="section-title">버전</h3>
+            <ul class="version-list">
+                <li class="active-version">모든 버전</li>
+            </ul>
+        </div>
+
+        <div class="sidebar-box stats-section stats-gradient-box">
+            <h3 class="section-title">통계</h3>
+            <div class="stats-data">
+                <div class="stat-item">
+                    <span>총 서버</span>
+                    <b class="stat-value">15,234</b>
+                </div>
+                <div class="stat-item">
+                    <span>온라인 플레이어</span>
+                    <b class="stat-value">2.1M</b>
+                </div>
+                <div class="stat-item">
+                    <span>오늘 투표</span>
+                    <b class="stat-value">45,678</b>
+                </div>
+            </div>
+        </div>
+
+    </aside>
+
+    <section class="server-list">
+
+        <div class="list-header">
+            <span>총 <b>${fn:length(serverList)}</b>개 서버</span>
+
+            <select>
+                <option>인기순</option>
+                <option>플레이어 많은 순</option>
+                <option>최신 서버 순</option>
+            </select>
+        </div>
+
+        <div class="card-grid">
+
+            <c:forEach var="server" items="${serverList}">
+                <%-- 🚨 갱신된 DB 상태 값을 JSTL 변수로 미리 설정 --%>
+                <c:set var="isOnline" value="${server.status == 'ACTIVE'}" />
+                <c:set var="onlineCount" value="${server.onlinePlayers}" />
+                <c:set var="maxCount" value="${server.maxPlayers}" />
+                <c:set var="statusClass" value="${isOnline ? 'online' : 'offline'}" />
+                <c:set var="statusText" value="${isOnline ? 'ONLINE' : 'OFFLINE'}" />
+
+                <div class="server-card" data-domain="${server.domain}">
+
+                    <div class="thumb"
+                         style="background-image:url(
+                         <c:choose>
+                         <c:when test="${not empty server.serverImage && not empty server.serverImage.fileName}">
+                                 '${pageContext.request.contextPath}/upload/server_images/${server.serverImage.fileName}'
+                         </c:when>
+                         <c:otherwise>
+                                 '${pageContext.request.contextPath}/static/images/default_server_icon.png'
+                         </c:otherwise>
+                         </c:choose>
+                                 );">
+
+                        <div class="badge-left">${server.category}</div>
+
+                            <%-- 🚨 1. 상태 배지: DB status 값으로 즉시 표시 --%>
+                        <div class="badge-right ${statusClass}" data-status-badge>
+                            ● <span data-status-text>${statusText}</span>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <h2>${server.name}</h2>
+                        <p class="desc">${server.description}</p>
+
+                        <div class="tags">
+                            <span class="main-category-tag">${server.category}</span>
+                            <span class="sub-tag">Survival</span>
+                            <span class="sub-tag">Economy</span>
+                        </div>
+
+                        <div class="player-row">
+                            <span>플레이어</span>
+                            <b data-player-count>
+                                    <%-- 🚨 2. 플레이어 수: DB onlinePlayers, maxPlayers 필드 직접 출력 --%>
+                                <c:choose>
+                                    <c:when test="${isOnline}">
+                                        ${onlineCount} / ${maxCount}
+                                    </c:when>
+                                    <c:otherwise>
+                                        Offline
+                                    </c:otherwise>
+                                </c:choose>
+                            </b>
+                        </div>
+
+                            <%-- 🚨 3. 게이지 바: DB 데이터로 스타일 속성 계산 --%>
+                        <c:set var="percentage" value="${(onlineCount / maxCount) * 100}" />
+                        <div class="progress">
+                            <div class="fill" style="width: <c:if test="${isOnline && maxCount > 0}">${percentage}%</c:if> <c:if test="${!isOnline || maxCount == 0}">0%</c:if>;"></div>
+                        </div>
+
+                        <div class="bottom-row">
+                            <div class="ver" data-version>${server.version}</div>
+                            <div class="votes">★ 0 votes</div>
+                        </div>
+
+                        <a href="${pageContext.request.contextPath}/server.do?action=view&id=${server.serverId}"
+                           class="view-btn">서버 정보 보기</a>
+                    </div>
+                </div>
+            </c:forEach>
+
+        </div>
+
+    </section>
+
+</div>
 
 <%@ include file="/WEB-INF/views/footer.jsp" %>
 

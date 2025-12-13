@@ -1,12 +1,21 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<html>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
+<!DOCTYPE html>
+
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <title>서버 등록 - CraftConnect</title>
+
+    <%-- 💡 수정: CSS 경로 확인 및 메인 페이지에 모두 로드 --%>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/style.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/form-style.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/footer.css">
 </head>
 <body>
 
+<%-- header.jsp는 HTML 구조 없이 컨텐츠만 포함해야 함 --%>
 <%@ include file="/WEB-INF/views/header.jsp" %>
 <main class="form-page-main">
     <div class="container">
@@ -14,17 +23,18 @@
             <h2>새 마인크래프트 서버 등록</h2>
             <p style="text-align: center; margin-bottom: 20px;">서버 이름, 버전, 주소를 입력해주세요!</p>
 
-            <!-- 🚩 action="${pageContext.request.contextPath}/server.do" -->
-            <!-- POST 요청을 ServerController로 정확히 보냅니다. -->
-            <form action="${pageContext.request.contextPath}/server.do" method="post">
+            <form action="${pageContext.request.contextPath}/server.do" method="post" enctype="multipart/form-data">
 
-                <!-- 🚩 중요: ServerController의 doPost에서 if ("create".equals(action)) 분기를 위한 히든 필드 -->
                 <input type="hidden" name="action" value="create">
 
                 <div class="user-form-group">
                     <label for="name">서버 이름</label>
-                    <!-- ServerController에서 name="name"으로 파라미터를 받을 수 있도록 설정 -->
                     <input type="text" id="name" name="name" required>
+                </div>
+
+                <div class="user-form-group">
+                    <label for="description">서버 설명</label>
+                    <input type="text" id="description" name="description" required>
                 </div>
 
                 <div class="user-form-group">
@@ -35,6 +45,11 @@
                 <div class="user-form-group">
                     <label for="domain">주소 (domain)</label>
                     <input type="text" id="domain" name="domain" required>
+                </div>
+
+                <div class="user-form-group">
+                    <label for="serverImage">대표 이미지</label>
+                    <input type="file" id="serverImage" name="serverImage" accept="image/*">
                 </div>
 
                 <div class="user-form-group">

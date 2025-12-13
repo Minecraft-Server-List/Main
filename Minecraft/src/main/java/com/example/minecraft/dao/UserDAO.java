@@ -50,7 +50,7 @@ public class UserDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            JdbcConnectUtil.close(con, pstmt, rs);
+            JdbcConnectUtil.close(con);
         }
         return uList;
     }
@@ -80,7 +80,7 @@ public class UserDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            JdbcConnectUtil.close(con, pstmt, rs); 
+            JdbcConnectUtil.close(con);
         }
         
         return dto; // 성공 시 DTO, 실패 시 null 반환
@@ -104,7 +104,7 @@ public class UserDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            JdbcConnectUtil.close(con, pstmt);
+            JdbcConnectUtil.close(con);
         }
         return result;
     }
@@ -133,7 +133,7 @@ public class UserDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            JdbcConnectUtil.close(con, pstmt, rs);
+            JdbcConnectUtil.close(con);
         }
         return dto;
     }
@@ -162,7 +162,7 @@ public class UserDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            JdbcConnectUtil.close(con, pstmt, rs);
+            JdbcConnectUtil.close(con);
         }
         return dto;
     }
@@ -186,7 +186,7 @@ public class UserDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            JdbcConnectUtil.close(con, pstmt);
+            JdbcConnectUtil.close(con);
         }
         return result;
     }
@@ -205,7 +205,7 @@ public class UserDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            JdbcConnectUtil.close(con, pstmt);
+            JdbcConnectUtil.close(con);
         }
         return result;
     }

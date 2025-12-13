@@ -1,0 +1,113 @@
+/* 1. 그리드 컨테이너 설정 */
+.server-card-grid {
+    display: grid;
+    /* 화면 크기에 따라 최소 300px 카드를 자동 배열 */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px; /* 카드 사이 간격 */
+    margin-top: 20px;
+}
+
+/* 2. 개별 서버 카드 스타일 */
+.server-card {
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden; /* 이미지 모서리 둥글게 */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s;
+    display: flex; /* 내부 요소 세로 정렬 */
+    flex-direction: column;
+}
+
+.server-card:hover {
+    transform: translateY(-5px); /* 호버 시 살짝 떠오르는 효과 */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* 3. 이미지 컨테이너 및 상태 배지 */
+.card-image-container {
+    position: relative;
+    height: 180px; /* 이미지 높이 고정 */
+    overflow: hidden;
+}
+
+.server-card-image, .server-card-image.placeholder {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 이미지를 잘라 채움 */
+}
+
+/* 상태 배지 스타일 */
+.status-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    padding: 4px 8px;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: bold;
+    color: white;
+}
+
+.status-online {
+    background-color: #4CAF50; /* 녹색 */
+}
+
+.status-offline {
+    background-color: #F44336; /* 빨간색 */
+}
+
+/* 4. 카드 내용 */
+.card-content {
+    padding: 15px;
+    flex-grow: 1; /* 내용이 충분하지 않아도 카드 높이 일치 */
+}
+
+.server-title {
+    font-size: 1.3em;
+    margin-top: 0;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.server-domain {
+    font-size: 0.9em;
+    color: #888;
+    margin-bottom: 15px;
+}
+
+/* 메타 정보 (버전, 플레이어) */
+.server-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9em;
+    color: #555;
+    padding-top: 10px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.meta-players {
+    font-weight: bold;
+    color: #2196F3; /* 파란색 강조 */
+}
+
+/* 5. 버튼 스타일 */
+.card-actions {
+    padding: 15px;
+    border-top: 1px solid #eee;
+}
+
+.btn-view-details {
+    display: block;
+    text-align: center;
+    padding: 10px;
+    background-color: #2196F3;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+}
+
+.btn-view-details:hover {
+    background-color: #1976D2;
+}
