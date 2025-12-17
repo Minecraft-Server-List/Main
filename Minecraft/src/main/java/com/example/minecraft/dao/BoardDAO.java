@@ -11,26 +11,28 @@ import com.example.minecraft.util.JdbcConnectUtil;
 import com.example.minecraft.dto.BoardDTO;
 
 public class BoardDAO {
-    // 🚨 전역 변수 삭제 완료 (Connection con = null; 등 없음)
 
-    // --- SQL 쿼리 ---
-    final String SQL_INSERT = "INSERT INTO base_board (user_id, category, title, content) VALUES (?, ?, ?, ?)";
+    // [INSERT 변경] 카테고리 코드(문자열)를 입력받아 서브쿼리로 ID를 조회 후 삽입
+    final String SQL_INSERT = "INSERT INTO base_board (user_id, board_category_id, title, content) VALUES (?, (SELECT board_category_id FROM board_category WHERE code = ?), ?, ?)";
+    
     final String SQL_INCREASE_VIEW = "UPDATE base_board SET view_count = view_count + 1 WHERE base_board_id = ?";
+
+    // [SELECT 공통] board_category(bc)와 조인하여 code와 name을 조회
+    final String BASE_SELECT = "SELECT b.*, u.name AS writer_name, bc.code AS cat_code, bc.name AS cat_name, "
+            + "(SELECT COUNT(*) FROM board_likes bl WHERE bl.base_board_id = b.base_board_id) AS like_count "
+            + "FROM base_board b "
+            + "JOIN users u ON b.user_id = u.user_id "
+            + "JOIN board_category bc ON b.board_category_id = bc.board_category_id ";
+
+    final String SQL_SELECT_PAGING = BASE_SELECT + "ORDER BY b.base_board_id DESC LIMIT ?, ?";
     
-    final String SQL_SELECT_ALL = 
-            "SELECT b.*, u.name AS writer_name, (SELECT COUNT(*) FROM board_likes bl WHERE bl.base_board_id = b.base_board_id) AS like_count, 0 AS is_liked FROM base_board b JOIN users u ON b.user_id = u.user_id ORDER BY b.base_board_id DESC";
+    // [카테고리별 조회] bc.code를 기준으로 필터링
+    final String SQL_SELECT_BY_CATEGORY = BASE_SELECT + "WHERE bc.code = ? ORDER BY b.base_board_id DESC LIMIT ?, ?";
     
-    final String SQL_SELECT_PAGING = 
-            "SELECT b.*, u.name AS writer_name, (SELECT COUNT(*) FROM board_likes bl WHERE bl.base_board_id = b.base_board_id) AS like_count, 0 AS is_liked FROM base_board b JOIN users u ON b.user_id = u.user_id ORDER BY b.base_board_id DESC LIMIT ?, ?";
-    
-    final String SQL_SELECT_BY_CATEGORY = 
-            "SELECT b.*, u.name AS writer_name, (SELECT COUNT(*) FROM board_likes bl WHERE bl.base_board_id = b.base_board_id) AS like_count, 0 AS is_liked FROM base_board b JOIN users u ON b.user_id = u.user_id WHERE b.category = ? ORDER BY b.base_board_id DESC LIMIT ?, ?";
-    
-    final String SQL_SELECT_BY_ID = 
-            "SELECT b.*, u.name AS writer_name, (SELECT COUNT(*) FROM board_likes bl WHERE bl.base_board_id = b.base_board_id) AS like_count, (SELECT COUNT(*) FROM board_likes bl WHERE bl.base_board_id = b.base_board_id AND bl.user_id = ?) AS is_liked FROM base_board b JOIN users u ON b.user_id = u.user_id WHERE b.base_board_id = ?";
-    
-    final String SQL_SELECT_BY_USER_ID = 
-            "SELECT b.*, u.name AS writer_name, (SELECT COUNT(*) FROM board_likes bl WHERE bl.base_board_id = b.base_board_id) AS like_count, 0 AS is_liked FROM base_board b JOIN users u ON b.user_id = u.user_id WHERE b.user_id = ? ORDER BY b.base_board_id DESC";
+    final String SQL_SELECT_BY_ID = BASE_SELECT + ", (SELECT COUNT(*) FROM board_likes bl WHERE bl.base_board_id = b.base_board_id AND bl.user_id = ?) AS is_liked "
+            + "WHERE b.base_board_id = ?";
+            
+    final String SQL_SELECT_BY_USER_ID = BASE_SELECT + "WHERE b.user_id = ? ORDER BY b.base_board_id DESC";
     
     final String SQL_UPDATE = "UPDATE base_board SET title = ?, content = ? WHERE base_board_id = ?";
     final String SQL_DELETE = "DELETE FROM base_board WHERE base_board_id = ?";
@@ -39,22 +41,18 @@ public class BoardDAO {
     final String SQL_ADD_LIKE = "INSERT INTO board_likes (user_id, base_board_id) VALUES (?, ?)";
     final String SQL_REMOVE_LIKE = "DELETE FROM board_likes WHERE user_id = ? AND base_board_id = ?";
 
-    // --- 메서드 구현 (지역 변수 사용) ---
-
     public int insertBoard(BoardDTO dto) {
         Connection con = null; PreparedStatement pstmt = null;
-        int result = 0;
         try {
             con = JdbcConnectUtil.getConnection();
             pstmt = con.prepareStatement(SQL_INSERT);
             pstmt.setLong(1, dto.getUserId());
-            pstmt.setString(2, dto.getCategory());
+            pstmt.setString(2, dto.getCategory()); // 예: "NOTICE"
             pstmt.setString(3, dto.getTitle());
             pstmt.setString(4, dto.getContent());
-            result = pstmt.executeUpdate();
-        } catch (SQLException e) { e.printStackTrace(); } 
-        finally { JdbcConnectUtil.close(con, pstmt); }
-        return result;
+            return pstmt.executeUpdate();
+        } catch (SQLException e) { e.printStackTrace(); return 0; } 
+        finally { JdbcConnectUtil.close(pstmt, null); JdbcConnectUtil.close(con); }
     }
 
     public int incrementViewCount(long boardId) {
@@ -65,7 +63,7 @@ public class BoardDAO {
             pstmt.setLong(1, boardId);
             return pstmt.executeUpdate();
         } catch (SQLException e) { e.printStackTrace(); return 0; } 
-        finally { JdbcConnectUtil.close(con, pstmt); }
+        finally { JdbcConnectUtil.close(pstmt, null); JdbcConnectUtil.close(con); }
     }
 
     public ArrayList<BoardDTO> selectAllBoards(int offset, int limit) {
@@ -79,23 +77,23 @@ public class BoardDAO {
             rs = pstmt.executeQuery();
             while (rs.next()) list.add(mapResultSetToBoard(rs));
         } catch (SQLException e) { e.printStackTrace(); } 
-        finally { JdbcConnectUtil.close(con, pstmt, rs); }
+        finally { JdbcConnectUtil.close(pstmt, rs); JdbcConnectUtil.close(con); }
         return list;
     }
 
-    public ArrayList<BoardDTO> selectBoardsByCategory(String category, int offset, int limit) {
+    public ArrayList<BoardDTO> selectBoardsByCategory(String categoryCode, int offset, int limit) {
         ArrayList<BoardDTO> list = new ArrayList<>();
         Connection con = null; PreparedStatement pstmt = null; ResultSet rs = null;
         try {
             con = JdbcConnectUtil.getConnection();
             pstmt = con.prepareStatement(SQL_SELECT_BY_CATEGORY);
-            pstmt.setString(1, category);
+            pstmt.setString(1, categoryCode);
             pstmt.setInt(2, offset);
             pstmt.setInt(3, limit);
             rs = pstmt.executeQuery();
             while (rs.next()) list.add(mapResultSetToBoard(rs));
         } catch (SQLException e) { e.printStackTrace(); } 
-        finally { JdbcConnectUtil.close(con, pstmt, rs); }
+        finally { JdbcConnectUtil.close(pstmt, rs); JdbcConnectUtil.close(con); }
         return list;
     }
 
@@ -110,7 +108,7 @@ public class BoardDAO {
             rs = pstmt.executeQuery();
             if (rs.next()) dto = mapResultSetToBoard(rs);
         } catch (SQLException e) { e.printStackTrace(); } 
-        finally { JdbcConnectUtil.close(con, pstmt, rs); }
+        finally { JdbcConnectUtil.close(pstmt, rs); JdbcConnectUtil.close(con); }
         return dto;
     }
 
@@ -124,7 +122,7 @@ public class BoardDAO {
             rs = pstmt.executeQuery();
             while (rs.next()) list.add(mapResultSetToBoard(rs));
         } catch (SQLException e) { e.printStackTrace(); } 
-        finally { JdbcConnectUtil.close(con, pstmt, rs); }
+        finally { JdbcConnectUtil.close(pstmt, rs); JdbcConnectUtil.close(con); }
         return list;
     }
 
@@ -138,7 +136,7 @@ public class BoardDAO {
             pstmt.setLong(3, dto.getBaseBoardId());
             return pstmt.executeUpdate();
         } catch (SQLException e) { e.printStackTrace(); return 0; } 
-        finally { JdbcConnectUtil.close(con, pstmt); }
+        finally { JdbcConnectUtil.close(pstmt, null); JdbcConnectUtil.close(con); }
     }
 
     public int deleteBoard(long boardId) {
@@ -149,18 +147,15 @@ public class BoardDAO {
             pstmt.setLong(1, boardId);
             return pstmt.executeUpdate();
         } catch (SQLException e) { e.printStackTrace(); return 0; } 
-        finally { JdbcConnectUtil.close(con, pstmt); }
+        finally { JdbcConnectUtil.close(pstmt, null); JdbcConnectUtil.close(con); }
     }
 
-    // [핵심 수정] 트랜잭션 처리 (지역변수 사용 + Null 체크)
     public int toggleLike(long userId, long boardId) {
         int status = -1;
         Connection con = null; PreparedStatement pstmt = null; ResultSet rs = null;
-        
         try {
             con = JdbcConnectUtil.getConnection();
-            if(con == null) return -1; // 연결 실패 시 종료
-
+            if(con == null) return -1;
             con.setAutoCommit(false); 
 
             pstmt = con.prepareStatement(SQL_CHECK_LIKE);
@@ -168,7 +163,7 @@ public class BoardDAO {
             pstmt.setLong(2, boardId);
             rs = pstmt.executeQuery();
             boolean exists = rs.next();
-            JdbcConnectUtil.close(null, pstmt, rs); 
+            JdbcConnectUtil.close(pstmt, rs); 
 
             if (exists) {
                 pstmt = con.prepareStatement(SQL_REMOVE_LIKE);
@@ -188,17 +183,21 @@ public class BoardDAO {
             e.printStackTrace();
             try { if (con != null) con.rollback(); } catch (SQLException ex) {}
         } finally {
-            try { if (con != null) con.setAutoCommit(true); } catch (SQLException e) {}
-            JdbcConnectUtil.close(con, pstmt, rs);
+            JdbcConnectUtil.close(pstmt, null); 
+            JdbcConnectUtil.close(con); 
         }
         return status;
     }
 
+    // [결과 매핑] JOIN된 카테고리 정보도 DTO에 담습니다.
     private BoardDTO mapResultSetToBoard(ResultSet rs) throws SQLException {
         BoardDTO dto = new BoardDTO();
         dto.setBaseBoardId(rs.getLong("base_board_id"));
         dto.setUserId(rs.getLong("user_id"));
-        dto.setCategory(rs.getString("category"));
+        
+        dto.setCategory(rs.getString("cat_code"));     // ex: NOTICE
+        dto.setCategoryName(rs.getString("cat_name")); // ex: 공지사항
+        
         dto.setTitle(rs.getString("title"));
         dto.setContent(rs.getString("content"));
         dto.setCreatedAt(rs.getObject("created_at", LocalDateTime.class));
@@ -206,7 +205,12 @@ public class BoardDAO {
         dto.setWriterName(rs.getString("writer_name"));
         dto.setViewCount(rs.getInt("view_count"));
         dto.setLikeCount(rs.getInt("like_count"));
-        dto.setLiked(rs.getInt("is_liked") > 0); 
+        
+        try {
+            dto.setLiked(rs.getInt("is_liked") > 0); 
+        } catch (SQLException e) {
+            dto.setLiked(false);
+        }
         return dto;
     }
 }

@@ -13,7 +13,7 @@
 </head>
 <body>
 
-    <%@ include file="header.jsp" %> 
+    <%@ include file="../header.jsp" %> 
 
     <main class="container">
         <div class="board-layout">
@@ -29,7 +29,7 @@
         </div>
     </main>
 
-    <%@ include file="footer.jsp" %>
+    <%@ include file="../footer.jsp" %>
 
     <script>
         const contextPath = '${pageContext.request.contextPath}';

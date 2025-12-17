@@ -11,16 +11,19 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-import com.example.minecraft.dao.BoardDAO;
 import com.example.minecraft.dto.BoardDTO;
+import com.example.minecraft.service.BoardService;
 
 @WebServlet("/board/*")
 public class BoardServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private BoardDAO boardDAO;
+    
+    private BoardService boardService;
 
-    public BoardServlet() {
-        boardDAO = new BoardDAO();
+    // 초기화: 서비스 객체 생성
+    @Override
+    public void init() throws ServletException {
+        this.boardService = new BoardService();
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
@@ -47,10 +50,7 @@ public class BoardServlet extends HttpServlet {
                 case "/save": saveBoard(request, response); break;
                 case "/delete": deleteBoard(request, response); break;
                 case "/like": toggleLike(request, response); break;
-                
-                // 마이페이지 내 글 목록
                 case "/myList": listMyBoard(request, response); break; 
-                
                 default: response.sendError(HttpServletResponse.SC_NOT_FOUND);
             }
         } catch (Exception e) {
@@ -73,25 +73,18 @@ public class BoardServlet extends HttpServlet {
         
         if (category == null || category.trim().isEmpty()) category = "ALL";
 
-        int limit = 10;
-        int offset = (page - 1) * limit;
-
-        List<BoardDTO> boardList;
-        if ("ALL".equals(category)) {
-            boardList = boardDAO.selectAllBoards(offset, limit);
-        } else {
-            boardList = boardDAO.selectBoardsByCategory(category, offset, limit);
-        }
+        // Service 호출
+        List<BoardDTO> boardList = boardService.getBoardListService(category, page);
         
         request.setAttribute("boardList", boardList);
         request.setAttribute("currentPage", page);
         request.setAttribute("currentCategory", category); 
         request.setAttribute("categoryName", getCategoryName(category)); 
         
-        request.getRequestDispatcher("/WEB-INF/views/boardList.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/board/boardList.jsp").forward(request, response);
     }
 
-    // [추가] 내 글 목록 조회 (mypageList.jsp 사용)
+    // [추가] 내 글 목록 조회
     private void listMyBoard(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         
@@ -101,14 +94,13 @@ public class BoardServlet extends HttpServlet {
             return;
         }
 
-        // DAO 호출
-        List<BoardDTO> myBoardList = boardDAO.selectBoardsByUserId(userId);
+        // Service 호출
+        List<BoardDTO> myBoardList = boardService.getMyBoardListService(userId);
         
-        // mypageList.jsp용 속성 설정
         request.setAttribute("dataList", myBoardList); 
         request.setAttribute("currentType", "posts"); 
         
-        request.getRequestDispatcher("/WEB-INF/views/mypageList.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/mypage/mypageList.jsp").forward(request, response);
     }
 
     // 2. 상세 조회
@@ -121,11 +113,11 @@ public class BoardServlet extends HttpServlet {
             long boardId = Long.parseLong(idParam);
             long currentUserId = getLoginUserId(request);
             
-            boardDAO.incrementViewCount(boardId);
-            BoardDTO board = boardDAO.selectBoardById(boardId, currentUserId);
+            // Service 호출 (조회수 증가 포함)
+            BoardDTO board = boardService.getBoardViewService(boardId, currentUserId);
             request.setAttribute("board", board);
         }
-        request.getRequestDispatcher("/WEB-INF/views/boardPost.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/board/boardPost.jsp").forward(request, response);
     }
 
     // 3. 저장/수정
@@ -136,7 +128,7 @@ public class BoardServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
         
         long userId = getLoginUserId(request);
-        String userRole = getLoginUserRole(request); // 권한 확인
+        String userRole = getLoginUserRole(request);
 
         if (userId == 0) {
             out.print("{\"status\":\"fail\", \"message\":\"로그인이 필요합니다.\"}");
@@ -153,7 +145,6 @@ public class BoardServlet extends HttpServlet {
              return;
         }
 
-        // [수정] 공지사항(NOTICE) 작성 권한 체크: 관리자(ADMIN)가 아니면 차단
         if ("NOTICE".equals(category) && !"ADMIN".equals(userRole)) {
             out.print("{\"status\":\"fail\", \"message\":\"공지사항은 관리자만 작성할 수 있습니다.\"}");
             return;
@@ -168,12 +159,11 @@ public class BoardServlet extends HttpServlet {
         boolean isUpdate = (idParam != null && !idParam.isEmpty());
         
         if (isUpdate) {
-            long boardId = Long.parseLong(idParam);
-            dto.setBaseBoardId(boardId);
-            boardDAO.updateBoard(dto);
-        } else {
-            boardDAO.insertBoard(dto);
+            dto.setBaseBoardId(Long.parseLong(idParam));
         }
+
+        // Service 호출
+        boardService.saveBoardService(dto, isUpdate);
 
         out.print("{\"status\":\"success\", \"message\":\"저장되었습니다.\"}");
     }
@@ -194,7 +184,9 @@ public class BoardServlet extends HttpServlet {
         }
 
         long boardId = Long.parseLong(request.getParameter("id"));
-        BoardDTO board = boardDAO.selectBoardById(boardId, userId);
+        
+        // 권한 확인을 위해 게시글 정보 먼저 가져오기 (Service 호출)
+        BoardDTO board = boardService.getBoardByIdService(boardId, userId);
         
         if (board == null) {
             out.print("{\"status\":\"fail\", \"message\":\"게시글이 없습니다.\"}");
@@ -202,7 +194,8 @@ public class BoardServlet extends HttpServlet {
         }
 
         if (board.getUserId() == userId || "ADMIN".equals(userRole)) {
-            boardDAO.deleteBoard(boardId);
+            // Service 호출 (삭제)
+            boardService.deleteBoardService(boardId);
             out.print("{\"status\":\"success\"}");
         } else {
             out.print("{\"status\":\"fail\", \"message\":\"삭제 권한이 없습니다.\"}");
@@ -222,9 +215,11 @@ public class BoardServlet extends HttpServlet {
         }
         
         long boardId = Long.parseLong(request.getParameter("id"));
-        int result = boardDAO.toggleLike(userId, boardId);
         
-        out.print(String.format("{\"status\":\"success\", \"liked\": %b}", (result == 1)));
+        // Service 호출
+        boolean liked = boardService.toggleLikeService(userId, boardId);
+        
+        out.print(String.format("{\"status\":\"success\", \"liked\": %b}", liked));
     }
 
     private long getLoginUserId(HttpServletRequest request) {

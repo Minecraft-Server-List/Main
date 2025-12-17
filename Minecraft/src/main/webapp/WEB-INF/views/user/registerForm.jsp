@@ -8,7 +8,7 @@
 </head>
 <body>
 
-<%@ include file = "header.jsp" %>
+<%@ include file = "../header.jsp" %>
 
 <main class="form-page-main">
     <div class="container">
@@ -16,8 +16,8 @@
             <h2>회원가입</h2>
             <p style="text-align: center; margin-bottom: 20px;">사용할 이름, 이메일, 비밀번호를 입력하세요.</p>
         
-            <%-- [유지] 가입 처리(DB 저장)는 서블릿(.do)이 담당 --%>
-            <form action="register.do" method="post">
+            <%-- [변경] 통합된 UserServlet 경로로 수정 --%>
+            <form action="${pageContext.request.contextPath}/user/register" method="post">
                 <div class="user-form-group">
                     <label for="name">이름</label>
                     <input type="text" id="name" name="name" required>
@@ -39,7 +39,7 @@
     </div>
 </main>
 
-<%@ include file="footer.jsp" %>
+<%@ include file="../footer.jsp" %>
 
 </body>
 </html>

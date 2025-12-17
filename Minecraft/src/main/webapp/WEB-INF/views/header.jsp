@@ -6,14 +6,14 @@
     <nav class="container main-nav-new">
 
         <div class="nav-left-new">
-            <a href="${pageContext.request.contextPath}/index" class="logo-new">
+            <a href="${pageContext.request.contextPath}/index.jsp" class="logo-new">
                 <img src="${pageContext.request.contextPath}/static/images/logo_icon.png" alt="CraftConnect Logo" class="logo-icon">
                 CraftConnect
             </a>
 
             <ul class="nav-links-new">
                 <li><a href="${pageContext.request.contextPath}/serverList">Servers</a></li>
-                <li><a href="#">Community</a></li>
+                <li><a href="board.page">Community</a></li>
                 <li><a href="#">News</a></li>
                 <li><a href="#">Support</a></li>
             </ul>
@@ -41,7 +41,7 @@
                 </c:if>
 
                 <%-- 유저 프로필 및 로그아웃 --%>
-                <a href="${pageContext.request.contextPath}/searchUser.do?email=${sessionScope.userEmail}" class="user-profile-new" title="My Page">
+                <a href="mypage.page" class="user-profile-new" title="My Page">
                     <img src="https://placehold.co/36x36/9a9a9a/ffffff?text=${fn:toUpperCase(fn:substring(sessionScope.userName, 0, 1))}" alt="User Profile">
                 </a>
 
@@ -53,7 +53,7 @@
 
 
 <%-- 1. 모달 HTML 구조 포함 --%>
-<%@ include file="/WEB-INF/views/login-modal.jsp" %>
+<%@ include file="/WEB-INF/views/user/login-modal.jsp" %>
 
 <%-- 2. 모달 제어 JavaScript 로직 포함 --%>
 <script>

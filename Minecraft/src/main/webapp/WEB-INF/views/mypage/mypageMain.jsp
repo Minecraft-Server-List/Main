@@ -10,7 +10,7 @@
 </head>
 <body>
 
-    <%@ include file="header.jsp" %>  <main class="form-page-main">
+    <%@ include file="../header.jsp" %>  <main class="form-page-main">
         <div class="container">
             
             <%@ include file="mypageHeader.jsp" %>
@@ -23,5 +23,5 @@
         </div>
     </main>
 
-    <%@ include file="footer.jsp" %>  </body>
+    <%@ include file="../footer.jsp" %>  </body>
 </html>

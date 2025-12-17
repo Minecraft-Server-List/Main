@@ -27,13 +27,13 @@
             친구목록
         </a>
         
-        <%-- 탭 3: 본인 작성 게시글 목록 (BoardServlet 연결) --%>
+        <%-- 탭 3: 본인 작성 게시글 목록 --%>
         <a href="#" data-tab="myPostList" onclick="loadMypageContent('myPostList', this); return false;"
            class="<%= "myPostList".equals(activeTab) ? "active" : "" %>">
             작성 게시글 목록
         </a>
         
-        <%-- 탭 4: 본인 작성 코멘트 목록 (ComentServlet 연결) --%>
+        <%-- 탭 4: 본인 작성 코멘트 목록 --%>
         <a href="#" data-tab="myCommentList" onclick="loadMypageContent('myCommentList', this); return false;"
            class="<%= "myCommentList".equals(activeTab) ? "active" : "" %>">
             작성 코멘트 목록
@@ -63,18 +63,19 @@ function loadMypageContent(tabName, clickedElement) {
     const userEmail = '<%= session.getAttribute("userEmail") %>'; 
 
     if (tabName === 'edit') {
-        // 개인정보 수정 (기존)
-        contentUrl = contextPath + '/searchUser.do?email=' + userEmail;
+        // [수정] 개인정보 수정: searchUser.do -> /user/search
+        contentUrl = contextPath + '/user/search?email=' + userEmail;
+        
     } else if (tabName === 'boardCreate') {
-        // 게시판 생성 (기존)
+        // 친구목록 (기존 경로 유지 or 추후 통합 필요)
         contentUrl = contextPath + '/boardCreate.do';
         
     } else if (tabName === 'myPostList') {
-        // [수정] 작성 게시글 목록 -> BoardServlet의 /myList 경로 호출
+        // 작성 게시글 목록
         contentUrl = contextPath + '/board/myList';
         
     } else if (tabName === 'myCommentList') {
-        // [수정] 작성 코멘트 목록 -> ComentServlet의 /myList 경로 호출
+        // 작성 코멘트 목록
         contentUrl = contextPath + '/comment/myList';
         
     } else {
@@ -103,7 +104,8 @@ function loadMypageContent(tabName, clickedElement) {
         // 4. 받아온 HTML을 본문 영역에 삽입
         contentArea.innerHTML = html;
         
-        // 5. 현재 탭 상태를 서버 세션에 저장 (새로고침 시 유지용)
+        // 5. 현재 탭 상태를 서버 세션에 저장
+        // (참고: updateTabSession.do 서블릿이 존재해야 정상 작동합니다)
         fetch(contextPath + '/updateTabSession.do?tab=' + tabName);
     })
     .catch(error => {

@@ -10,16 +10,18 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-import com.example.minecraft.dao.ComentDAO;
 import com.example.minecraft.dto.ComentDTO;
+import com.example.minecraft.service.ComentService;
 
 @WebServlet("/comment/*")
 public class ComentServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private ComentDAO comentDAO;
+    
+    private ComentService comentService;
 
-    public ComentServlet() {
-        comentDAO = new ComentDAO();
+    @Override
+    public void init() throws ServletException {
+        this.comentService = new ComentService();
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
@@ -55,9 +57,8 @@ public class ComentServlet extends HttpServlet {
                     toggleLike(request, response); 
                     break;
                 
-                // [추가] 내 댓글 목록 (HTML 반환)
+                // 내 댓글 목록 (HTML 반환)
                 case "/myList": 
-                    // JSP 포워딩이므로 ContentType 설정 안 함
                     listMyComments(request, response); 
                     break;
                     
@@ -70,7 +71,6 @@ public class ComentServlet extends HttpServlet {
         }
     }
 
-    // [추가] 내 댓글 목록 조회
     private void listMyComments(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         
@@ -80,13 +80,13 @@ public class ComentServlet extends HttpServlet {
             return;
         }
 
-        List<ComentDTO> myCommentList = comentDAO.selectComentsByUserId(userId);
+        // Service 호출
+        List<ComentDTO> myCommentList = comentService.getMyCommentListService(userId);
         
-        // mypageList.jsp 재활용을 위한 속성 설정
         request.setAttribute("dataList", myCommentList); 
         request.setAttribute("currentType", "comments"); 
         
-        request.getRequestDispatcher("/WEB-INF/views/mypageList.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/mypage/mypageList.jsp").forward(request, response);
     }
 
     private void listComments(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -94,7 +94,8 @@ public class ComentServlet extends HttpServlet {
         long currentUserId = getLoginUserId(request);
         String userRole = getLoginUserRole(request);
 
-        List<ComentDTO> list = comentDAO.selectComentsByBoardId(boardId, currentUserId);
+        // Service 호출
+        List<ComentDTO> list = comentService.getCommentListService(boardId, currentUserId);
         
         StringBuilder json = new StringBuilder("[");
         for(int i=0; i<list.size(); i++) {
@@ -130,7 +131,8 @@ public class ComentServlet extends HttpServlet {
         dto.setBaseBoardId(baseBoardId);
         dto.setContent(content);
 
-        comentDAO.insertComent(dto);
+        // Service 호출
+        comentService.addCommentService(dto);
         response.getWriter().print("{\"status\":\"success\"}");
     }
     
@@ -141,7 +143,9 @@ public class ComentServlet extends HttpServlet {
             return;
         }
         long cid = Long.parseLong(request.getParameter("coment_id"));
-        comentDAO.deleteComent(cid);
+        
+        // Service 호출
+        comentService.deleteCommentService(cid);
         response.getWriter().print("{\"status\":\"success\"}");
     }
 
@@ -152,8 +156,11 @@ public class ComentServlet extends HttpServlet {
             return;
         }
         long cid = Long.parseLong(request.getParameter("id"));
-        int result = comentDAO.toggleLike(userId, cid);
-        response.getWriter().print(String.format("{\"status\":\"success\", \"liked\": %b}", (result == 1)));
+        
+        // Service 호출
+        boolean liked = comentService.toggleLikeService(userId, cid);
+        
+        response.getWriter().print(String.format("{\"status\":\"success\", \"liked\": %b}", liked));
     }
 
     private long getLoginUserId(HttpServletRequest request) {
