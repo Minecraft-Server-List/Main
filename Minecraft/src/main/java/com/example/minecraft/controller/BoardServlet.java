@@ -104,18 +104,36 @@ public class BoardServlet extends HttpServlet {
     }
 
     // 2. 상세 조회
+ // [BoardServlet.java] viewBoard 메서드 수정
     private void viewBoard(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         
         String idParam = request.getParameter("id");
         
+        // [디버깅] 콘솔에 ID가 찍히는지 확인하세요!
+        System.out.println(">>> 상세보기 요청 들어옴. ID 파라미터 값: " + idParam);
+
         if (idParam != null && !idParam.isEmpty()) {
-            long boardId = Long.parseLong(idParam);
-            long currentUserId = getLoginUserId(request);
-            
-            // Service 호출 (조회수 증가 포함)
-            BoardDTO board = boardService.getBoardViewService(boardId, currentUserId);
-            request.setAttribute("board", board);
+            try {
+                long boardId = Long.parseLong(idParam);
+                long currentUserId = getLoginUserId(request);
+                
+                BoardDTO board = boardService.getBoardViewService(boardId, currentUserId);
+                
+                // [디버깅] DB에서 가져온 결과 확인
+                if (board == null) {
+                    System.out.println(">>> DB 조회 결과: NULL (DAO 에러 발생 가능성 있음)");
+                } else {
+                    System.out.println(">>> DB 조회 성공: " + board.getTitle());
+                }
+
+                request.setAttribute("board", board);
+            } catch (Exception e) {
+                System.out.println(">>> 에러 발생: ");
+                e.printStackTrace(); // 콘솔에 빨간 에러 메시지를 꼭 확인해야 합니다.
+            }
+        } else {
+            System.out.println(">>> ID 파라미터가 널(Null)이거나 비어있습니다.");
         }
         request.getRequestDispatcher("/WEB-INF/views/board/boardPost.jsp").forward(request, response);
     }

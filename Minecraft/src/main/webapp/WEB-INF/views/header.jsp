@@ -35,7 +35,7 @@
 
                 <%-- 관리자 메뉴 추가 (Admin Role 체크) --%>
                 <c:if test="${sessionScope.userRole == 'ADMIN'}">
-                    <a href="${pageContext.request.contextPath}/userList.do" class="btn-header-text admin-link" title="[관리자 메뉴]">
+                    <a href="${pageContext.request.contextPath}/user/list" class="btn-header-text admin-link" title="[관리자 메뉴]">
                         Admin
                     </a>
                 </c:if>
@@ -45,7 +45,7 @@
                     <img src="https://placehold.co/36x36/9a9a9a/ffffff?text=${fn:toUpperCase(fn:substring(sessionScope.userName, 0, 1))}" alt="User Profile">
                 </a>
 
-                <a href="${pageContext.request.contextPath}/logout.do" class="btn-header-text">Logout</a>
+                <a href="${pageContext.request.contextPath}/user/logout" class="btn-header-text">Logout</a>
             </c:if>
         </div>
     </nav>

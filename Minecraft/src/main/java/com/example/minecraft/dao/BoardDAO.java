@@ -12,12 +12,12 @@ import com.example.minecraft.dto.BoardDTO;
 
 public class BoardDAO {
 
-    // [INSERT 변경] 카테고리 코드(문자열)를 입력받아 서브쿼리로 ID를 조회 후 삽입
+    // [INSERT] 
     final String SQL_INSERT = "INSERT INTO base_board (user_id, board_category_id, title, content) VALUES (?, (SELECT board_category_id FROM board_category WHERE code = ?), ?, ?)";
     
     final String SQL_INCREASE_VIEW = "UPDATE base_board SET view_count = view_count + 1 WHERE base_board_id = ?";
 
-    // [SELECT 공통] board_category(bc)와 조인하여 code와 name을 조회
+    // [SELECT 기본 골격]
     final String BASE_SELECT = "SELECT b.*, u.name AS writer_name, bc.code AS cat_code, bc.name AS cat_name, "
             + "(SELECT COUNT(*) FROM board_likes bl WHERE bl.base_board_id = b.base_board_id) AS like_count "
             + "FROM base_board b "
@@ -26,10 +26,15 @@ public class BoardDAO {
 
     final String SQL_SELECT_PAGING = BASE_SELECT + "ORDER BY b.base_board_id DESC LIMIT ?, ?";
     
-    // [카테고리별 조회] bc.code를 기준으로 필터링
     final String SQL_SELECT_BY_CATEGORY = BASE_SELECT + "WHERE bc.code = ? ORDER BY b.base_board_id DESC LIMIT ?, ?";
     
-    final String SQL_SELECT_BY_ID = BASE_SELECT + ", (SELECT COUNT(*) FROM board_likes bl WHERE bl.base_board_id = b.base_board_id AND bl.user_id = ?) AS is_liked "
+    // [수정됨] 상세 조회용 SQL (is_liked 서브쿼리를 SELECT 절 안에 포함)
+    final String SQL_SELECT_BY_ID = "SELECT b.*, u.name AS writer_name, bc.code AS cat_code, bc.name AS cat_name, "
+            + "(SELECT COUNT(*) FROM board_likes bl WHERE bl.base_board_id = b.base_board_id) AS like_count, "
+            + "(SELECT COUNT(*) FROM board_likes bl WHERE bl.base_board_id = b.base_board_id AND bl.user_id = ?) AS is_liked "
+            + "FROM base_board b "
+            + "JOIN users u ON b.user_id = u.user_id "
+            + "JOIN board_category bc ON b.board_category_id = bc.board_category_id "
             + "WHERE b.base_board_id = ?";
             
     final String SQL_SELECT_BY_USER_ID = BASE_SELECT + "WHERE b.user_id = ? ORDER BY b.base_board_id DESC";
@@ -47,7 +52,7 @@ public class BoardDAO {
             con = JdbcConnectUtil.getConnection();
             pstmt = con.prepareStatement(SQL_INSERT);
             pstmt.setLong(1, dto.getUserId());
-            pstmt.setString(2, dto.getCategory()); // 예: "NOTICE"
+            pstmt.setString(2, dto.getCategory()); 
             pstmt.setString(3, dto.getTitle());
             pstmt.setString(4, dto.getContent());
             return pstmt.executeUpdate();
@@ -103,6 +108,7 @@ public class BoardDAO {
         try {
             con = JdbcConnectUtil.getConnection();
             pstmt = con.prepareStatement(SQL_SELECT_BY_ID);
+            // 순서 주의: 첫번째 ?는 is_liked 확인용 user_id, 두번째 ?는 board_id
             pstmt.setLong(1, currentUserId);
             pstmt.setLong(2, boardId);
             rs = pstmt.executeQuery();
@@ -189,28 +195,40 @@ public class BoardDAO {
         return status;
     }
 
-    // [결과 매핑] JOIN된 카테고리 정보도 DTO에 담습니다.
+ // [BoardDAO.java 맨 아래 부분 교체]
     private BoardDTO mapResultSetToBoard(ResultSet rs) throws SQLException {
         BoardDTO dto = new BoardDTO();
         dto.setBaseBoardId(rs.getLong("base_board_id"));
         dto.setUserId(rs.getLong("user_id"));
         
-        dto.setCategory(rs.getString("cat_code"));     // ex: NOTICE
-        dto.setCategoryName(rs.getString("cat_name")); // ex: 공지사항
+        // JOIN된 컬럼들 (SQL 별칭 주의)
+        dto.setCategory(rs.getString("cat_code"));     
+        dto.setCategoryName(rs.getString("cat_name")); 
+        dto.setWriterName(rs.getString("writer_name"));
         
         dto.setTitle(rs.getString("title"));
         dto.setContent(rs.getString("content"));
-        dto.setCreatedAt(rs.getObject("created_at", LocalDateTime.class));
-        dto.setUpdatedAt(rs.getObject("updated_at", LocalDateTime.class));
-        dto.setWriterName(rs.getString("writer_name"));
         dto.setViewCount(rs.getInt("view_count"));
         dto.setLikeCount(rs.getInt("like_count"));
+
+        // [수정 핵심] LocalDateTime 변환 안전하게 변경 (오류 발생 차단)
+        java.sql.Timestamp createdTs = rs.getTimestamp("created_at");
+        if (createdTs != null) {
+            dto.setCreatedAt(createdTs.toLocalDateTime());
+        }
+
+        java.sql.Timestamp updatedTs = rs.getTimestamp("updated_at");
+        if (updatedTs != null) {
+            dto.setUpdatedAt(updatedTs.toLocalDateTime());
+        }
         
+        // 좋아요 여부
         try {
             dto.setLiked(rs.getInt("is_liked") > 0); 
         } catch (SQLException e) {
             dto.setLiked(false);
         }
+        
         return dto;
     }
 }
