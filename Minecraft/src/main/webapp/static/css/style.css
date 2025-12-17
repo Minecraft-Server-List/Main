@@ -744,3 +744,279 @@ input[type="password"].modal-input {
 .password-icon.hidden {
     display: none;
 }
+    /* ========================================================= */
+/* 5. Board Specific Styles (게시판 레이아웃 & 목록) */
+/* ========================================================= */
+
+/* 게시판 전체 레이아웃 (좌측 사이드바 + 우측 본문) */
+.board-layout {
+    display: flex;
+    gap: 30px;
+    padding: 40px 0;
+    min-height: 800px;
+    align-items: flex-start;
+}
+
+/* 좌측 사이드바 영역 */
+.board-sidebar {
+    width: 200px;
+    flex-shrink: 0;
+}
+
+/* 사이드바 내 정보 박스 */
+.cafe-info-box {
+    border: 1px solid #e5e5e5;
+    padding: 20px 15px;
+    margin-bottom: 20px;
+    text-align: center;
+    background: #fff;
+    border-radius: 12px;
+}
+
+/* 게시판 작성 버튼 (녹색) */
+.btn-write {
+    display: block;
+    width: 100%;
+    background-color: #10b981;
+    color: #fff;
+    padding: 12px 0;
+    border-radius: 20px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 14px;
+    margin-top: 10px;
+    transition: background-color 0.2s;
+    border: none;
+    cursor: pointer;
+}
+.btn-write:hover { background-color: #059669; }
+
+/* 사이드바 메뉴 리스트 */
+.menu-header {
+    font-size: 13px;
+    color: #94a3b8;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    padding-left: 5px;
+}
+
+.sidebar-menu li a {
+    display: block;
+    padding: 12px 10px;
+    color: #475569;
+    font-size: 14px;
+    border-bottom: 1px solid #f1f5f9;
+    transition: all 0.2s;
+}
+.sidebar-menu li a:hover {
+    background-color: #f8fafc;
+    color: #10b981;
+}
+.sidebar-menu li.active a {
+    color: #10b981;
+    font-weight: 700;
+    border-left: 3px solid #10b981;
+    padding-left: 7px;
+}
+
+/* 게시판 메인 컨텐츠 영역 */
+.board-main {
+    flex-grow: 1;
+}
+
+.board-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #0f172a;
+    padding-bottom: 10px;
+}
+
+.board-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+/* 게시판 테이블 스타일 */
+.board-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+.board-table th {
+    padding: 15px 0;
+    border-bottom: 1px solid #e2e8f0;
+    color: #334155;
+    font-weight: 600;
+    background-color: #f8fafc;
+}
+.board-table td {
+    padding: 15px 10px;
+    border-bottom: 1px solid #f1f5f9;
+    color: #475569;
+    text-align: center;
+}
+.board-table td.title-cell {
+    text-align: left;
+    padding-left: 20px;
+}
+.board-table td.title-cell a {
+    font-weight: 500;
+}
+.board-table td.title-cell a:hover {
+    text-decoration: underline;
+    color: #10b981;
+}
+
+/* 페이지네이션 */
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+    gap: 8px;
+}
+.pagination a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 32px;
+    border: 1px solid #e2e8f0;
+    color: #64748b;
+    font-size: 14px;
+    background: #fff;
+    border-radius: 4px;
+}
+.pagination a.active {
+    background-color: #10b981;
+    color: #fff;
+    border-color: #10b981;
+    font-weight: bold;
+}
+
+/* ========================================================= */
+/* 6. Board View & Write Styles (상세보기 & 글쓰기) */
+/* ========================================================= */
+
+.write-table {
+    width: 100%;
+    border-top: 2px solid #0f172a;
+    border-collapse: collapse;
+}
+.write-table th {
+    background-color: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 15px;
+    font-size: 14px;
+    font-weight: 600;
+    width: 150px;
+}
+.write-table td {
+    border-bottom: 1px solid #e2e8f0;
+    padding: 10px 15px;
+}
+.input-select, .input-text, .input-textarea {
+    width: 100%;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    padding: 10px;
+    outline: none;
+}
+.input-textarea {
+    height: 400px;
+    resize: vertical;
+}
+.btn-area {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+/* ========================================================= */
+/* 7. Comment System Styles (댓글 시스템) */
+/* ========================================================= */
+
+.comment-wrap {
+    background: #f8fafc;
+    padding: 24px;
+    border-top: 1px solid #e2e8f0;
+    margin-top: 40px;
+    border-radius: 12px;
+}
+.cmt-item {
+    border-bottom: 1px solid #e2e8f0;
+    padding: 16px 0;
+}
+.cmt-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    margin-bottom: 8px;
+}
+.cmt-writer { font-weight: 700; color: #1e293b; }
+.cmt-date { color: #94a3b8; margin-left: 8px; }
+.cmt-content { font-size: 14px; color: #475569; white-space: pre-wrap; }
+.comment-input-area {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+}
+.comment-input-area textarea {
+    flex-grow: 1;
+    height: 64px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 12px;
+    resize: none;
+}
+.btn-cmt-like.liked { color: #ef4444; font-weight: bold; }
+
+/* ========================================================= */
+/* 8. MyPage Styles (마이페이지 탭 전환) */
+/* ========================================================= */
+
+.mypage-title {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 40px 10px 40px;
+}
+.mypage-nav-container {
+    background-color: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+    margin-bottom: 20px;
+}
+.mypage-nav-links {
+    display: flex;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 40px;
+}
+.mypage-nav-links a {
+    padding: 16px 24px;
+    font-size: 15px;
+    color: #64748b;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+}
+.mypage-nav-links a.active {
+    color: #10b981;
+    border-bottom: 3px solid #10b981;
+    font-weight: 700;
+}
+.mypage-content-area {
+    min-height: 400px;
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    margin-bottom: 40px;
+}
+.loading-spinner {
+    display: none;
+    text-align: center;
+    padding: 50px;
+    color: #94a3b8;
+}
