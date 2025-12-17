@@ -16,7 +16,7 @@
     <h2 style="margin-bottom: 24px;">개인 정보 수정</h2>
     <hr style="margin-bottom: 24px;">
     
-    <form action="updateUser.do" method="post">
+    <form action="${pageContext.request.contextPath}/user/update" method="post">
         <input type="hidden" name="userId" value="<%= userToEdit.getUserId() %>">
         
          <div class="user-form-group">

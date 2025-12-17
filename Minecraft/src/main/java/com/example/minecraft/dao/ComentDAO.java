@@ -11,22 +11,16 @@ import com.example.minecraft.util.JdbcConnectUtil;
 import com.example.minecraft.dto.ComentDTO;
 
 public class ComentDAO {
-    // 🚨 전역 변수 삭제 완료
 
     final String SQL_INSERT = "INSERT INTO coment (user_id, base_board_id, content) VALUES (?, ?, ?)";
-    final String SQL_SELECT_BY_BOARD = 
-            "SELECT c.*, u.name AS writer_name, (SELECT COUNT(*) FROM comment_likes cl WHERE cl.coment_id = c.coment_id) AS like_count, (SELECT COUNT(*) FROM comment_likes cl WHERE cl.coment_id = c.coment_id AND cl.user_id = ?) AS is_liked FROM coment c JOIN users u ON c.user_id = u.user_id WHERE c.base_board_id = ? ORDER BY c.coment_id ASC";
-    
-    final String SQL_SELECT_BY_USER = 
-            "SELECT c.*, b.title AS board_title, (SELECT COUNT(*) FROM comment_likes cl WHERE cl.coment_id = c.coment_id) AS like_count, (SELECT COUNT(*) FROM comment_likes cl WHERE cl.coment_id = c.coment_id AND cl.user_id = ?) AS is_liked FROM coment c JOIN base_board b ON c.base_board_id = b.base_board_id WHERE c.user_id = ? ORDER BY c.coment_id DESC";
-
+    final String SQL_SELECT_BY_BOARD = "SELECT c.*, u.name AS writer_name, (SELECT COUNT(*) FROM comment_likes cl WHERE cl.coment_id = c.coment_id) AS like_count, (SELECT COUNT(*) FROM comment_likes cl WHERE cl.coment_id = c.coment_id AND cl.user_id = ?) AS is_liked FROM coment c JOIN users u ON c.user_id = u.user_id WHERE c.base_board_id = ? ORDER BY c.coment_id ASC";
+    final String SQL_SELECT_BY_USER = "SELECT c.*, b.title AS board_title, (SELECT COUNT(*) FROM comment_likes cl WHERE cl.coment_id = c.coment_id) AS like_count, (SELECT COUNT(*) FROM comment_likes cl WHERE cl.coment_id = c.coment_id AND cl.user_id = ?) AS is_liked FROM coment c JOIN base_board b ON c.base_board_id = b.base_board_id WHERE c.user_id = ? ORDER BY c.coment_id DESC";
     final String SQL_UPDATE = "UPDATE coment SET content = ? WHERE coment_id = ?";
     final String SQL_DELETE = "DELETE FROM coment WHERE coment_id = ?";
+    
     final String SQL_CHECK_LIKE = "SELECT 1 FROM comment_likes WHERE user_id = ? AND coment_id = ?";
     final String SQL_ADD_LIKE = "INSERT INTO comment_likes (user_id, coment_id) VALUES (?, ?)";
     final String SQL_REMOVE_LIKE = "DELETE FROM comment_likes WHERE user_id = ? AND coment_id = ?";
-
-    // --- 메서드 구현 (지역 변수 사용) ---
 
     public int insertComent(ComentDTO dto) {
         Connection con = null; PreparedStatement pstmt = null;
@@ -38,7 +32,10 @@ public class ComentDAO {
             pstmt.setString(3, dto.getContent());
             return pstmt.executeUpdate();
         } catch (SQLException e) { e.printStackTrace(); return 0; } 
-        finally { JdbcConnectUtil.close(con, pstmt); }
+        finally { 
+            JdbcConnectUtil.close(pstmt, null); 
+            JdbcConnectUtil.close(con); 
+        }
     }
 
     public int updateComent(long comentId, String content) {
@@ -50,7 +47,10 @@ public class ComentDAO {
             pstmt.setLong(2, comentId);
             return pstmt.executeUpdate();
         } catch (SQLException e) { e.printStackTrace(); return 0; } 
-        finally { JdbcConnectUtil.close(con, pstmt); }
+        finally { 
+            JdbcConnectUtil.close(pstmt, null); 
+            JdbcConnectUtil.close(con); 
+        }
     }
 
     public ArrayList<ComentDTO> selectComentsByBoardId(long boardId, long currentUserId) {
@@ -68,7 +68,10 @@ public class ComentDAO {
                 list.add(dto);
             }
         } catch (SQLException e) { e.printStackTrace(); } 
-        finally { JdbcConnectUtil.close(con, pstmt, rs); }
+        finally { 
+            JdbcConnectUtil.close(pstmt, rs); 
+            JdbcConnectUtil.close(con); 
+        }
         return list;
     }
 
@@ -87,7 +90,10 @@ public class ComentDAO {
                 list.add(dto);
             }
         } catch (SQLException e) { e.printStackTrace(); } 
-        finally { JdbcConnectUtil.close(con, pstmt, rs); }
+        finally { 
+            JdbcConnectUtil.close(pstmt, rs); 
+            JdbcConnectUtil.close(con); 
+        }
         return list;
     }
 
@@ -99,7 +105,10 @@ public class ComentDAO {
             pstmt.setLong(1, comentId);
             return pstmt.executeUpdate();
         } catch (SQLException e) { e.printStackTrace(); return 0; } 
-        finally { JdbcConnectUtil.close(con, pstmt); }
+        finally { 
+            JdbcConnectUtil.close(pstmt, null); 
+            JdbcConnectUtil.close(con); 
+        }
     }
 
     public int toggleLike(long userId, long comentId) {
@@ -115,7 +124,8 @@ public class ComentDAO {
             pstmt.setLong(2, comentId);
             rs = pstmt.executeQuery();
             boolean exists = rs.next();
-            JdbcConnectUtil.close(null, pstmt, rs); 
+            
+            JdbcConnectUtil.close(pstmt, rs); 
 
             if (exists) {
                 pstmt = con.prepareStatement(SQL_REMOVE_LIKE);
@@ -135,8 +145,8 @@ public class ComentDAO {
             e.printStackTrace();
             try { if (con != null) con.rollback(); } catch (SQLException ex) {}
         } finally {
-            try { if (con != null) con.setAutoCommit(true); } catch (SQLException e) {}
-            JdbcConnectUtil.close(con, pstmt, rs);
+            JdbcConnectUtil.close(pstmt, null); 
+            JdbcConnectUtil.close(con); 
         }
         return status;
     }

@@ -9,7 +9,7 @@
 </head>
 <body>
 
-<%@ include file = "header.jsp" %>
+<%@ include file = "../header.jsp" %>
 
 <%
 	ArrayList<UserDTO> uList = (ArrayList<UserDTO>)request.getAttribute("allList");
@@ -27,7 +27,6 @@
         <h2>회원 목록</h2>
         <hr style="margin-bottom: 24px;">
         <p>등록된 회원이 없습니다.</p>
-        <%-- [변경] 홈 이동 --%>
         <a href="${pageContext.request.contextPath}/index.page">[홈으로 가기]</a>
     </div>
 <%
@@ -54,7 +53,6 @@
                     <td><%= dto.getEmail()  %></td>
                     <td><%= dto.getRole()  %></td>
                     <td><%
-                        // 3. 가입일시 (created_at) Null 체크 로직 (안정성 확보)
                         if (dto.getCreatedAt() != null) {
                             out.print(dto.getCreatedAt().format(dtf));
                         } else {
@@ -62,9 +60,9 @@
                         }
                     %></td>
                     <td>
-                        <%-- [유지] 기능 수행(수정/삭제)은 서블릿(.do) 호출 --%>
-                        <a href="searchUser.do?email=<%= dto.getEmail() %>" class="btn-action-edit">[수정]</a>
-                        <a href="deleteUser.do?userId=<%= dto.getUserId() %>" class="btn-action-delete">[삭제]</a>
+                        <%-- [변경] 통합된 UserServlet 경로(search, delete)로 수정 --%>
+                        <a href="${pageContext.request.contextPath}/user/search?email=<%= dto.getEmail() %>" class="btn-action-edit">[수정]</a>
+                        <a href="${pageContext.request.contextPath}/user/delete?userId=<%= dto.getUserId() %>" class="btn-action-delete">[삭제]</a>
                     </td>
                 </tr>
 <% } %>
@@ -77,7 +75,7 @@
     </div>
 </main>
 
-<%@ include file="footer.jsp" %>
+<%@ include file="../footer.jsp" %>
 
 </body>
 </html>

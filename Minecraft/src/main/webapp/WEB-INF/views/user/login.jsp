@@ -9,15 +9,15 @@
 </head>
 <body>
 
-    <%@ include file="header.jsp" %>
+    <%@ include file="../header.jsp" %>
 
     <main class="form-page-main">
         <div class="container">
             <div class="user-form-container">
                 <h2>로그인</h2>
                 
-                <%-- [유지] 로그인 처리(DB 확인)는 서블릿(.do)이 담당 --%>
-                <form action="login.do" method="post">
+                <%-- [변경] 통합된 UserServlet 경로로 수정 --%>
+                <form action="${pageContext.request.contextPath}/user/login" method="post">
                     <div class="user-form-group">
                         <label for="email_id">이메일 (ID)</label>
                         <input type="text" id="email_id" name="id" required>
@@ -34,7 +34,7 @@
         </div>
     </main>
 
-    <%@ include file="footer.jsp" %>
+    <%@ include file="../footer.jsp" %>
 
 </body>
 </html>

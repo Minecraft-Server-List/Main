@@ -3,20 +3,22 @@ package com.example.minecraft.dto;
 import java.time.LocalDateTime;
 
 public class BoardDTO {
-    // DB 컬럼 매핑 필드
     private Long baseBoardId;
     private Long userId;
-    private String category;   // [신규] 게시판 카테고리 (NOTICE, FREE, QNA 등)
+    
+    // [핵심 변경] DB의 board_category 테이블 매핑
+    private Long categoryId;     // DB PK (board_category_id)
+    private String category;     // DB code (NOTICE, FREE...) - 로직 제어용
+    private String categoryName; // DB name (공지사항, 자유게시판...) - 화면 출력용
+
     private String title;
     private String content;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     
-    // 조회수 & 좋아요 수
     private int viewCount;     
     private int likeCount;     
 
-    // 화면 표시용 추가 필드
     private String writerName; 
     private boolean isLiked;   
 
@@ -27,9 +29,14 @@ public class BoardDTO {
     public Long getUserId() { return userId; }
     public void setUserId(Long userId) { this.userId = userId; }
 
-    // [신규] 카테고리 Getter/Setter
+    public Long getCategoryId() { return categoryId; }
+    public void setCategoryId(Long categoryId) { this.categoryId = categoryId; }
+
     public String getCategory() { return category; }
     public void setCategory(String category) { this.category = category; }
+
+    public String getCategoryName() { return categoryName; }
+    public void setCategoryName(String categoryName) { this.categoryName = categoryName; }
 
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }

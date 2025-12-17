@@ -9,7 +9,7 @@
 </head>
 <body>
 
-<%@ include file = "header.jsp" %>
+<%@ include file = "../header.jsp" %>
 
 <%
     String deletedEmail = (String) request.getAttribute("deletedEmail");
@@ -32,9 +32,9 @@
         <hr style="margin-bottom: 24px;">
         <p><font color="red">'<%= deletedEmail %>'</font> 계정이 삭제되었습니다.</p>
 <% if("ADMIN".equals(userRole)) { %>
-        <a href="userList.do">[회원 목록으로 가기]</a>
+        <%-- [변경] 목록 이동 경로 수정 --%>
+        <a href="${pageContext.request.contextPath}/user/list">[회원 목록으로 가기]</a>
 <% } %>
-        <%-- [변경] 홈 이동 --%>
         <a href="${pageContext.request.contextPath}/index.page">[홈으로 가기]</a>
     </div>
 
@@ -80,7 +80,8 @@
         
         <div class="user-form-buttons">
 <% if("ADMIN".equals(userRole)) { %>
-            <input type="button" value="회원 목록으로" class="btn btn-secondary" onclick="location.href='userList.do'">
+            <%-- [변경] 목록 버튼 경로 수정 --%>
+            <input type="button" value="회원 목록으로" class="btn btn-secondary" onclick="location.href='${pageContext.request.contextPath}/user/list'">
             <input type="button" value="홈으로 가기" class="btn btn-primary" onclick="location.href='${pageContext.request.contextPath}/index.page'">
 <% } else { %>
             <input type="button" value="홈으로 가기" class="btn btn-primary" onclick="location.href='${pageContext.request.contextPath}/index.page'">
@@ -95,7 +96,8 @@
     <h2>회원 정보 수정</h2>
     <hr style="margin-bottom: 24px;">
     
-    <form action="updateUser.do" method="post">
+    <%-- [변경] form action 경로 수정 --%>
+    <form action="${pageContext.request.contextPath}/user/update" method="post">
         <input type="hidden" name="userId" value="<%= userToEdit.getUserId() %>">
         
         <div class="user-form-group">
@@ -133,7 +135,8 @@
         <div class="user-form-group">
             <input type="submit" value="정보 수정하기">
 <% if("ADMIN".equals(userRole)) { %>
-            <input type="button" value="목록으로" class="btn-secondary-full" onclick="location.href='userList.do'">
+            <%-- [변경] 목록 버튼 경로 수정 --%>
+            <input type="button" value="목록으로" class="btn-secondary-full" onclick="location.href='${pageContext.request.contextPath}/user/list'">
 <% } %>
         </div>
     </form>
@@ -148,7 +151,8 @@
         <p><%= message %></p>
         <br>
 <% if("ADMIN".equals(userRole)) { %>
-        <a href="userList.do">[회원 목록으로 가기]</a>
+        <%-- [변경] 목록 링크 수정 --%>
+        <a href="${pageContext.request.contextPath}/user/list">[회원 목록으로 가기]</a>
 <% } %>
         <a href="${pageContext.request.contextPath}/index.page">[홈으로 가기]</a>
     </div>
@@ -161,7 +165,7 @@
     </div> 
 </main> 
 
-<%@ include file="footer.jsp" %>
+<%@ include file="../footer.jsp" %>
 
 </body>
 </html>

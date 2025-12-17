@@ -15,7 +15,7 @@ public class JdbcConnectUtil {
             Class.forName("com.mysql.cj.jdbc.Driver");
             // DB서버 커넥트
             // 🚨 주의: DB 접속 정보는 반드시 실제 환경에 맞게 수정해야 합니다.
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/minecraft", "root", "root");
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/minecraft", "root", "3274");
         } catch (ClassNotFoundException e) {
             System.err.println("JDBC 드라이버 로드 실패!");
             e.printStackTrace();

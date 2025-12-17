@@ -22,7 +22,7 @@
         </div>
 
         <div class="modal-form-section">
-            <form action="login.do" method="post" id="login-form" class="modal-form-spacing">
+            <form action="${pageContext.request.contextPath}/user/login" method="post" id="login-form" class="modal-form-spacing">
 
                 <div class="input-group">
                     <label class="input-label">이메일 (ID)</label>
