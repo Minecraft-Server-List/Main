@@ -1020,3 +1020,89 @@ input[type="password"].modal-input {
     padding: 50px;
     color: #94a3b8;
 }
+/* 모든 버튼의 기본 브라우저 스타일 초기화 */
+button, .btn-submit, .btn-cancel, .btn-cmt-like, .btn-write {
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: #fff; /* 기본 상태는 흰색 */
+    color: #333;
+    border: 1px solid #ddd;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s ease; /* 부드러운 변화 효과 */
+}
+
+/* 마우스를 올렸을 때(Hover)만 강조 효과 */
+.btn-submit:hover, .btn-write:hover, .btn-cmt-submit:hover {
+    background-color: #10b981 !important; /* 프로젝트 테마 녹색 */
+    color: #fff !important;
+    border-color: #10b981 !important;
+}
+
+/* 취소나 삭제 버튼의 호버 효과 */
+.btn-cancel:hover {
+    background-color: #ef4444 !important; /* 빨간색 */
+    color: #fff !important;
+    border-color: #ef4444 !important;
+}
+
+/* 댓글 좋아요 버튼 전용 */
+.btn-cmt-like {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    font-size: 12px;
+}
+.btn-cmt-like:hover {
+    background-color: #fff0f0;
+    color: #ef4444;
+}
+/* 1. 기본 상태: 흰색 배경 */
+.btn-submit {
+    background-color: #ffffff !important;
+    color: #333333 !important;
+    border: 1px solid #cbd5e1;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease; /* 강조 효과가 부드럽게 나타남 */
+}
+
+/* 2. 마우스를 올렸을 때(Hover): 검은색 강조 */
+.btn-submit:hover {
+    background-color: #333333 !important;
+    color: #ffffff !important;
+    border-color: #333333 !important;
+}
+/* 버튼 기본 공통 스타일 초기화 */
+.btn-submit, .btn-cancel, .btn-cmt-like {
+    background-color: #ffffff !important;
+    color: #334155 !important;
+    border: 1px solid #e2e8f0 !important;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* 마우스를 올렸을 때만 검은색(또는 테마색) 강조 */
+.btn-submit:hover, .btn-cmt-submit:hover {
+    background-color: #0f172a !important;
+    color: #ffffff !important;
+    border-color: #0f172a !important;
+}
+
+/* 게시글/댓글 좋아요 버튼 활성화(붉은색) 상태 */
+.btn-cmt-like.liked {
+    background-color: #fff1f2 !important; /* 연한 분홍 배경 */
+    color: #e11d48 !important;           /* 진한 붉은 텍스트 */
+    border-color: #fecdd3 !important;    /* 붉은 테두리 */
+    font-weight: bold;
+}
+
+/* 취소 및 삭제 버튼 호버 효과 */
+.btn-cancel:hover {
+    background-color: #f1f5f9 !important;
+    border-color: #cbd5e1 !important;
+}

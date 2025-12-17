@@ -40,11 +40,10 @@
         <div style="padding: 30px 10px; min-height: 200px; font-size:15px; line-height:1.6; white-space:pre-wrap;"><%= board.getContent() %></div>
 
         <div style="text-align:center; margin: 30px 0;">
-            <button class="btn-like <%= board.isLiked() ? "liked" : "" %>" 
-                    onclick="window.postManager.like(<%= board.getBaseBoardId() %>, this)" 
-                    style="padding:10px 20px; font-size:14px; border-radius:20px; border:1px solid #ddd; background:#fff; cursor:pointer;">
-                ♥ 좋아요 <span id="like-count-display"><%= board.getLikeCount() %></span>
-            </button>
+<button class="btn-cmt-like <%= board.isLiked() ? "liked" : "" %>" 
+        onclick="window.postManager.like(<%= board.getBaseBoardId() %>, this)">
+    ♥ 좋아요 <span id="like-count-display"><%= board.getLikeCount() %></span>
+</button>
         </div>
 
         <div class="btn-area" style="justify-content: space-between; display:flex;">
