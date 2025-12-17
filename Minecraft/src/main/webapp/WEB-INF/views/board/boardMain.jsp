@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <title>커뮤니티 - CraftConnect</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/style.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/footer.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         .loading-spinner { display: none; text-align: center; padding: 50px; font-weight: bold; color: #666; }

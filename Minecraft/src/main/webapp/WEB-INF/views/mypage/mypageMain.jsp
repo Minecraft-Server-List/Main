@@ -7,6 +7,7 @@
     <title>마이페이지 - CraftConnect</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/form-style.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/style.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/footer.css">
 </head>
 <body>
 
