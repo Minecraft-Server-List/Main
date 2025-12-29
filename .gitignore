@@ -1,0 +1,22 @@
+# 컴파일 및 빌드 결과물
+/build/
+/out/
+/.gradle/
+bin/
+
+# IDE 설정 파일
+.idea/
+*.iml
+*.iws
+.vscode/
+
+# 민감한 설정 파일 (이게 핵심입니다!)
+src/main/resources/application-secrets.properties
+.env
+
+# 로그 및 임시 파일
+*.log
+/logs/
+
+# 업로드된 이미지 (로컬 경로는 올리지 않습니다)
+src/main/resources/static/uploads/
