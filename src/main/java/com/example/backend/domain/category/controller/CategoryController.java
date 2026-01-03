@@ -16,6 +16,7 @@ import java.util.List;
 public class CategoryController {
     private final CategoryService categoryService;
 
+    // 카테고리 전체 조회
     @GetMapping
     public ResponseEntity<List<CategoryResponseDto>> getAllCategories() {
         return ResponseEntity.ok(categoryService.getAllCategories());
