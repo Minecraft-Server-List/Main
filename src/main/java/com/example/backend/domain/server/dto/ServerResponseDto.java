@@ -20,7 +20,7 @@ public class ServerResponseDto {
     private Integer currentPlayers;
     private Integer maxPlayers;
     private List<String> categories;
-    private List<String> imageUrls;
+    private String fileName;
     private LocalDateTime createdAt;
 
     public static ServerResponseDto from(ServerEntity server) {
@@ -28,9 +28,10 @@ public class ServerResponseDto {
                 .map(sc -> sc.getCategory().getName())
                 .collect(Collectors.toList());
 
-        List<String> urls = server.getServerImages().stream()
-                .map(img -> "http://localhost:8080/images/" + img.getFileName())
-                .collect(Collectors.toList());
+        String firstFileName = server.getServerImages().stream()
+                .findFirst()
+                .map(img -> img.getFileName())
+                .orElse(null);
 
         return new ServerResponseDto(
                 server.getServerId(),
@@ -42,7 +43,7 @@ public class ServerResponseDto {
                 server.getCurrentPlayers(),
                 server.getMaxPlayers(),
                 categoryNames,
-                urls,
+                firstFileName,
                 server.getCreatedAt()
         );
     }
