@@ -36,8 +36,15 @@ public class ServerImageService {
             if (file.isEmpty()) continue;
 
             String originalName = file.getOriginalFilename();
-            String uuid = UUID.randomUUID().toString();
-            String fileName = uuid + "_" + originalName;
+
+            // 확장자 추출 (.png, .jpg 등)
+            String extension = "";
+            if (originalName != null && originalName.contains(".")) {
+                extension = originalName.substring(originalName.lastIndexOf("."));
+            }
+
+            // 파일명은 오직 UUID와 확장자로만 구성 (한글/공백 제거)
+            String fileName = UUID.randomUUID().toString() + extension;
             String fullPath = uploadPath + fileName;
 
             // 1. 실제 파일 저장
@@ -46,8 +53,8 @@ public class ServerImageService {
             // 2. DB에 정보 저장
             ServerImageEntity image = ServerImageEntity.builder()
                     .server(server)
-                    .originalName(originalName)
-                    .fileName(fileName)
+                    .originalName(originalName) // 원본 이름은 DB에만 보관 (참고용)
+                    .fileName(fileName)         // 실제 파일명은 깔끔한 UUID (접근용)
                     .filePath(fullPath)
                     .fileSize(file.getSize())
                     .uploadedAt(LocalDateTime.now())
