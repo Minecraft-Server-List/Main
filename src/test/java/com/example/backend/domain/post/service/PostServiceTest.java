@@ -16,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -116,7 +117,14 @@ class PostServiceTest {
     void updatePost_Success() {
         // given
         Long postId = 1L;
-        PostEntity post = PostEntity.builder().postId(postId).title("원래 제목").build();
+        UserEntity user = UserEntity.builder().name("유시영").build();
+        PostEntity post = PostEntity.builder()
+                .postId(postId)
+                .user(user)
+                .title("원래 제목")
+                .postClassifications(new ArrayList<>())
+                .build();
+
         PostRequestDto request = new PostRequestDto("바뀐 제목", "바뀐 내용", null);
 
         given(postRepository.findById(postId)).willReturn(Optional.of(post));
@@ -126,6 +134,7 @@ class PostServiceTest {
 
         // then
         assertThat(result.getTitle()).isEqualTo("바뀐 제목");
+        assertThat(result.getAuthorName()).isEqualTo("유시영");
     }
 
     // 5. 게시글 삭제 테스트
