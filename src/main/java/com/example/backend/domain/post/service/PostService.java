@@ -58,4 +58,31 @@ public class PostService {
         post.increaseViewCount();
         return PostResponseDto.from(post);
     }
+
+    @Transactional
+    public PostResponseDto updatePost(Long postId, PostRequestDto requestDto) {
+        PostEntity post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
+
+        // // 2. 제목 및 내용 업데이트
+        post.update(requestDto.getTitle(), requestDto.getContent());
+
+        // // 3. 기존 카테고리 매핑 삭제 후 재등록 (선택 사항)
+        if (requestDto.getCategoryIds() != null) {
+            post.getPostClassifications().clear(); // // OrphanRemoval 설정으로 인해 DB에서도 자동 삭제됨
+            requestDto.getCategoryIds().forEach(id -> {
+                CategoryEntity category = categoryRepository.findById(id)
+                        .orElseThrow(() -> new IllegalArgumentException("카테고리 없음"));
+                postClassificationRepository.save(PostClassificationEntity.builder()
+                        .post(post).category(category).build());
+            });
+        }
+        return PostResponseDto.from(post);
+    }
+
+    // // 4. 게시글 삭제
+    @Transactional
+    public void deletePost(Long postId) {
+        postRepository.deleteById(postId);
+    }
 }
