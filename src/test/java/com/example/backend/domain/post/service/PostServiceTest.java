@@ -40,7 +40,7 @@ class PostServiceTest {
     @InjectMocks
     private PostService postService;
 
-    // // 1. 게시글 생성 테스트
+    // 1. 게시글 생성 테스트
     @Test
     @DisplayName("게시글 생성 - 성공 (카테고리 포함)")
     void createPost_Success() {
@@ -66,7 +66,7 @@ class PostServiceTest {
         verify(postClassificationRepository, times(1)).save(any());
     }
 
-    // // 2. 게시글 상세 조회 테스트 (조회수 증가 확인)
+    // 2. 게시글 상세 조회 테스트 (조회수 증가 확인)
     @Test
     @DisplayName("게시글 상세 조회 - 성공 및 조회수 증가")
     void getPost_Success() {
@@ -90,7 +90,7 @@ class PostServiceTest {
         assertThat(post.getViewCount()).isEqualTo(1); // // 서비스 로직 내 increaseViewCount() 검증
     }
 
-    // // 3. 게시글 전체 조회 테스트
+    // 3. 게시글 전체 조회 테스트
     @Test
     @DisplayName("게시글 전체 목록 조회 - 성공")
     void getAllPosts_Success() {
@@ -108,5 +108,37 @@ class PostServiceTest {
         // then
         assertThat(result).hasSize(2);
         assertThat(result.get(0).getTitle()).isEqualTo("제목1");
+    }
+
+    // 4. 게시글 수정 테스트
+    @Test
+    @DisplayName("게시글 수정 - 성공")
+    void updatePost_Success() {
+        // given
+        Long postId = 1L;
+        PostEntity post = PostEntity.builder().postId(postId).title("원래 제목").build();
+        PostRequestDto request = new PostRequestDto("바뀐 제목", "바뀐 내용", null);
+
+        given(postRepository.findById(postId)).willReturn(Optional.of(post));
+
+        // when
+        PostResponseDto result = postService.updatePost(postId, request);
+
+        // then
+        assertThat(result.getTitle()).isEqualTo("바뀐 제목");
+    }
+
+    // 5. 게시글 삭제 테스트
+    @Test
+    @DisplayName("게시글 삭제 - 성공")
+    void deletePost_Success() {
+        // given
+        Long postId = 1L;
+
+        // when
+        postService.deletePost(postId);
+
+        // then
+        verify(postRepository, times(1)).deleteById(postId);
     }
 }
