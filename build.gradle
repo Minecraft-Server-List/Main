@@ -37,6 +37,12 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
 }
 
-tasks.named('test') {
-	useJUnitPlatform()
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+        showStandardStreams = true
+        // // 2. 실패 시 원인을 더 자세히 보고 싶다면 아래 한 줄 추가해도 좋아요
+        exceptionFormat = "full"
+    }
 }
