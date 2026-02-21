@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
@@ -137,5 +138,63 @@ class CommentServiceTest {
 
         // then
         verify(commentRepository).deleteById(commentId);
+    }
+
+    // 실패 케이스
+
+    // 1. 존재하지 않는 게시글 예외 테스트
+    @Test
+    @DisplayName("존재하지 않는 게시글 ID로 댓글을 작성하면 IllegalArgumentException이 발생한다")
+    void createComment_Fail_PostNotFound() {
+        // given
+        Long postId = 999L;
+        Long userId = 1L;
+        CommentRequestDto request = new CommentRequestDto("내용", null);
+
+        // 게시글이 없음을 가정
+        given(postRepository.findById(postId)).willReturn(Optional.empty());
+
+        // when & then
+        assertThatThrownBy(() -> commentService.createComment(postId, userId, request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("게시글 없음");
+    }
+
+    // 2. 존재하지 않는 부모 댓글 예외 테스트
+    @Test
+    @DisplayName("존재하지 않는 부모 댓글 ID로 대댓글을 작성하면 IllegalArgumentException이 발생한다")
+    void createReply_Fail_ParentCommentNotFound() {
+        // given
+        Long postId = 1L;
+        Long userId = 1L;
+        Long invalidParentId = 888L;
+        CommentRequestDto request = new CommentRequestDto("대댓글", invalidParentId);
+
+        given(postRepository.findById(postId)).willReturn(Optional.of(PostEntity.builder().build()));
+        given(userRepository.findById(userId)).willReturn(Optional.of(UserEntity.builder().build()));
+
+        // 부모 댓글이 없음을 가정
+        given(commentRepository.findById(invalidParentId)).willReturn(Optional.empty());
+
+        // when & then
+        assertThatThrownBy(() -> commentService.createComment(postId, userId, request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("부모 댓글 없음");
+    }
+
+    // 3. 존재하지 않는 댓글 수정 예외 테스트
+    @Test
+    @DisplayName("존재하지 않는 댓글을 수정하려 하면 IllegalArgumentException이 발생한다")
+    void updateComment_Fail_CommentNotFound() {
+        // given
+        Long invalidCommentId = 777L;
+        CommentRequestDto request = new CommentRequestDto("수정 내용", null);
+
+        given(commentRepository.findById(invalidCommentId)).willReturn(Optional.empty());
+
+        // when & then
+        assertThatThrownBy(() -> commentService.updateComment(invalidCommentId, request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("댓글 없음");
     }
 }
