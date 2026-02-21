@@ -39,7 +39,7 @@ class CommentServiceTest {
 
     // 1. 일반 댓글 작성 성공 테스트
     @Test
-    @DisplayName("댓글 생성 시 작성자 이름과 내용이 정확해야 한다")
+    @DisplayName("✅ [성공] 댓글 생성: 작성자 이름과 내용이 정확하게 저장되어야 한다")
     void createComment_Success() {
         // given
         Long postId = 1L;
@@ -71,7 +71,7 @@ class CommentServiceTest {
 
     // 2. 대댓글 작성 및 연관관계 테스트
     @Test
-    @DisplayName("대댓글 생성 시 부모 댓글 정보가 포함되어야 한다")
+    @DisplayName("✅ [성공] 대댓글 생성: 부모 댓글 ID가 있으면 자식 댓글로 올바르게 연결되어야 한다")
     void createReply_Success() {
         // given
         Long parentId = 10L;
@@ -99,12 +99,12 @@ class CommentServiceTest {
         // then
         assertThat(result.getContent()).contains("대댓글");
         assertThat(result.getCommentId()).isEqualTo(11L);
-        verify(commentRepository).findById(parentId); // 부모 댓글 조회 여부 검증
+        verify(commentRepository).findById(parentId); // 부모 댓글 조회 로직 호출 여부 확인
     }
 
     // 3. 댓글 수정 검증
     @Test
-    @DisplayName("댓글 수정 시 내용이 변경되어야 한다")
+    @DisplayName("✅ [성공] 댓글 수정: 수정 요청 시 기존 내용이 새로운 내용으로 변경되어야 한다")
     void updateComment_Success() {
         // given
         Long commentId = 5L;
@@ -128,7 +128,7 @@ class CommentServiceTest {
 
     // 4. 댓글 삭제 검증
     @Test
-    @DisplayName("댓글 삭제 요청 시 레포지토리의 삭제 메서드가 호출되어야 한다")
+    @DisplayName("✅ [성공] 댓글 삭제: 삭제 시 레포지토리의 delete 메서드가 정상 호출되어야 한다")
     void deleteComment_Success() {
         // given
         Long commentId = 7L;
@@ -140,18 +140,17 @@ class CommentServiceTest {
         verify(commentRepository).deleteById(commentId);
     }
 
-    // 실패 케이스
+    // --- 실패 케이스 ---
 
     // 1. 존재하지 않는 게시글 예외 테스트
     @Test
-    @DisplayName("존재하지 않는 게시글 ID로 댓글을 작성하면 IllegalArgumentException이 발생한다")
+    @DisplayName("❌ [실패] 댓글 작성: 존재하지 않는 게시글 ID일 경우 예외가 발생한다")
     void createComment_Fail_PostNotFound() {
         // given
         Long postId = 999L;
         Long userId = 1L;
         CommentRequestDto request = new CommentRequestDto("내용", null);
 
-        // 게시글이 없음을 가정
         given(postRepository.findById(postId)).willReturn(Optional.empty());
 
         // when & then
@@ -162,7 +161,7 @@ class CommentServiceTest {
 
     // 2. 존재하지 않는 부모 댓글 예외 테스트
     @Test
-    @DisplayName("존재하지 않는 부모 댓글 ID로 대댓글을 작성하면 IllegalArgumentException이 발생한다")
+    @DisplayName("❌ [실패] 대댓글 작성: 부모 댓글 ID를 찾을 수 없을 경우 예외가 발생한다")
     void createReply_Fail_ParentCommentNotFound() {
         // given
         Long postId = 1L;
@@ -172,8 +171,6 @@ class CommentServiceTest {
 
         given(postRepository.findById(postId)).willReturn(Optional.of(PostEntity.builder().build()));
         given(userRepository.findById(userId)).willReturn(Optional.of(UserEntity.builder().build()));
-
-        // 부모 댓글이 없음을 가정
         given(commentRepository.findById(invalidParentId)).willReturn(Optional.empty());
 
         // when & then
@@ -184,7 +181,7 @@ class CommentServiceTest {
 
     // 3. 존재하지 않는 댓글 수정 예외 테스트
     @Test
-    @DisplayName("존재하지 않는 댓글을 수정하려 하면 IllegalArgumentException이 발생한다")
+    @DisplayName("❌ [실패] 댓글 수정: 수정하려는 댓글 ID가 존재하지 않으면 예외가 발생한다")
     void updateComment_Fail_CommentNotFound() {
         // given
         Long invalidCommentId = 777L;
