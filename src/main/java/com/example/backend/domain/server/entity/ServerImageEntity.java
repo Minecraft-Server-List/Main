@@ -40,8 +40,8 @@ public class ServerImageEntity {
     @CreatedDate
     private LocalDateTime uploadedAt;
 
-    // // 6. 서버 엔티티와의 연관 관계 편의 메서드
-    public void setServerEntity(ServerEntity serverEntity) {
-        this.server = serverEntity;
+    // 6. 서버 엔티티와의 연관 관계 편의 메서드
+    public void setServer(ServerEntity server) {
+        this.server = server;
     }
 }
