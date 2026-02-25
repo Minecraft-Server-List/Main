@@ -66,15 +66,15 @@ public class ServerController {
 
     // 8. 서버 삭제
     @DeleteMapping("/{serverId}")
-    public ResponseEntity<ApiResponse<Void>> deleteServer(@PathVariable Long serverId) {
+    public ResponseEntity<ApiResponse<String>> deleteServer(@PathVariable Long serverId) {
         serverService.deleteServer(serverId);
-        return ResponseEntity.ok(ApiResponse.success(200, null));
+        return ResponseEntity.ok(ApiResponse.success(200, "서버가 성공적으로 삭제되었습니다."));
     }
 
     // 9. 이미지 개별 삭제
     @DeleteMapping("/images/{imageId}")
-    public ResponseEntity<ApiResponse<Void>> deleteImage(@PathVariable Long imageId) {
+    public ResponseEntity<ApiResponse<String>> deleteImage(@PathVariable Long imageId) {
         serverImageService.deleteImage(imageId);
-        return ResponseEntity.ok(ApiResponse.success(200, null));
+        return ResponseEntity.ok(ApiResponse.success(200, "이미지가 성공적으로 삭제되었습니다."));
     }
 }
