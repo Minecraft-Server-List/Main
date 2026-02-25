@@ -74,4 +74,15 @@ public class S3Service {
             throw new IllegalArgumentException("이미지 삭제 중 오류가 발생했습니다: " + e.getMessage());
         }
     }
+
+
+    // 3. S3키 추출하는 메소드
+    public String extractKeyFromUrl(String imageUrl) {
+        // 1. CloudFront 주소나 S3 엔드포인트 이후의 파일명만 잘라냅니다.
+        // ex) https://cloud-front.net/images/uuid.png -> images/uuid.png
+        if (imageUrl == null || !imageUrl.contains(".net/")) {
+            return imageUrl;
+        }
+        return imageUrl.substring(imageUrl.lastIndexOf(".net/") + 5);
+    }
 }

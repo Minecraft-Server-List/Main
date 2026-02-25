@@ -24,31 +24,31 @@ public class ServerImageService {
     private final S3Service s3Service;
 
     // 1. 이미지 업로드 기능
+    @Transactional
     public void uploadImages(Long serverId, List<MultipartFile> files) throws IOException {
-        // 2. 이미지를 등록할 서버 엔티티 조회
         ServerEntity serverEntity = serverRepository.findById(serverId)
                 .orElseThrow(() -> new IllegalArgumentException("서버를 찾을 수 없습니다."));
 
         for (MultipartFile file : files) {
-            if (file.isEmpty()) continue;
+            String s3Url = s3Service.uploadImage(file);
+            String s3Key = s3Service.extractKeyFromUrl(s3Url);
 
-            // 3. S3Service를 통해 파일 업로드 및 CloudFront URL 획득
-            // 이 메서드 내부에서 UUID 파일명 생성 및 확장자 처리가 이미 완료됨
-            String imageUrl = s3Service.uploadImage(file);
-
-            // 4. URL에서 s3Key(파일명)만 추출
-            String s3Key = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
-
-            // 5. 변경된 엔티티 구조에 맞게 DB 정보 저장
-            ServerImageEntity image = ServerImageEntity.builder()
+            ServerImageEntity imageEntity = ServerImageEntity.builder()
                     .server(serverEntity)
-                    .originalName(file.getOriginalFilename()) // 원본 파일명 보관
-                    .s3Key(s3Key)                             // S3 관리용 키
-                    .imageUrl(imageUrl)                       // CloudFront 조회용 URL
+                    .imageUrl(s3Url)
+                    .s3Key(s3Key)
+                    .originalName(file.getOriginalFilename())
                     .build();
 
-            serverImageRepository.save(image);
+            // 1. 서버 엔티티의 리스트에 이미지를 직접 추가 (메모리 동기화)
+            serverEntity.addImage(imageEntity);
+
+            // 2. 이미지 데이터 저장
+            serverImageRepository.save(imageEntity);
         }
+
+        // 3. 변경된 서버 엔티티 상태를 DB에 즉시 반영
+        serverRepository.saveAndFlush(serverEntity);
     }
 
     // 2. 이미지 삭제 기능
