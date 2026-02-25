@@ -6,8 +6,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "servers")
@@ -42,11 +42,11 @@ public class ServerEntity extends BaseTimeEntity {
 
     @Builder.Default
     @OneToMany(mappedBy = "server", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ServerCategoryEntity> serverCategories = new ArrayList<>();
+    private Set<ServerCategoryEntity> serverCategories = new LinkedHashSet<>();
 
     @Builder.Default
     @OneToMany(mappedBy = "server", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ServerImageEntity> serverImageEntities = new ArrayList<>();
+    private Set<ServerImageEntity> serverImageEntities = new LinkedHashSet<>();
 
     // 서버 정보 수정
     public void update(String name, String description, String domain) {
@@ -63,15 +63,15 @@ public class ServerEntity extends BaseTimeEntity {
     }
 
     public void addCategory(CategoryEntity category) {
-        ServerCategoryEntity serverCategoryEntity = ServerCategoryEntity.builder()
+        ServerCategoryEntity serverCategory = ServerCategoryEntity.builder()
                 .server(this)
                 .category(category)
                 .build();
-        this.serverCategories.add(serverCategoryEntity);
+        this.serverCategories.add(serverCategory);
     }
 
     public void addImage(ServerImageEntity serverImageEntity) {
         this.serverImageEntities.add(serverImageEntity);
-        serverImageEntity.setServerEntity(this);
+        serverImageEntity.setServer(this);
     }
 }
