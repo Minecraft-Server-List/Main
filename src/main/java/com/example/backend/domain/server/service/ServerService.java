@@ -28,7 +28,7 @@ public class ServerService {
         ServerEntity serverEntity = serverRepository.save(requestDto.toEntity());
 
         if (requestDto.getCategoryIds() != null && !requestDto.getCategoryIds().isEmpty()) {
-            requestDto.getCategoryIds().forEach(categoryId -> {
+            requestDto.getCategoryIds().stream().distinct().forEach(categoryId -> {
                 CategoryEntity category = categoryRepository.findById(categoryId)
                         .orElseThrow(() -> new IllegalArgumentException("카테고리를 찾을 수 없습니다. ID: " + categoryId));
                 serverEntity.addCategory(category);
@@ -40,15 +40,21 @@ public class ServerService {
 
     // 2. 서버 전체 목록 조회
     public List<ServerResponseDto> getAllServers() {
-        return serverRepository.findAll().stream()
+        // 1. Repository에서 한 번의 쿼리로 모든 데이터를 가져옴
+        List<ServerEntity> servers = serverRepository.findAll();
+
+        // 2. DTO 변환 (이미 DTO 내부에 대표 이미지 추출 로직이 있으므로 활용)
+        return servers.stream()
                 .map(ServerResponseDto::from)
                 .toList();
     }
 
     // 3. 특정 서버 상세 조회
     public ServerResponseDto getServer(Long serverId) {
+        // 상세 조회 시에도 이미지가 필요하므로 Optional 체크
         ServerEntity serverEntity = serverRepository.findById(serverId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 서버를 찾을 수 없습니다. ID: " + serverId));
+
         return ServerResponseDto.from(serverEntity);
     }
 
