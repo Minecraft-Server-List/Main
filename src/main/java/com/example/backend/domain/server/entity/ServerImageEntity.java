@@ -26,11 +26,11 @@ public class ServerImageEntity {
     private ServerEntity server;
 
     // 2. S3 관리용 키 (UUID.확장자 형태 - 삭제 시 활용)
-    @Column(nullable = false)
+    @Column(name = "s3_key", nullable = false)
     private String s3Key;
 
     // 3. CloudFront 조회용 URL (보여주기용)
-    @Column(nullable = false, length = 512)
+    @Column(name = "image_url", nullable = false, length = 512)
     private String imageUrl;
 
     // 4. 사용자가 올린 원래 파일명
