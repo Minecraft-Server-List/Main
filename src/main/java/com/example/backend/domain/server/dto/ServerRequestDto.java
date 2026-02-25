@@ -12,6 +12,7 @@ public class ServerRequestDto {
     private String name;
     private String description;
     private String domain;
+    private String version;
     private List<Long> categoryIds;
 
     public ServerEntity toEntity() {

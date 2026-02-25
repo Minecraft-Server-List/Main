@@ -60,13 +60,31 @@ public class ServerService {
 
     // 4. 서버 정보 수정
     @Transactional
-    public ServerResponseDto updateServer(Long serverId, ServerRequestDto requestDto) {
+    public void updateServer(Long serverId, ServerRequestDto requestDto) {
         ServerEntity serverEntity = serverRepository.findById(serverId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 서버를 찾을 수 없습니다. ID: " + serverId));
+                .orElseThrow(() -> new IllegalArgumentException("서버를 찾을 수 없습니다."));
 
-        serverEntity.update(requestDto.getName(), requestDto.getDescription(), requestDto.getDomain());
+        // 1. 기본 정보 부분 수정
+        if (requestDto.getName() != null) serverEntity.setName(requestDto.getName());
+        if (requestDto.getDescription() != null) serverEntity.setDescription(requestDto.getDescription());
+        if (requestDto.getDomain() != null) serverEntity.setDomain(requestDto.getDomain());
+        if (requestDto.getVersion() != null) serverEntity.setVersion(requestDto.getVersion());
 
-        return ServerResponseDto.from(serverEntity);
+        // 2. 카테고리 수정 (요청이 있을 때만)
+        if (requestDto.getCategoryIds() != null) {
+            // 1. 기존 관계를 비움
+            serverEntity.clearCategories();
+
+            // 2. 비워진 상태를 DB에 즉시 반영하여 세션 충돌 방지
+            serverRepository.saveAndFlush(serverEntity);
+
+            // 3. 새로운 카테고리 추가
+            requestDto.getCategoryIds().forEach(categoryId -> {
+                CategoryEntity category = categoryRepository.findById(categoryId)
+                        .orElseThrow(() -> new IllegalArgumentException("카테고리 없음"));
+                serverEntity.addCategory(category);
+            });
+        }
     }
 
     // 5. 서버 삭제 (S3 이미지 동시 삭제 로직 추가 ⭐)

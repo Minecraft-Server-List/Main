@@ -7,11 +7,13 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
 @Table(name = "servers")
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
@@ -49,10 +51,11 @@ public class ServerEntity extends BaseTimeEntity {
     private Set<ServerImageEntity> serverImageEntities = new LinkedHashSet<>();
 
     // 서버 정보 수정
-    public void update(String name, String description, String domain) {
+    public void update(String name, String description, String domain, String version) {
         this.name = name;
         this.description = description;
         this.domain = domain;
+        this.version = version;
     }
 
     // 스케줄러 서버 정보 업데이트
@@ -68,6 +71,18 @@ public class ServerEntity extends BaseTimeEntity {
                 .category(category)
                 .build();
         this.serverCategories.add(serverCategory);
+    }
+
+    public void updateCategories(List<CategoryEntity> categories) {
+        this.serverCategories.clear();
+
+        if (categories != null) {
+            categories.forEach(this::addCategory);
+        }
+    }
+
+    public void clearCategories() {
+        this.serverCategories.clear();
     }
 
     public void addImage(ServerImageEntity serverImageEntity) {

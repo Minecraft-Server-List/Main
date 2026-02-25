@@ -56,12 +56,25 @@ public class ServerController {
     }
 
     // 7. 서버 정보 수정
-    @PutMapping("/{serverId}")
-    public ResponseEntity<ApiResponse<ServerResponseDto>> updateServer(
+    @PatchMapping(value = "/{serverId}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<ApiResponse<ServerResponseDto>> patchServer(
             @PathVariable Long serverId,
-            @RequestBody ServerRequestDto requestDto) {
-        ServerResponseDto response = serverService.updateServer(serverId, requestDto);
-        return ResponseEntity.ok(ApiResponse.success(200, response));
+            @RequestPart(value = "server", required = false) ServerRequestDto requestDto,
+            @RequestPart(value = "files", required = false) List<MultipartFile> files) throws IOException {
+
+        // 2. 정보 수정이 요청된 경우에만 실행
+        if (requestDto != null) {
+            serverService.updateServer(serverId, requestDto);
+        }
+
+        // 3. 파일이 넘어온 경우에만 추가 업로드 실행
+        if (files != null && !files.isEmpty()) {
+            serverImageService.uploadImages(serverId, files);
+        }
+
+        // 4. 최종 결과 조회 후 반환
+        ServerResponseDto finalResponse = serverService.getServer(serverId);
+        return ResponseEntity.ok(ApiResponse.success(200, finalResponse));
     }
 
     // 8. 서버 삭제
