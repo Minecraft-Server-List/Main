@@ -1,6 +1,6 @@
 package com.example.backend.domain.server.dto;
 
-import com.example.backend.domain.server.entity.ServerEntity;
+import com.example.backend.domain.server.entity.Server;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -23,7 +23,7 @@ public class ServerResponseDto {
     private String fileName;
     private LocalDateTime createdAt;
 
-    public static ServerResponseDto from(ServerEntity server) {
+    public static ServerResponseDto from(Server server) {
         List<String> categoryNames = server.getServerCategories().stream()
                 .map(sc -> sc.getCategory().getName())
                 .collect(Collectors.toList());

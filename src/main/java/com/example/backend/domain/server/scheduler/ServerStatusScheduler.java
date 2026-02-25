@@ -1,7 +1,7 @@
 package com.example.backend.domain.server.scheduler;
 
 import com.example.backend.domain.server.dto.MinecraftServerStatus;
-import com.example.backend.domain.server.entity.ServerEntity;
+import com.example.backend.domain.server.entity.Server;
 import com.example.backend.domain.server.repository.ServerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,9 +26,9 @@ public class ServerStatusScheduler {
     public void updateAllServersStatus() {
         log.info("--- 마인크래프트 서버 상태 동기화 시작 ---");
 
-        List<ServerEntity> servers = serverRepository.findAll();
+        List<Server> servers = serverRepository.findAll();
 
-        for (ServerEntity server : servers) {
+        for (Server server : servers) {
             try {
                 String apiUrl = "https://api.mcstatus.io/v2/status/java/" + server.getDomain();
 
