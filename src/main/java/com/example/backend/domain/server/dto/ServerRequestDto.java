@@ -1,6 +1,6 @@
 package com.example.backend.domain.server.dto;
 
-import com.example.backend.domain.server.entity.Server;
+import com.example.backend.domain.server.entity.ServerEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -14,8 +14,8 @@ public class ServerRequestDto {
     private String domain;
     private List<Long> categoryIds;
 
-    public Server toEntity() {
-        return Server.builder()
+    public ServerEntity toEntity() {
+        return ServerEntity.builder()
                 .name(this.name)
                 .description(this.description)
                 .domain(this.domain)

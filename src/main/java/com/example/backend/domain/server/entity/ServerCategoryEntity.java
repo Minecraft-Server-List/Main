@@ -10,13 +10,13 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-@IdClass(ServerCategoryId.class) // 복합키 클래스 연결
-public class ServerCategory {
+@IdClass(ServerCategoryIdEntity.class) // 복합키 클래스 연결
+public class ServerCategoryEntity {
 
     @Id
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "server_id")
-    private Server server;
+    private ServerEntity serverEntity;
 
     @Id
     @ManyToOne(fetch = FetchType.LAZY)

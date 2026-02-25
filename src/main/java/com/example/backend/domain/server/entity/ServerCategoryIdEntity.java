@@ -9,7 +9,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-public class ServerCategoryId implements Serializable {
+public class ServerCategoryIdEntity implements Serializable {
     private Long server;
     private Long category;
 }

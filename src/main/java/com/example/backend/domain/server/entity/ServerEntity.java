@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class Server extends BaseTimeEntity {
+public class ServerEntity extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,11 +42,11 @@ public class Server extends BaseTimeEntity {
 
     @Builder.Default
     @OneToMany(mappedBy = "server", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ServerCategory> serverCategories = new ArrayList<>();
+    private List<ServerCategoryEntity> serverCategories = new ArrayList<>();
 
     @Builder.Default
     @OneToMany(mappedBy = "server", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ServerImage> serverImages = new ArrayList<>();
+    private List<ServerImageEntity> serverImageEntities = new ArrayList<>();
 
     // 서버 정보 수정
     public void update(String name, String description, String domain) {
@@ -63,15 +63,15 @@ public class Server extends BaseTimeEntity {
     }
 
     public void addCategory(CategoryEntity category) {
-        ServerCategory serverCategory = ServerCategory.builder()
-                .server(this)
+        ServerCategoryEntity serverCategoryEntity = ServerCategoryEntity.builder()
+                .serverEntity(this)
                 .category(category)
                 .build();
-        this.serverCategories.add(serverCategory);
+        this.serverCategories.add(serverCategoryEntity);
     }
 
-    public void addImage(ServerImage serverImage) {
-        this.serverImages.add(serverImage);
-        serverImage.setServer(this);
+    public void addImage(ServerImageEntity serverImageEntity) {
+        this.serverImageEntities.add(serverImageEntity);
+        serverImageEntity.setServerEntity(this);
     }
 }
