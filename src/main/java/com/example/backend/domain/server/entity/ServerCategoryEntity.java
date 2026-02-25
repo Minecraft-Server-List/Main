@@ -16,7 +16,7 @@ public class ServerCategoryEntity {
     @Id
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "server_id")
-    private ServerEntity serverEntity;
+    private ServerEntity server;
 
     @Id
     @ManyToOne(fetch = FetchType.LAZY)

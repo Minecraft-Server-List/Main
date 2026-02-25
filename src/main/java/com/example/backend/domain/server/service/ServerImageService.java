@@ -41,7 +41,7 @@ public class ServerImageService {
 
             // 5. 변경된 엔티티 구조에 맞게 DB 정보 저장
             ServerImageEntity image = ServerImageEntity.builder()
-                    .serverEntity(serverEntity)
+                    .server(serverEntity)
                     .originalName(file.getOriginalFilename()) // 원본 파일명 보관
                     .s3Key(s3Key)                             // S3 관리용 키
                     .imageUrl(imageUrl)                       // CloudFront 조회용 URL

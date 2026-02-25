@@ -64,7 +64,7 @@ public class ServerEntity extends BaseTimeEntity {
 
     public void addCategory(CategoryEntity category) {
         ServerCategoryEntity serverCategoryEntity = ServerCategoryEntity.builder()
-                .serverEntity(this)
+                .server(this)
                 .category(category)
                 .build();
         this.serverCategories.add(serverCategoryEntity);

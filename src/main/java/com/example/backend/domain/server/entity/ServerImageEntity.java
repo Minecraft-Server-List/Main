@@ -23,7 +23,7 @@ public class ServerImageEntity {
     // 1. 서버 엔티티와 N:1 연관 관계 설정
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "server_id", nullable = false)
-    private ServerEntity serverEntity;
+    private ServerEntity server;
 
     // 2. S3 관리용 키 (UUID.확장자 형태 - 삭제 시 활용)
     @Column(nullable = false)
@@ -42,6 +42,6 @@ public class ServerImageEntity {
 
     // // 6. 서버 엔티티와의 연관 관계 편의 메서드
     public void setServerEntity(ServerEntity serverEntity) {
-        this.serverEntity = serverEntity;
+        this.server = serverEntity;
     }
 }
