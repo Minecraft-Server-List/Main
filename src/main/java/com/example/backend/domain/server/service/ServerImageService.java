@@ -4,16 +4,14 @@ import com.example.backend.domain.server.entity.ServerEntity;
 import com.example.backend.domain.server.entity.ServerImageEntity;
 import com.example.backend.domain.server.repository.ServerImageRepository;
 import com.example.backend.domain.server.repository.ServerRepository;
+import com.example.backend.global.config.s3.S3Service; // S3Service 임포트
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -22,45 +20,46 @@ public class ServerImageService {
 
     private final ServerImageRepository serverImageRepository;
     private final ServerRepository serverRepository;
+    // 이미 작성해둔 S3Service 주입
+    private final S3Service s3Service;
 
-    private final String uploadPath = "/Users/yusiyeong/mcreview/uploads/";
-
+    // 1. 이미지 업로드 기능
+    @Transactional
     public void uploadImages(Long serverId, List<MultipartFile> files) throws IOException {
-        ServerEntity server = serverRepository.findById(serverId)
+        ServerEntity serverEntity = serverRepository.findById(serverId)
                 .orElseThrow(() -> new IllegalArgumentException("서버를 찾을 수 없습니다."));
 
-        File folder = new File(uploadPath);
-        if (!folder.exists()) folder.mkdirs(); // 폴더 없으면 생성
-
         for (MultipartFile file : files) {
-            if (file.isEmpty()) continue;
+            String s3Url = s3Service.uploadImage(file);
+            String s3Key = s3Service.extractKeyFromUrl(s3Url);
 
-            String originalName = file.getOriginalFilename();
-
-            // 확장자 추출 (.png, .jpg 등)
-            String extension = "";
-            if (originalName != null && originalName.contains(".")) {
-                extension = originalName.substring(originalName.lastIndexOf("."));
-            }
-
-            // 파일명은 오직 UUID와 확장자로만 구성 (한글/공백 제거)
-            String fileName = UUID.randomUUID().toString() + extension;
-            String fullPath = uploadPath + fileName;
-
-            // 1. 실제 파일 저장
-            file.transferTo(new File(fullPath));
-
-            // 2. DB에 정보 저장
-            ServerImageEntity image = ServerImageEntity.builder()
-                    .server(server)
-                    .originalName(originalName) // 원본 이름은 DB에만 보관 (참고용)
-                    .fileName(fileName)         // 실제 파일명은 깔끔한 UUID (접근용)
-                    .filePath(fullPath)
-                    .fileSize(file.getSize())
-                    .uploadedAt(LocalDateTime.now())
+            ServerImageEntity imageEntity = ServerImageEntity.builder()
+                    .server(serverEntity)
+                    .imageUrl(s3Url)
+                    .s3Key(s3Key)
+                    .originalName(file.getOriginalFilename())
                     .build();
 
-            serverImageRepository.save(image);
+            // 1. 서버 엔티티의 리스트에 이미지를 직접 추가 (메모리 동기화)
+            serverEntity.addImage(imageEntity);
+
+            // 2. 이미지 데이터 저장
+            serverImageRepository.save(imageEntity);
         }
+
+        // 3. 변경된 서버 엔티티 상태를 DB에 즉시 반영
+        serverRepository.saveAndFlush(serverEntity);
+    }
+
+    // 2. 이미지 삭제 기능
+    public void deleteImage(Long imageId) {
+        ServerImageEntity image = serverImageRepository.findById(imageId)
+                .orElseThrow(() -> new IllegalArgumentException("이미지 정보를 찾을 수 없습니다."));
+
+        // 1. S3 창고에서 파일 삭제
+        s3Service.deleteImage(image.getImageUrl());
+
+        // 2. DB 레코드 삭제
+        serverImageRepository.delete(image);
     }
 }

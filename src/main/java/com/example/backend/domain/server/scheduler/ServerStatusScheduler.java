@@ -26,24 +26,24 @@ public class ServerStatusScheduler {
     public void updateAllServersStatus() {
         log.info("--- 마인크래프트 서버 상태 동기화 시작 ---");
 
-        List<ServerEntity> servers = serverRepository.findAll();
+        List<ServerEntity> serverEntities = serverRepository.findAll();
 
-        for (ServerEntity server : servers) {
+        for (ServerEntity serverEntity : serverEntities) {
             try {
-                String apiUrl = "https://api.mcstatus.io/v2/status/java/" + server.getDomain();
+                String apiUrl = "https://api.mcstatus.io/v2/status/java/" + serverEntity.getDomain();
 
                 MinecraftServerStatus status = restTemplate.getForObject(apiUrl, MinecraftServerStatus.class);
 
                 if (status != null) {
-                    server.updateStatus(
+                    serverEntity.updateStatus(
                             status.isOnline() ? "ONLINE" : "OFFLINE",
                             status.isOnline() ? status.getPlayerInfo().getCurrentCount() : 0,
                             status.isOnline() ? status.getPlayerInfo().getMaxCount() : 0
                     );
-                    log.info("성공: {} -> {}", server.getDomain(), status.isOnline() ? "ONLINE" : "OFFLINE");
+                    log.info("성공: {} -> {}", serverEntity.getDomain(), status.isOnline() ? "ONLINE" : "OFFLINE");
                 }
             } catch (Exception e) {
-                log.error("에러: {} 서버 조회 실패 - {}", server.getDomain(), e.getMessage());
+                log.error("에러: {} 서버 조회 실패 - {}", serverEntity.getDomain(), e.getMessage());
             }
         }
         log.info("--- 서버 상태 동기화 완료 ---");

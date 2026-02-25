@@ -10,7 +10,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-@IdClass(ServerCategoryId.class) // 복합키 클래스 연결
+@IdClass(ServerCategoryIdEntity.class) // 복합키 클래스 연결
 public class ServerCategoryEntity {
 
     @Id
