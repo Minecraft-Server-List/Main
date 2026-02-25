@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class ServerEntity extends BaseTimeEntity {
+public class Server extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,11 +42,11 @@ public class ServerEntity extends BaseTimeEntity {
 
     @Builder.Default
     @OneToMany(mappedBy = "server", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ServerCategoryEntity> serverCategories = new ArrayList<>();
+    private List<ServerCategory> serverCategories = new ArrayList<>();
 
     @Builder.Default
     @OneToMany(mappedBy = "server", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ServerImageEntity> serverImages = new ArrayList<>();
+    private List<ServerImage> serverImages = new ArrayList<>();
 
     // 서버 정보 수정
     public void update(String name, String description, String domain) {
@@ -63,10 +63,15 @@ public class ServerEntity extends BaseTimeEntity {
     }
 
     public void addCategory(CategoryEntity category) {
-        ServerCategoryEntity serverCategory = ServerCategoryEntity.builder()
+        ServerCategory serverCategory = ServerCategory.builder()
                 .server(this)
                 .category(category)
                 .build();
         this.serverCategories.add(serverCategory);
+    }
+
+    public void addImage(ServerImage serverImage) {
+        this.serverImages.add(serverImage);
+        serverImage.setServer(this);
     }
 }

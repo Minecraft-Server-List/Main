@@ -11,12 +11,12 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @IdClass(ServerCategoryId.class) // 복합키 클래스 연결
-public class ServerCategoryEntity {
+public class ServerCategory {
 
     @Id
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "server_id")
-    private ServerEntity server;
+    private Server server;
 
     @Id
     @ManyToOne(fetch = FetchType.LAZY)
