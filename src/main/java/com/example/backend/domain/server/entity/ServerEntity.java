@@ -1,22 +1,22 @@
 package com.example.backend.domain.server.entity;
 
 import com.example.backend.domain.category.entity.CategoryEntity;
+import com.example.backend.domain.server.type.ServerStatus;
 import com.example.backend.global.common.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
 @Table(name = "servers")
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ServerEntity extends BaseTimeEntity {
 
     @Id
@@ -29,42 +29,44 @@ public class ServerEntity extends BaseTimeEntity {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(length = 20)
-    private String status;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    @Builder.Default
+    private ServerStatus status = ServerStatus.OFFLINE;
 
-    @Column(length = 50)
+    @Column(length = 20)
     private String version;
 
-    @Column(length = 30)
+    @Column(nullable = false, unique = true, length = 100)
     private String domain;
 
-    private Integer currentPlayers;
-    private Integer maxPlayers;
+    @Column(name = "current_players")
+    @Builder.Default
+    private Integer currentPlayers = 0;
+
+    @Column(name = "max_players")
+    @Builder.Default
+    private Integer maxPlayers = 0;
+
+    @Column(name = "last_checked_at")
     private LocalDateTime lastCheckedAt;
 
-    @Builder.Default
+    // 1. 카테고리와의 연관 관계 (중간 테이블 사용)
     @OneToMany(mappedBy = "server", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private Set<ServerCategoryEntity> serverCategories = new LinkedHashSet<>();
 
-    @Builder.Default
+    // 2. 이미지와의 연관 관계
     @OneToMany(mappedBy = "server", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private Set<ServerImageEntity> serverImageEntities = new LinkedHashSet<>();
 
-    // 서버 정보 수정
-    public void update(String name, String description, String domain, String version) {
-        this.name = name;
-        this.description = description;
-        this.domain = domain;
-        this.version = version;
-    }
-
-    // 스케줄러 서버 정보 업데이트
-    public void updateStatus(String status, int currentPlayers, int maxPlayers) {
+    // 1. 서버 상태 업데이트
+    public void updateStatus(ServerStatus status) {
         this.status = status;
-        this.currentPlayers = currentPlayers;
-        this.maxPlayers = maxPlayers;
     }
 
+    // 2. 카테고리 추가
     public void addCategory(CategoryEntity category) {
         ServerCategoryEntity serverCategory = ServerCategoryEntity.builder()
                 .server(this)
@@ -73,20 +75,23 @@ public class ServerEntity extends BaseTimeEntity {
         this.serverCategories.add(serverCategory);
     }
 
-    public void updateCategories(List<CategoryEntity> categories) {
-        this.serverCategories.clear();
-
-        if (categories != null) {
-            categories.forEach(this::addCategory);
-        }
-    }
-
+    // 3. 카테고리 초기화 (수정 시 사용)
     public void clearCategories() {
         this.serverCategories.clear();
     }
 
-    public void addImage(ServerImageEntity serverImageEntity) {
-        this.serverImageEntities.add(serverImageEntity);
-        serverImageEntity.setServer(this);
+    // 4. 이미지 추가
+    public void addImage(ServerImageEntity image) {
+        this.serverImageEntities.add(image);
+        if (image.getServer() != this) {
+            image.mappingServer(this);
+        }
+    }
+
+    // 5. 플레이어 정보 동시 업데이트 (스케줄러용)
+    public void updatePlayerInfo(Integer current, Integer max) {
+        this.currentPlayers = current;
+        this.maxPlayers = max;
+        this.lastCheckedAt = LocalDateTime.now();
     }
 }

@@ -20,28 +20,34 @@ public class ServerImageEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long imageId;
 
-    // 1. 서버 엔티티와 N:1 연관 관계 설정
+    // N:1 연관 관계 설정
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "server_id", nullable = false)
     private ServerEntity server;
 
-    // 2. S3 관리용 키 (UUID.확장자 형태 - 삭제 시 활용)
-    @Column(name = "s3_key", nullable = false)
+    // S3 내 식별자 (UUID 등)
+    @Column(name = "s3_key", nullable = false, length = 255)
     private String s3Key;
 
-    // 3. CloudFront 조회용 URL (보여주기용)
+    // CloudFront 또는 S3 접근 주소
     @Column(name = "image_url", nullable = false, length = 512)
     private String imageUrl;
 
-    // 4. 사용자가 올린 원래 파일명
+    // 원본 파일명
+    @Column(name = "original_name", length = 512)
     private String originalName;
 
-    // 5. 업로드 시간
+    // 업로드 시간 (Auditing 기능 활용)
     @CreatedDate
+    @Column(name = "uploaded_at", updatable = false)
     private LocalDateTime uploadedAt;
 
-    // 6. 서버 엔티티와의 연관 관계 편의 메서드
-    public void setServer(ServerEntity server) {
+    // 서버 엔티티 설정 시 양방향 관계를 안전하게 처리
+    public void mappingServer(ServerEntity server) {
         this.server = server;
+        // 서버 엔티티의 이미지 리스트에도 자기 자신을 추가
+        if (!server.getServerImageEntities().contains(this)) {
+            server.getServerImageEntities().add(this);
+        }
     }
 }
