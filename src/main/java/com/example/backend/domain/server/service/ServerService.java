@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -25,6 +26,7 @@ public class ServerService {
     // 1. 서버 등록
     @Transactional
     public ServerResponseDto createServer(ServerRequestDto requestDto) {
+        // 기본 상태는 OFFLINE으로 시작 (스케줄러가 곧 ONLINE으로 바꿔줄 거예요)
         ServerEntity serverEntity = serverRepository.save(requestDto.toEntity());
 
         if (requestDto.getCategoryIds() != null && !requestDto.getCategoryIds().isEmpty()) {
@@ -40,10 +42,9 @@ public class ServerService {
 
     // 2. 서버 전체 목록 조회
     public List<ServerResponseDto> getAllServers() {
-        // 1. Repository에서 한 번의 쿼리로 모든 데이터를 가져옴
+        // Repository의 @EntityGraph 덕분에 N+1 문제 없이 한 번에 가져옴
         List<ServerEntity> servers = serverRepository.findAll();
 
-        // 2. DTO 변환 (이미 DTO 내부에 대표 이미지 추출 로직이 있으므로 활용)
         return servers.stream()
                 .map(ServerResponseDto::from)
                 .toList();
@@ -51,8 +52,8 @@ public class ServerService {
 
     // 3. 특정 서버 상세 조회
     public ServerResponseDto getServer(Long serverId) {
-        // 상세 조회 시에도 이미지가 필요하므로 Optional 체크
-        ServerEntity serverEntity = serverRepository.findById(serverId)
+        // findById 대신 성능 최적화된 findByServerId 사용
+        ServerEntity serverEntity = serverRepository.findByServerId(serverId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 서버를 찾을 수 없습니다. ID: " + serverId));
 
         return ServerResponseDto.from(serverEntity);
@@ -61,44 +62,48 @@ public class ServerService {
     // 4. 서버 정보 수정
     @Transactional
     public void updateServer(Long serverId, ServerRequestDto requestDto) {
-        ServerEntity serverEntity = serverRepository.findById(serverId)
+        ServerEntity serverEntity = serverRepository.findByServerId(serverId)
                 .orElseThrow(() -> new IllegalArgumentException("서버를 찾을 수 없습니다."));
 
-        // 1. 기본 정보 부분 수정
+        // 1. 기본 정보 및 ENUM 상태 수정
         if (requestDto.getName() != null) serverEntity.setName(requestDto.getName());
         if (requestDto.getDescription() != null) serverEntity.setDescription(requestDto.getDescription());
         if (requestDto.getDomain() != null) serverEntity.setDomain(requestDto.getDomain());
         if (requestDto.getVersion() != null) serverEntity.setVersion(requestDto.getVersion());
 
-        // 2. 카테고리 수정 (요청이 있을 때만)
+        // 추가된 필드들 반영
+        if (requestDto.getStatus() != null) serverEntity.setStatus(requestDto.getStatus());
+        if (requestDto.getCurrentPlayers() != null) serverEntity.setCurrentPlayers(requestDto.getCurrentPlayers());
+        if (requestDto.getMaxPlayers() != null) serverEntity.setMaxPlayers(requestDto.getMaxPlayers());
+        serverEntity.setLastCheckedAt(LocalDateTime.now());
+
+        // 2. 카테고리 수정
         if (requestDto.getCategoryIds() != null) {
-            // 1. 기존 관계를 비움
             serverEntity.clearCategories();
 
-            // 2. 비워진 상태를 DB에 즉시 반영하여 세션 충돌 방지
+            // 기존 데이터 즉시 삭제 반영 (영속성 충돌 방지)
             serverRepository.saveAndFlush(serverEntity);
 
-            // 3. 새로운 카테고리 추가
             requestDto.getCategoryIds().forEach(categoryId -> {
                 CategoryEntity category = categoryRepository.findById(categoryId)
-                        .orElseThrow(() -> new IllegalArgumentException("카테고리 없음"));
+                        .orElseThrow(() -> new IllegalArgumentException("카테고리 없음: " + categoryId));
                 serverEntity.addCategory(category);
             });
         }
     }
 
-    // 5. 서버 삭제 (S3 이미지 동시 삭제 로직 추가 ⭐)
+    // 5. 서버 삭제 (S3 동시 삭제 유지 ⭐)
     @Transactional
     public void deleteServer(Long serverId) {
-        ServerEntity serverEntity = serverRepository.findById(serverId)
+        ServerEntity serverEntity = serverRepository.findByServerId(serverId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 서버를 찾을 수 없습니다. ID: " + serverId));
 
-        // 1. 서버에 연결된 모든 이미지를 S3 창고에서도 실제 삭제
+        // S3 실물 파일 삭제 로직
         serverEntity.getServerImageEntities().forEach(image -> {
             s3Service.deleteImage(image.getImageUrl());
         });
 
-        // 2. 서버 데이터 삭제 (CascadeType.ALL 설정으로 연관된 이미지/카테고리 레코드도 함께 삭제됨)
+        // 레코드 삭제 (ON DELETE CASCADE로 DB 자식들도 싹 지워짐)
         serverRepository.delete(serverEntity);
     }
 }
