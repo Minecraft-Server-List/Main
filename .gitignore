@@ -29,3 +29,6 @@ src/main/resources/static/uploads/
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# 데이터베이스 쿼리문 파일
+Craftconnect.sql
