@@ -48,7 +48,9 @@ public class PostService {
     }
 
     public List<PostResponseDto> getAllPosts() {
-        return postRepository.findAll().stream().map(PostResponseDto::from).toList();
+        return postRepository.findAll().stream()
+                .map(PostResponseDto::from)
+                .toList();
     }
 
     @Transactional
@@ -78,7 +80,7 @@ public class PostService {
         return PostResponseDto.from(post);
     }
 
-    // // 4. 게시글 삭제
+    // 4. 게시글 삭제
     @Transactional
     public void deletePost(Long postId) {
         postRepository.deleteById(postId);
