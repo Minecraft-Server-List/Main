@@ -18,6 +18,6 @@ public abstract class BaseTimeEntity {
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
-    @LastModifiedDate // 수정 시간도 자동으로 관리해주면 편해요!
+    @LastModifiedDate
     private LocalDateTime updatedAt;
 }

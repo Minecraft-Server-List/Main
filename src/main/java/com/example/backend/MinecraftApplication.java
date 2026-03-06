@@ -3,13 +3,15 @@ package com.example.backend;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
+@EnableScheduling
 @EnableJpaAuditing
 @SpringBootApplication
 public class MinecraftApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(MinecraftApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(MinecraftApplication.class, args);
+    }
 
 }
