@@ -16,7 +16,7 @@ public class ServerRequestDto {
     private String version;
     private List<Long> categoryIds;
 
-    // 수동 상태 변경이 필요할 경우를 대비해 필드 추가 (선택사항)
+    // 수동 상태 변경이 필요할 경우를 대비해 필드 추가
     private ServerStatus status;
     private Integer currentPlayers;
     private Integer maxPlayers;
@@ -27,7 +27,7 @@ public class ServerRequestDto {
                 .description(this.description)
                 .domain(this.domain)
                 .version(this.version)
-                .status(ServerStatus.OFFLINE) // // 문자열 대신 ENUM 상수 사용
+                .status(ServerStatus.OFFLINE)
                 .currentPlayers(0)
                 .maxPlayers(0)
                 .build();
