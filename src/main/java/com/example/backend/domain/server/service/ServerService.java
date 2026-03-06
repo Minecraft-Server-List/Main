@@ -66,15 +66,29 @@ public class ServerService {
                 .orElseThrow(() -> new IllegalArgumentException("서버를 찾을 수 없습니다."));
 
         // 1. 기본 정보 및 ENUM 상태 수정
-        if (requestDto.getName() != null) serverEntity.setName(requestDto.getName());
-        if (requestDto.getDescription() != null) serverEntity.setDescription(requestDto.getDescription());
-        if (requestDto.getDomain() != null) serverEntity.setDomain(requestDto.getDomain());
-        if (requestDto.getVersion() != null) serverEntity.setVersion(requestDto.getVersion());
+        if (requestDto.getName() != null) {
+            serverEntity.setName(requestDto.getName());
+        }
+        if (requestDto.getDescription() != null) {
+            serverEntity.setDescription(requestDto.getDescription());
+        }
+        if (requestDto.getDomain() != null) {
+            serverEntity.setDomain(requestDto.getDomain());
+        }
+        if (requestDto.getVersion() != null) {
+            serverEntity.setVersion(requestDto.getVersion());
+        }
 
         // 추가된 필드들 반영
-        if (requestDto.getStatus() != null) serverEntity.setStatus(requestDto.getStatus());
-        if (requestDto.getCurrentPlayers() != null) serverEntity.setCurrentPlayers(requestDto.getCurrentPlayers());
-        if (requestDto.getMaxPlayers() != null) serverEntity.setMaxPlayers(requestDto.getMaxPlayers());
+        if (requestDto.getStatus() != null) {
+            serverEntity.setStatus(requestDto.getStatus());
+        }
+        if (requestDto.getCurrentPlayers() != null) {
+            serverEntity.setCurrentPlayers(requestDto.getCurrentPlayers());
+        }
+        if (requestDto.getMaxPlayers() != null) {
+            serverEntity.setMaxPlayers(requestDto.getMaxPlayers());
+        }
         serverEntity.setLastCheckedAt(LocalDateTime.now());
 
         // 2. 카테고리 수정
