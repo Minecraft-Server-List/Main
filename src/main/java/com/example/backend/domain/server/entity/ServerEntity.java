@@ -89,9 +89,10 @@ public class ServerEntity extends BaseTimeEntity {
     }
 
     // 5. 플레이어 정보 동시 업데이트 (스케줄러용)
-    public void updatePlayerInfo(Integer current, Integer max) {
-        this.currentPlayers = current;
-        this.maxPlayers = max;
-        this.lastCheckedAt = LocalDateTime.now();
+    public void updateStatusAndPlayers(ServerStatus status, Integer current, Integer max) {
+        this.status = status;
+        this.currentPlayers = (current != null) ? current : 0;
+        this.maxPlayers = (max != null) ? max : 0;
+        this.lastCheckedAt = LocalDateTime.now(); // // 체크할 때마다 무조건 갱신
     }
 }
